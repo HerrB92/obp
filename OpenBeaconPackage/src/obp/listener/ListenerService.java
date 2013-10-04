@@ -24,7 +24,6 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import obp.Constants;
 import obp.tag.TagSighting;
 import obp.tag.Tag;
 
@@ -42,33 +41,20 @@ public class ListenerService implements Runnable {
 	private boolean debug = false;
 	private boolean running = false;
 	private int[] encryptionKey;
-	private TagSighting envelope;
-	private Tag tag;
-	
-//	public ListenerService(String host, int port, int timeout, int[] key, boolean debug) throws InterruptedException {
-//		new ListenerService(host, new byte[]{}, port, timeout, key, debug);
-//	}
-//	
-//	public ListenerService(byte[] hostIP, int port, int timeout, int[] key, boolean debug) throws InterruptedException {
-//		new ListenerService(null, hostIP, port, timeout, key, debug);
-//	}
+	private TagSighting tagSighting;
+	//private Tag tag;
 	
 	public ListenerService(String host, int port, int timeout, int[] key, boolean debug)
-			throws InterruptedException {
-
-		setDebug(debug);
+		throws InterruptedException {
 		
-		boolean bound = false;
+		setDebug(debug);
+		this.encryptionKey = key;
+		
 		int attempts = 0;
-		encryptionKey = key;
-
+		boolean bound = false;
 		while (!(bound || (attempts >= 3))) {
 			try {
-//				if (host == null) {
-//					server = InetAddress.getByName(hostIP);
-//				} else {
-					server = InetAddress.getByName(host);
-//				}
+				server = InetAddress.getByName(host);
 				
 				socket = new DatagramSocket(port, server);
 				bound = socket.isBound();
@@ -80,6 +66,7 @@ public class ListenerService implements Runnable {
 				Thread.sleep(5000);
 			}
 		}
+		
 		if (!bound) {
 			System.out.println("ListenerService: Unable to connect, exit.");
 			Runtime.getRuntime().exit(1);
@@ -121,27 +108,15 @@ public class ListenerService implements Runnable {
 				socket.receive(packet);
 				
 				if (packet.getLength() == TagSighting.ENVELOPE_SIZE_BYTE) {
-					envelope = new TagSighting(packet, encryptionKey);
-					
-//					TBeaconNetworkHdr hdr;
-//					u_int32_t sequence;
-//					u_int32_t timestamp;
-//					TBeaconEnvelope log
-					
-//					tag = new Tag(packet, encryptionKey);
-//					
-//					if (debug) {
-//						System.out.print(c + " | length:" + tag.getSize()
-//								+ " | sent by: " + tag.getBeaconAddress()
-//								+ " | Tag Id: " + tag.getID());
-//					}
-//					
-//					if (tag.checkCRC()) {
-//						listener.messageReceived(tag);
-//						c++;
-//					} else {
-//						System.out.println("Packet lost CRC:" + tag.getCRC());
-//					}
+					tagSighting = new TagSighting(packet, encryptionKey);
+										
+					if (tagSighting.hasValidTagCRC()) {
+						if (listener != null) {
+							listener.messageReceived(tagSighting);
+						}
+					} else {
+						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC());
+					}
 				}
 			} catch (IOException ioException) {
 				// there is probably a better way..

@@ -22,10 +22,8 @@
 
 package obp.listener;
 
-import obp.tag.Tag;
+import obp.tag.TagSighting;
 
-
-public interface Listener{
-	abstract void messageReceived(Tag tag);
-}
-
+public interface Listener {
+	abstract void messageReceived(TagSighting tagSighting);
+} // Listener

@@ -22,36 +22,42 @@
 
 package test;
 
-import driver.easyreader.*;
+import obp.listener.Listener;
+import obp.listener.ListenerService;
+import obp.tag.Tag;
+import obp.tag.TagSighting;
 
-public class RFIDeasyreader_test implements MessageListener {
-
-	public static final int [] tea_key ={0xe107341e,0xab99c57e,0x48e17803,0x52fb4d16};
+public class TestService implements Listener {
 	
-	public RFIDeasyreader_test() throws Exception {
+	public static final int[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
+
+	//public static final int [] tea_key ={0xe107341e,0xab99c57e,0x48e17803,0x52fb4d16};
+	
+	public TestService() throws Exception {
 		
 		String host = "10.254.0.1";
 		int port = 2342; 		// default port openbeacon
 		int timeout = 10;		// in sec.
 
-		MessageListenerService service = new MessageListenerService(host,port,timeout, tea_key);
+		ListenerService service = new ListenerService(host, port, timeout, key, false);
 		service.setMessageListener(this);
 		service.setDebug(false);
-		service.Start();
+		service.start();
 		System.out.println("Message Listener Started");
 
 		while (true) {
 			Thread.sleep(50);
 		}
 	}
-
-	public void messageReceived(Sputnik SputnikData) {
-		System.out.println("Message Received, TagID:" + SputnikData.getID()+ " | Strength: "+SputnikData.getStrength());
+	
+	@Override
+	public void messageReceived(TagSighting tag) {
+		// System.out.println("Message Received, TagID:" + tag.getId()+ " | Strength: "+tag.getStrength());
 	}
 
 	public static final void main(String[] args) {
 		try {
-			new RFIDeasyreader_test();
+			new TestService();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

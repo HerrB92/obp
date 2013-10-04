@@ -58,8 +58,7 @@ public class SputnikEmulator {
 		buf[14] = (byte) (0xFF & (crc >> 8) ) ;
 		
 		try {
-			dest = InetAddress.getByName((args.length > 1) ? args[1]
-					: "10.254.0.1");
+			dest = InetAddress.getByName((args.length > 1) ? args[1] : "10.254.0.1");
 
 			DatagramSocket sock = new DatagramSocket();
 			DatagramPacket pack = new DatagramPacket(buf, buf.length, dest,	2342);

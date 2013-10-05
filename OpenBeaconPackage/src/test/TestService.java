@@ -24,7 +24,7 @@ package test;
 
 import obp.listener.Listener;
 import obp.listener.ListenerService;
-import obp.tag.Tag;
+import obp.tag.TagOld;
 import obp.tag.TagSighting;
 
 public class TestService implements Listener {

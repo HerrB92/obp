@@ -25,7 +25,7 @@ import java.net.DatagramSocket;
 import java.net.InetAddress;
 
 import obp.tag.TagSighting;
-import obp.tag.Tag;
+import obp.tag.TagOld;
 
 /**
  * @author bbehrens

@@ -3,9 +3,12 @@
  */
 package obp.listener;
 
+import org.joda.time.DateTime;
+
 import obp.index.DataIndex;
 import obp.tag.Tag;
 import obp.tag.TagSighting;
+import odp.reader.Reader;
 
 /**
  * @author bbehrens
@@ -44,12 +47,23 @@ public class ServiceListener implements Listener {
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
 		if (getDataIndex() != null) {
-			Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
+			DateTime now = DateTime.now();
 			
+			Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
 			if (tag == null) {
-				tag = new Tag(tagSighting.getTagId(), tagSighting.getTagButtonPressed());
+				tag = new Tag(tagSighting.getTagId());
 				getDataIndex().addTag(tag);
 			}
+			tag.setLastSeen(now);
+			tag.setButtonPressed(tagSighting.getTagButtonPressed());
+			
+			Reader reader = getDataIndex().getReaderById(tagSighting.getReaderId());
+			if (reader == null) {
+				reader = new Reader(tagSighting.getReaderId());
+				getDataIndex().addReader(reader);
+			}
+			
+			reader.setLastSeen(now);
 		}
 	} // messageReceived
 }

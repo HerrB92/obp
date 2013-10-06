@@ -3,17 +3,25 @@
  */
 package obp.tag;
 
+import obp.Constants;
+
+import org.joda.time.DateTime;
+
 /**
  * @author bbehrens
  *
  */
 public class Tag {
-	private int tagId;
-	private int tagProtocol;
+	private int id;
+	private DateTime created = DateTime.now();
+	private DateTime lastSeen = DateTime.now();
+	
+	private boolean buttonPressed = false;
+	private DateTime buttonPressedStart;
+	
 	private int tagFlags;
 	private int tagStrength;
 	private int tagSequence;
-	private boolean tagButtonPressed = false;
 	
 	private int readerInterface;
 	private int readerId;
@@ -24,95 +32,129 @@ public class Tag {
 
 	/**
 	 * @param tagId
-	 * @param tagButtonPressed
+	 * @param buttonPressed
 	 */
-	public Tag(int tagId, boolean tagButtonPressed) {
-		this.tagId = tagId;
-		this.tagButtonPressed = tagButtonPressed;
+	public Tag(int id) {
+		setId(id);
 	} // Constructor
 
 	/**
-	 * @return the tagId
+	 * @return the tag id
 	 */
-	public int getTagId() {
-		return tagId;
-	}
+	public int getId() {
+		return id;
+	} // getId
 
 	/**
-	 * @param tagId the tagId to set
+	 * @param id the tagId to set
 	 */
-	public void setTagId(int tagId) {
-		this.tagId = tagId;
-	}
+	public void setId(int id) {
+		this.id = id;
+	} // setId
+	
+	/**
+	 * @return Created joda datetime
+	 */
+	public DateTime getCreated() {
+		return created;
+	} // getCreated
+	
+	/**
+	 * @return the lastSeen
+	 */
+	public DateTime getLastSeen() {
+		return lastSeen;
+	} // getLastSeen
 
 	/**
-	 * @return the tagProtocol
+	 * @param lastSeen the lastSeen to set
 	 */
-	public int getTagProtocol() {
-		return tagProtocol;
-	}
+	public void setLastSeen(DateTime lastSeen) {
+		this.lastSeen = lastSeen;
+	} // setLastSeen
+	
+	/**
+	 * @return true, if tag button is pressed, false otherwise
+	 */
+	public boolean isButtonPressed() {
+		return buttonPressed;
+	} // isButtonPressed
 
 	/**
-	 * @param tagProtocol the tagProtocol to set
+	 * @param buttonPressed the ButtonPressed to set
 	 */
-	public void setTagProtocol(int tagProtocol) {
-		this.tagProtocol = tagProtocol;
-	}
+	public void setButtonPressed(boolean buttonPressed) {
+		// If the information is received, that the button is pressed,
+		// set buttonPressed to true and update buttonPressedStart date.
+		
+		// If the information is received, that the button is not pressed
+		// anymore (which can also be triggered by a protocol which does
+		// not transmit the "button pressed" information) set buttonPressed
+		// only to false after the specified delay
+		if (buttonPressed == true) {
+			this.buttonPressed = true;
+			setButtonPressedStart(DateTime.now());
+		} else if (isButtonPressed() == true && 
+			getButtonPressedStart().plusSeconds(Constants.TAGSIGHTING_BUTTON_TIME_SECONDS).isBeforeNow()) {
+			this.buttonPressed = false;
+		}
+	} // setButtonPressed
+	
+	/**
+	 * @return the joda datetime the button has been
+	 *         recognized as "pressed"
+	 */
+	private DateTime getButtonPressedStart() {
+		return buttonPressedStart;
+	} // getButtonPressedStart
+
+	/**
+	 * @param lastSeen the lastSeen to set
+	 */
+	private void setButtonPressedStart(DateTime buttonPressedStart) {
+		this.buttonPressedStart = buttonPressedStart;
+	} // setButtonPressedStart
 
 	/**
 	 * @return the tagFlags
 	 */
 	public int getTagFlags() {
 		return tagFlags;
-	}
+	} // getTagFlags
 
 	/**
 	 * @param tagFlags the tagFlags to set
 	 */
 	public void setTagFlags(int tagFlags) {
 		this.tagFlags = tagFlags;
-	}
+	} // setTagFlags
 
 	/**
 	 * @return the tagStrength
 	 */
 	public int getTagStrength() {
 		return tagStrength;
-	}
+	} // getTagStrength
 
 	/**
 	 * @param tagStrength the tagStrength to set
 	 */
 	public void setTagStrength(int tagStrength) {
 		this.tagStrength = tagStrength;
-	}
+	} // setTagStrength
 
 	/**
 	 * @return the tagSequence
 	 */
 	public int getTagSequence() {
 		return tagSequence;
-	}
+	} // getTagSequence
 
 	/**
 	 * @param tagSequence the tagSequence to set
 	 */
 	public void setTagSequence(int tagSequence) {
 		this.tagSequence = tagSequence;
-	}
-
-	/**
-	 * @return the tagButtonPressed
-	 */
-	public boolean isTagButtonPressed() {
-		return tagButtonPressed;
-	}
-
-	/**
-	 * @param tagButtonPressed the tagButtonPressed to set
-	 */
-	public void setTagButtonPressed(boolean tagButtonPressed) {
-		this.tagButtonPressed = tagButtonPressed;
 	}
 
 	/**

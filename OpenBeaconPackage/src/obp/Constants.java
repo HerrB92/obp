@@ -26,6 +26,7 @@ public class Constants {
 	public static final int TAGSIGHTINGFLAG_BUTTON_PRESS = 0x02;
 	
 	public static final int STRENGTH_LEVELS_COUNT = 4;
+	public static final int TAGSIGHTING_BUTTON_TIME_SECONDS = 5;
 	
 	public static final int PROX_TAG_STRENGTH_BITS = 2;
 	public static final int PROX_TAG_STRENGTH_MASK = (1<<PROX_TAG_STRENGTH_BITS)-1;

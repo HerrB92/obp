@@ -30,4 +30,7 @@ public class Constants {
 	
 	public static final int PROX_TAG_STRENGTH_BITS = 2;
 	public static final int PROX_TAG_STRENGTH_MASK = (1<<PROX_TAG_STRENGTH_BITS)-1;
+	
+	public static final int STRENGTH_AGGREGATION_WINDOW_SECONDS = 2;
+	public static final int STRENGTH_AGGREGATION_AGED_SECONDS = STRENGTH_AGGREGATION_WINDOW_SECONDS + 2;
 }

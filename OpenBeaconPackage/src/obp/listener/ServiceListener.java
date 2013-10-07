@@ -51,7 +51,7 @@ public class ServiceListener implements Listener {
 			
 			Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
 			if (tag == null) {
-				tag = new Tag(tagSighting.getTagId());
+				tag = new Tag(tagSighting.getTagId(), tagSighting.getReaderId(), tagSighting.getStrength());
 				getDataIndex().addTag(tag);
 			}
 			tag.setLastSeen(now);

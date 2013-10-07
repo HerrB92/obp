@@ -3,6 +3,8 @@
  */
 package obp.tag;
 
+import java.util.HashMap;
+
 import obp.Constants;
 
 import org.joda.time.DateTime;
@@ -19,6 +21,8 @@ public class Tag {
 	private boolean buttonPressed = false;
 	private DateTime buttonPressedStart;
 	
+	private HashMap<Integer, TagReaderSighting> tagReaderSightings = new HashMap<Integer, TagReaderSighting>();
+	
 	private int tagFlags;
 	private int tagStrength;
 	private int tagSequence;
@@ -34,8 +38,9 @@ public class Tag {
 	 * @param tagId
 	 * @param buttonPressed
 	 */
-	public Tag(int id) {
+	public Tag(int id, int readerId, int strength) {
 		setId(id);
+		updateTagReaderSighting(readerId, strength);
 	} // Constructor
 
 	/**
@@ -226,4 +231,25 @@ public class Tag {
 	public void setProxTagId(int[] proxTagId) {
 		this.proxTagId = proxTagId;
 	}
+	
+	private void removeAgedSightings() {
+		// FIXME
+//		for (TagReaderSighting sighting : getTagReaderSightings().) {
+//			
+//		}
+	} // removeAgedSightings
+	
+	public HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
+		removeAgedSightings();
+		return tagReaderSightings;
+	} // getTagReaderSightings
+	
+	public void updateTagReaderSighting(int readerId, int strength) {
+		TagReaderSighting sighting = getTagReaderSightings().get(readerId);
+		if (sighting == null) {
+			getTagReaderSightings().put(readerId, new TagReaderSighting(readerId, strength));
+		} else {
+			sighting.setStrength(strength);
+		}
+	} // updateTagReaderSighting
 }

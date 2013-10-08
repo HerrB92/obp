@@ -643,40 +643,46 @@ public class TagSighting {
 	@Override
 	public String toString() {
 		StringBuffer buffer = new StringBuffer();
-		buffer.append("CRC: ");
-		buffer.append(getEnvelopeCRC());
-		buffer.append(" (Check: ");
-		buffer.append(hasValidEnvelopeCRC());
-		buffer.append(")|");
-		buffer.append("Protocol: ");
-		buffer.append(getProtocol());
-		buffer.append("|Interface: ");
-		buffer.append(getInterface());
-		buffer.append("|Reader ID: ");
-		buffer.append(getReaderId());
-		buffer.append("|Size: ");
-		buffer.append(getSize());
-		buffer.append("|Sequence: ");
-		buffer.append(getSequence());
-		buffer.append("|Timestamp: ");
-		buffer.append(getTimestamp());
-		buffer.append("|Tag ID: ");
-		buffer.append(getTagId());
-		buffer.append("|Tag Button: ");
-		buffer.append(getTagButtonPressed());
-		buffer.append("|Tag Protocol: ");
-		buffer.append(getTagProtocol());
-		buffer.append("|Flags: ");
-		buffer.append(getFlags());
-		buffer.append("|Strength: ");
-		buffer.append(getStrength());
-		buffer.append("|TagSequence: ");
-		buffer.append(getTagSequence());
-		buffer.append("|Tag CRC: ");
-		buffer.append(getTagCRC());
-		buffer.append(" (Check: ");
-		buffer.append(hasValidTagCRC());
-		buffer.append(")");
+		
+		for (byte data : getRawData()) {
+			buffer.append(data & 0xFF);
+			buffer.append(",");
+		}
+		
+//		buffer.append("CRC: ");
+//		buffer.append(getEnvelopeCRC());
+//		buffer.append(" (Check: ");
+//		buffer.append(hasValidEnvelopeCRC());
+//		buffer.append(")|");
+//		buffer.append("Protocol: ");
+//		buffer.append(getProtocol());
+//		buffer.append("|Interface: ");
+//		buffer.append(getInterface());
+//		buffer.append("|Reader ID: ");
+//		buffer.append(getReaderId());
+//		buffer.append("|Size: ");
+//		buffer.append(getSize());
+//		buffer.append("|Sequence: ");
+//		buffer.append(getSequence());
+//		buffer.append("|Timestamp: ");
+//		buffer.append(getTimestamp());
+//		buffer.append("|Tag ID: ");
+//		buffer.append(getTagId());
+//		buffer.append("|Tag Button: ");
+//		buffer.append(getTagButtonPressed());
+//		buffer.append("|Tag Protocol: ");
+//		buffer.append(getTagProtocol());
+//		buffer.append("|Flags: ");
+//		buffer.append(getFlags());
+//		buffer.append("|Strength: ");
+//		buffer.append(getStrength());
+//		buffer.append("|TagSequence: ");
+//		buffer.append(getTagSequence());
+//		buffer.append("|Tag CRC: ");
+//		buffer.append(getTagCRC());
+//		buffer.append(" (Check: ");
+//		buffer.append(hasValidTagCRC());
+//		buffer.append(")");
 		
 		return buffer.toString();
 	} // toString

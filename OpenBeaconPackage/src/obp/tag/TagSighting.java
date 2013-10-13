@@ -156,9 +156,6 @@ public class TagSighting {
 			case 15: // Timestamp (fourth byte)
 				timestamp += 0xff & rawData[i];
 				break;
-//			case 16: // Proto?
-//				proto = 0xff & rawData[i];
-//				break;
 			default:
 				tagData[i - 16] = rawData[i];
 				break;
@@ -168,8 +165,8 @@ public class TagSighting {
 		// Check envelope CRC
 		// CRC is calculated from all raw data except the first two bytes
 		// (which contain the envelope CRC value)
-		byte[] envelopeRawData = new byte[rawData.length - 2];
-		System.arraycopy(rawData, 2, envelopeRawData, 0, 30);
+//		byte[] envelopeRawData = new byte[rawData.length - 2];
+//		System.arraycopy(rawData, 2, envelopeRawData, 0, 30);
 		
 		if (calculateLongCRC(rawData, 2, 30) == getEnvelopeCRC()) {
 			validEnvelopeCRC = true;
@@ -177,7 +174,7 @@ public class TagSighting {
 		
 		validTagCRC = decryptTagData(tagData, encryptionKey);
 						
-		System.out.println("Sighting: " + this.toString());
+		//System.out.println("Sighting: " + this.toString());
 	}
 	
 	private boolean decryptTagData(byte[] tagData, int[] encryptionKey) {
@@ -637,53 +634,61 @@ public class TagSighting {
 		return (calculateCRC(data, start, size) ^ 0xFFFF);
 	} // calculateLongCRC
 	
+	public String toString(boolean rawData) {
+		StringBuffer buffer = new StringBuffer();
+		
+		if (rawData) {
+			for (byte data : getRawData()) {
+				if (buffer.length() > 0) {
+					buffer.append(",");
+				}
+				buffer.append(data & 0xFF);
+			}
+		} else {
+			buffer.append("CRC: ");
+			buffer.append(getEnvelopeCRC());
+			buffer.append(" (Check: ");
+			buffer.append(hasValidEnvelopeCRC());
+			buffer.append(")|");
+			buffer.append("Protocol: ");
+			buffer.append(getProtocol());
+			buffer.append("|Interface: ");
+			buffer.append(getInterface());
+			buffer.append("|Reader ID: ");
+			buffer.append(getReaderId());
+			buffer.append("|Size: ");
+			buffer.append(getSize());
+			buffer.append("|Sequence: ");
+			buffer.append(getSequence());
+			buffer.append("|Timestamp: ");
+			buffer.append(getTimestamp());
+			buffer.append("|Tag ID: ");
+			buffer.append(getTagId());
+			buffer.append("|Tag Button: ");
+			buffer.append(getTagButtonPressed());
+			buffer.append("|Tag Protocol: ");
+			buffer.append(getTagProtocol());
+			buffer.append("|Flags: ");
+			buffer.append(getFlags());
+			buffer.append("|Strength: ");
+			buffer.append(getStrength());
+			buffer.append("|TagSequence: ");
+			buffer.append(getTagSequence());
+			buffer.append("|Tag CRC: ");
+			buffer.append(getTagCRC());
+			buffer.append(" (Check: ");
+			buffer.append(hasValidTagCRC());
+			buffer.append(")");
+		}
+		
+		return buffer.toString();
+	} // toString(boolean rawData)
+	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
 	public String toString() {
-		StringBuffer buffer = new StringBuffer();
-		
-		for (byte data : getRawData()) {
-			buffer.append(data & 0xFF);
-			buffer.append(",");
-		}
-		
-//		buffer.append("CRC: ");
-//		buffer.append(getEnvelopeCRC());
-//		buffer.append(" (Check: ");
-//		buffer.append(hasValidEnvelopeCRC());
-//		buffer.append(")|");
-//		buffer.append("Protocol: ");
-//		buffer.append(getProtocol());
-//		buffer.append("|Interface: ");
-//		buffer.append(getInterface());
-//		buffer.append("|Reader ID: ");
-//		buffer.append(getReaderId());
-//		buffer.append("|Size: ");
-//		buffer.append(getSize());
-//		buffer.append("|Sequence: ");
-//		buffer.append(getSequence());
-//		buffer.append("|Timestamp: ");
-//		buffer.append(getTimestamp());
-//		buffer.append("|Tag ID: ");
-//		buffer.append(getTagId());
-//		buffer.append("|Tag Button: ");
-//		buffer.append(getTagButtonPressed());
-//		buffer.append("|Tag Protocol: ");
-//		buffer.append(getTagProtocol());
-//		buffer.append("|Flags: ");
-//		buffer.append(getFlags());
-//		buffer.append("|Strength: ");
-//		buffer.append(getStrength());
-//		buffer.append("|TagSequence: ");
-//		buffer.append(getTagSequence());
-//		buffer.append("|Tag CRC: ");
-//		buffer.append(getTagCRC());
-//		buffer.append(" (Check: ");
-//		buffer.append(hasValidTagCRC());
-//		buffer.append(")");
-		
-		return buffer.toString();
+		return toString(false);
 	} // toString
 }

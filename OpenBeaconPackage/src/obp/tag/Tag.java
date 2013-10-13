@@ -38,9 +38,8 @@ public class Tag {
 	 * @param tagId
 	 * @param buttonPressed
 	 */
-	public Tag(int id, int readerId, int strength) {
+	public Tag(int id) {
 		setId(id);
-		updateTagReaderSighting(readerId, strength);
 	} // Constructor
 
 	/**
@@ -100,7 +99,7 @@ public class Tag {
 			this.buttonPressed = true;
 			setButtonPressedStart(DateTime.now());
 		} else if (isButtonPressed() == true && 
-			getButtonPressedStart().plusSeconds(Constants.TAGSIGHTING_BUTTON_TIME_SECONDS).isBeforeNow()) {
+			getButtonPressedStart().plusSeconds(Constants.TAG_BUTTON_ACTIVE_SECONDS).isBeforeNow()) {
 			this.buttonPressed = false;
 		}
 	} // setButtonPressed
@@ -109,7 +108,7 @@ public class Tag {
 	 * @return the joda datetime the button has been
 	 *         recognized as "pressed"
 	 */
-	private DateTime getButtonPressedStart() {
+	private DateTime getButtonPressedStart() {		
 		return buttonPressedStart;
 	} // getButtonPressedStart
 
@@ -232,15 +231,7 @@ public class Tag {
 		this.proxTagId = proxTagId;
 	}
 	
-	private void removeAgedSightings() {
-		// FIXME
-//		for (TagReaderSighting sighting : getTagReaderSightings().) {
-//			
-//		}
-	} // removeAgedSightings
-	
 	public HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
-		removeAgedSightings();
 		return tagReaderSightings;
 	} // getTagReaderSightings
 	

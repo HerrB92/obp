@@ -15,6 +15,7 @@ public class TagReaderSighting {
 	private int readerId;
 	private int minStrength;
 	private DateTime lastUpdate;
+	private boolean active = true;
 	
 	public TagReaderSighting(int readerId, int strength) {
 		setReaderId(readerId);
@@ -49,6 +50,7 @@ public class TagReaderSighting {
 	private void setMinStrength(int minStrength) {
 		this.minStrength = minStrength;
 		setLastUpdate(DateTime.now());
+		setActive(true);
 	} // setMinStrength
 	
 	/**
@@ -65,6 +67,7 @@ public class TagReaderSighting {
 			setMinStrength(strength);
 		}
 	} // setStrength
+	
 	/**
 	 * @return the last update
 	 */
@@ -78,4 +81,31 @@ public class TagReaderSighting {
 	private void setLastUpdate(DateTime lastUpdate) {
 		this.lastUpdate = lastUpdate;
 	} // setLastUpdate
+	
+	/**
+	 * Set active status to inactive, if last update is older than
+	 * TAGSIGHTING_ACTIVE_WINDOW_SECONDS
+	 */
+	private void checkActiveStatus() {
+		if (isActive() && 
+			getLastUpdate().plusSeconds(Constants.TAG_READER_SIGHTING_ACTIVE_SECONDS).isBeforeNow()) {
+			setActive(false);
+		}
+	} // checkActiveStatus
+	
+	/**
+	 * @return the last update
+	 */
+	public boolean isActive() {
+		checkActiveStatus();
+		
+		return active;
+	} // isActive
+	
+	/**
+	 * @param active set to true to set this sighting to active
+	 */
+	private void setActive(boolean active) {
+		this.active = active;
+	} // setActive
 }

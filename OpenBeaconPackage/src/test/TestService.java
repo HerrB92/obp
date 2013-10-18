@@ -24,12 +24,11 @@ package test;
 
 import obp.listener.Listener;
 import obp.listener.ListenerService;
-import obp.tag.TagOld;
 import obp.tag.TagSighting;
 
 public class TestService implements Listener {
 	
-	public static final int[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
+	public static final long[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 
 	//public static final int [] tea_key ={0xe107341e,0xab99c57e,0x48e17803,0x52fb4d16};
 	

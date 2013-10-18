@@ -56,7 +56,7 @@ public class ServiceListener implements Listener {
 			}
 			tag.setLastSeen(now);
 			tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
-			tag.setButtonPressed(tagSighting.getTagButtonPressed());
+			tag.setButtonPressed(tagSighting.isTagButtonPressed());
 			
 			Reader reader = getDataIndex().getReaderById(tagSighting.getReaderId());
 			if (reader == null) {

@@ -23,24 +23,25 @@ package obp.tools;
 
 public class Tools {
     
-    //Decrypt data with key.
-    public static byte[] decrypt(byte[] data, int[] key) {
+    // Decrypt data with key.
+    public static byte[] decrypt(byte[] data, long[] key) {
         if (data.length == 0) {
             return data;
         }
         
-        return toByteArray(decrypt(toIntArray(data, false),key), true);
+        return toByteArray(decrypt(toIntArray(data, false), key), true);
     }
 
     // Decrypt data with key.
-    public static int[] decrypt(int[] v, int[] k) {
+    public static int[] decrypt(int[] v, long[] k) {
         int n = v.length - 1;
 
         if (n < 1) {
             return v;
         }
+        
         if (k.length < 4) {
-            int[] key = new int[4];
+            long[] key = new long[4];
 
             System.arraycopy(k, 0, key, 0, k.length);
             k = key;

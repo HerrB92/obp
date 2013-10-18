@@ -24,8 +24,8 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import obp.Constants;
 import obp.tag.TagSighting;
-import obp.tag.TagOld;
 
 /**
  * @author bbehrens
@@ -40,11 +40,11 @@ public class ListenerService implements Runnable {
 	private Listener listener;
 	private boolean debug = false;
 	private boolean running = false;
-	private int[] encryptionKey;
+	private long[] encryptionKey;
 	private TagSighting tagSighting;
 	//private Tag tag;
 	
-	public ListenerService(String host, int port, int timeout, int[] key, boolean debug)
+	public ListenerService(String host, int port, int timeout, long[] key, boolean debug)
 		throws InterruptedException {
 		
 		setDebug(debug);
@@ -107,10 +107,10 @@ public class ListenerService implements Runnable {
 			try {
 				socket.receive(packet);
 				
-				if (packet.getLength() == TagSighting.ENVELOPE_SIZE_BYTE) {
-					tagSighting = new TagSighting(packet, encryptionKey);
+				if (packet.getLength() == Constants.ENVELOPE_SIZE_BYTE) {
+					tagSighting = new TagSighting(packet, encryptionKey, debug);
 										
-					if (tagSighting.hasValidTagCRC()) {
+					if (tagSighting.hasValidTagData() && tagSighting.hasValidTagCRC()) {
 						if (listener != null) {
 							listener.messageReceived(tagSighting);
 						}

@@ -5,7 +5,7 @@ package obp.tag;
 
 import java.util.HashMap;
 
-import obp.Constants;
+import obp.ServiceConfiguration;
 
 import org.joda.time.DateTime;
 
@@ -33,6 +33,8 @@ public class Tag {
 	private int timestamp;
 	
 	private int[] proxTagId = new int[4];
+	
+	private ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 
 	/**
 	 * @param tagId
@@ -99,7 +101,7 @@ public class Tag {
 			this.buttonPressed = true;
 			setButtonPressedStart(DateTime.now());
 		} else if (isButtonPressed() == true && 
-			getButtonPressedStart().plusSeconds(Constants.TAG_BUTTON_ACTIVE_SECONDS).isBeforeNow()) {
+			getButtonPressedStart().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
 			this.buttonPressed = false;
 		}
 	} // setButtonPressed

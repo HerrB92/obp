@@ -3,7 +3,7 @@
  */
 package obp.tag;
 
-import obp.Constants;
+import obp.ServiceConfiguration;
 
 import org.joda.time.DateTime;
 
@@ -16,6 +16,8 @@ public class TagReaderSighting {
 	private int minStrength;
 	private DateTime lastUpdate;
 	private boolean active = true;
+	
+	private ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
 	public TagReaderSighting(int readerId, int strength) {
 		setReaderId(readerId);
@@ -57,7 +59,7 @@ public class TagReaderSighting {
 	 * @param strength the minStrength to set
 	 */
 	public void setStrength(int strength) {
-		if (getLastUpdate().plusSeconds(Constants.STRENGTH_AGGREGATION_AGED_SECONDS).isBeforeNow()) {
+		if (getLastUpdate().plusSeconds(configuration.getStrengthAggregationAgedSeconds()).isBeforeNow()) {
 			// If last update plus aggregation aged delta is older than now,
 			// discard previous minimal strength value and use the new one.
 			setMinStrength(strength);
@@ -88,7 +90,7 @@ public class TagReaderSighting {
 	 */
 	private void checkActiveStatus() {
 		if (isActive() && 
-			getLastUpdate().plusSeconds(Constants.TAG_READER_SIGHTING_ACTIVE_SECONDS).isBeforeNow()) {
+			getLastUpdate().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
 			setActive(false);
 		}
 	} // checkActiveStatus

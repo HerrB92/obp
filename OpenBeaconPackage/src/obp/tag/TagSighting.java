@@ -38,48 +38,62 @@ package obp.tag;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
+import java.util.Arrays;
 
 import obp.Constants;
 import obp.tools.Tools;
 
 public class TagSighting {
-	public static final int ENVELOPE_SIZE_BYTE = 32;
-	public static final int ENVELOPE_HEADER_SIZE_BYTE = 16;
+	// Packet
+	private InetAddress sendingReader;
 	
-	private InetAddress reader;
-
-	public long time;
-	
+	// Envelope
 	private byte[] rawData;
-	private int envelopeCRC;
+	private int envelopeCRC = Constants.NOT_DEFINED;
 	private boolean validEnvelopeCRC = false;
-	private int protocol;
-	private int readerInterface;
-	private int readerId;
-	private int size;
-	private int sequence;
-	private int timestamp;
+	private int protocol = Constants.NOT_DEFINED;
+	private int readerInterface = Constants.NOT_DEFINED;
+	private int readerId = Constants.NOT_DEFINED;
+	private int size = Constants.NOT_DEFINED;
+	private int sequence = Constants.NOT_DEFINED;
+	private int timestamp = Constants.NOT_DEFINED;
 	
+	// Data
 	private byte[] tagData;
-	
-	private int tagId;
-	private int tagProtocol;
-	private int tagFlags;
-	private int tagStrength;
-	private int tagSequence;
-	private int tagCRC;
+	private boolean validTagData = false;
+	private int tagId = Constants.NOT_DEFINED;
+	private int tagProtocol = Constants.NOT_DEFINED;
+	private int tagFlags = Constants.NOT_DEFINED;
+	private int tagStrength = Constants.NOT_DEFINED;
+	private int tagSequence = Constants.NOT_DEFINED;
+	private int tagCRC = Constants.NOT_DEFINED;
 	private boolean validTagCRC = false;
+	private int[] proximityTagId = new int[Constants.PROX_TAG_MAX_COUNT];
+	private Boolean tagButtonPressed;
 	
-	private int[] proxTagId = new int[4];
+	private int tagTime = Constants.NOT_DEFINED;
+	private int tagBattery = Constants.NOT_DEFINED;
 	
-	private boolean tagButtonPressed = false;
+	/**
+	 * Applies default "not set" values for any variables which
+	 * cannot be defined during declaration, for example arrays.
+	 * 
+	 * Why do we not use the objects instead of the primitives?
+	 * Because primitives are way faster (see http://stackoverflow.com/a/4094375)
+	 */
+	private void initializeVariables() {
+		Arrays.fill(proximityTagId, Constants.NOT_DEFINED);
+	} // initializeVariables
 
-	public TagSighting(DatagramPacket packet, int[] encryptionKey) {
+	public TagSighting(DatagramPacket packet, long[] encryptionKey, boolean debug) {
+		initializeVariables();
+		
 		ByteBuffer buffer = ByteBuffer.wrap(packet.getData());
 		
-		reader = packet.getAddress();
+		sendingReader = packet.getAddress();
+		
 		rawData = new byte[packet.getLength()];
-		tagData = new byte[ENVELOPE_SIZE_BYTE - ENVELOPE_HEADER_SIZE_BYTE];
+		tagData = new byte[Constants.ENVELOPE_SIZE_BYTE - Constants.ENVELOPE_HEADER_SIZE_BYTE];
 		
 		// Read the bytes from the buffer and assign values to the
 		// respective fields.
@@ -164,31 +178,35 @@ public class TagSighting {
 		
 		// Check envelope CRC
 		// CRC is calculated from all raw data except the first two bytes
-		// (which contain the envelope CRC value)
-//		byte[] envelopeRawData = new byte[rawData.length - 2];
-//		System.arraycopy(rawData, 2, envelopeRawData, 0, 30);
-		
+		// (which contain the envelope CRC value)		
 		if (calculateLongCRC(rawData, 2, 30) == getEnvelopeCRC()) {
 			validEnvelopeCRC = true;
 		}
 		
+		// Decrypt tag data and signal, if tag data should be valid
 		validTagCRC = decryptTagData(tagData, encryptionKey);
-						
-		//System.out.println("Sighting: " + this.toString());
-	}
+		
+		if (debug) {
+			System.out.println("Sighting: " + this.toString());
+		}
+	} // Constructor
 	
-	private boolean decryptTagData(byte[] tagData, int[] encryptionKey) {
+	private boolean decryptTagData(byte[] tagData, long[] encryptionKey) {
 		// Decode packet
+		
+		// First, flip every two bytes, as they have been flipped
+		// by the tag firmware for the network transport
 		tagData = Tools.flipArray(tagData);
+		
+		// Second, decrypt the tag data using the encryption key
 		tagData = Tools.decrypt(tagData, encryptionKey);
+		
+		// Third, flip the bytes again, as the data was prepared
+		// that way by the tag firmware
 		tagData = Tools.flipArray(tagData);
 		
 		tagProtocol = 0xff & tagData[0];
-		
-		// FIXME: THis should be somewhere else
-		int ignoredProtocols = 0;
-		int invalidProtocols = 0;
-		
+				
 		for (int i = 1; i < tagData.length; i++) {
 			switch (getTagProtocol()) {
 			case Constants.RFBPROTO_BEACONTRACKER_OLD:
@@ -204,13 +222,9 @@ public class TagSighting {
 				
 				// FIXME: Test this untested code
 				
-				int tagProtocol2 = 0xff & tagData[1];
-				if (tagProtocol2 != Constants.RFBPROTO_BEACONTRACKER_OLD2) {
-					tagStrength = -1;
-					tagSequence = 0;
-					System.out.printf("\t\tunknown old packet protocol2[%i] key[%i] ", tagProtocol2);
-					ignoredProtocols++;
-				} else {
+				int tempProtocol = 0xff & tagData[1];
+				
+				if (tempProtocol == Constants.RFBPROTO_BEACONTRACKER_OLD2) {
 					tagFlags = 0;
 					if ((tagData[2] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 						tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
@@ -235,11 +249,16 @@ public class TagSighting {
 					tagId += (0xff & tagData[10]) << 8;
 					tagId += 0xff & tagData[11];
 					
-					// Not used:
-					// Reserved: byte 12 & 13
+					// Ignored: Reserved: byte 12 & 13
 					
 					tagCRC = (0xff & tagData[14]) << 8;
 					tagCRC = 0xff & tagData[15];
+					
+					setValidTagData(true);
+				} else {
+					// tagStrength = -1;
+					// tagSequence = 0;
+					System.out.printf("\t\tunknown old packet protocol2[%i] key[%i] ", tempProtocol);
 				}
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_EXT:
@@ -260,6 +279,7 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
+				tagFlags = 0;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
@@ -269,14 +289,14 @@ public class TagSighting {
 					tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
 				}
 				
-				// Not used
+				// FIXME: Not used (definition unknown)
 				// oid_last_seen = (0xff & tagData[5]) << 8;
 				// oid_last_seen = 0xff & tagData[6];
 				
-				// time = (0xff & tagData[7]) << 8;
-				// time = 0xff & tagData[8];
+				setTagTime((0xff & tagData[7]) << 8);
+				setTagTime(getTagTime() + (0xff & tagData[8]));
 				
-				// battery = 0xff & tagData[9];
+				setTagBattery(0xff & tagData[9]);
 				
 				tagSequence = (0xff & tagData[10]) << 24;
 				tagSequence += (0xff & tagData[11]) << 16;
@@ -285,6 +305,8 @@ public class TagSighting {
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
+				
+				setValidTagData(true);
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER:
 				// TBeaconWrapper:
@@ -304,6 +326,7 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
+				tagFlags = 0;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
@@ -313,14 +336,15 @@ public class TagSighting {
 					tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
 				}
 				
-				// Not used
+				// FIXME: Not used (definition unknown)
 				// oid_last_seen = (0xff & tagData[5]) << 8;
 				// oid_last_seen = 0xff & tagData[6];
 				
+				// FIXME: Not used (definition unknown)
 				// powerup_count = (0xff & tagData[7]) << 8;
 				// powerup_count = 0xff & tagData[8];
 				
-				// reserved = 0xff & tagData[9];
+				// Ignored: Reserved: byte 9
 				
 				tagSequence = (0xff & tagData[10]) << 24;
 				tagSequence += (0xff & tagData[11]) << 16;
@@ -329,6 +353,8 @@ public class TagSighting {
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
+				
+				setValidTagData(true);
 				break;
 			case Constants.RFBPROTO_PROXTRACKER:
 				// TBeaconWrapper:
@@ -349,6 +375,7 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
+				tagFlags = 0;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
@@ -358,14 +385,15 @@ public class TagSighting {
 					tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
 				}
 				
-				// Not used
+				// FIXME: Not used (definition unknown)
 				// oid_last_seen = (0xff & tagData[5]) << 8;
 				// oid_last_seen = 0xff & tagData[6];
 				
+				// FIXME: Not used (definition unknown)
 				// powerup_count = (0xff & tagData[7]) << 8;
 				// powerup_count = 0xff & tagData[8];
 				
-				// reserved = 0xff & tagData[9];
+				// Ignored: Reserved: byte 9
 				
 				tagSequence = (0xff & tagData[10]) << 24;
 				tagSequence += (0xff & tagData[11]) << 16;
@@ -374,8 +402,12 @@ public class TagSighting {
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
+				
+				setValidTagData(true);
 				break;
 			case Constants.RFBPROTO_PROXREPORT:
+				// FIXME: OpenBeacon: Add support for old proximity format
+				
 				// TBeaconWrapper:
 				// Byte 00:    u_int8_t proto;
 				// Byte 01-02: u_int16_t oid;
@@ -390,23 +422,25 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
+				tagFlags = 0;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
 				tagFlags |= Constants.TAGSIGHTINGFLAG_SHORT_SEQUENCE;
 				
-				// In RFBPROTO_PROXREPORT oid_prox data is not used
+				// Ignored: Byte 04-11, as within the original OpenBeacon C++ code
+				// oid_prox data is not extracted/used
 				
 				tagSequence = (0xff & tagData[12]) << 8;
 				tagSequence += 0xff & tagData[13];
 				
-				// Fixed values
+				// Fixed value (as in the original OpenBeacon C++ code)
 				tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
-
-				// FIXME: OpenBeacon: Add support for old proximity format
+				
+				setValidTagData(true);
 				break;
 			case Constants.RFBPROTO_PROXREPORT_EXT:
 				// TBeaconWrapper:
@@ -423,25 +457,25 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
-				tagFlags = 0xff & tagData[3];
-				
 				tagFlags = Constants.TAGSIGHTINGFLAG_SHORT_SEQUENCE;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags |= Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
 				
-				if ((tagFlags & Constants.TAGSIGHTINGFLAG_BUTTON_PRESS) == Constants.TAGSIGHTINGFLAG_BUTTON_PRESS) {
+				tagButtonPressed = false;
+				if ((tagFlags & Constants.TAGSIGHTINGFLAG_BUTTON_PRESS) == 
+						Constants.TAGSIGHTINGFLAG_BUTTON_PRESS) {
 					tagButtonPressed = true;
 				}
 				
-				proxTagId[0] = (0xff & tagData[4]) << 8;
-				proxTagId[0] += 0xff & tagData[5];
-				proxTagId[1] = (0xff & tagData[6]) << 8;
-				proxTagId[1] += 0xff & tagData[7];
-				proxTagId[2] = (0xff & tagData[8]) << 8;
-				proxTagId[2] += 0xff & tagData[9];
-				proxTagId[3] = (0xff & tagData[10]) << 8;
-				proxTagId[3] += 0xff & tagData[11];
+				proximityTagId[0] = (0xff & tagData[4]) << 8;
+				proximityTagId[0] += 0xff & tagData[5];
+				proximityTagId[1] = (0xff & tagData[6]) << 8;
+				proximityTagId[1] += 0xff & tagData[7];
+				proximityTagId[2] = (0xff & tagData[8]) << 8;
+				proximityTagId[2] += 0xff & tagData[9];
+				proximityTagId[3] = (0xff & tagData[10]) << 8;
+				proximityTagId[3] += 0xff & tagData[11];
 				
 				// FIXME: Code me!!!
 //				if (tag_sighting)
@@ -465,10 +499,14 @@ public class TagSighting {
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
 				
-				// Fixed values
+				// Fixed value (as in the original OpenBeacon C++ code)
 				tagStrength = Constants.PROX_TAG_STRENGTH_MASK;
+				
+				setValidTagData(true);
 				break;
 			case Constants.RFBPROTO_READER_ANNOUNCE:
+				// FIXME: Ask OpenBeacon about details
+				
 				// TBeaconWrapper:
 				// Byte 00:    u_int8_t proto;
 				// Byte 01-02: u_int16_t oid;
@@ -482,14 +520,16 @@ public class TagSighting {
 				// Byte 06-09: u_int32_t uptime
 				// Byte 10-13: u_int32_t ip
 				
-				// Fixed values
-				tagId = 0;
-				tagStrength = -1;
-				tagSequence = 0;
-				ignoredProtocols++;
+				// Fixed values (as in the original OpenBeacon C++ code)
+//				tagId = 0;
+//				tagStrength = -1;
+//				tagSequence = 0;
+//				ignoredProtocols++;
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
+				
+				// invalidTagData = false;
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_STRANGE:
 				// FIXME: OpenBeacon: Fix complete case
@@ -509,14 +549,15 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				
-				// Fixed values
+				// Fixed values (as in the original OpenBeacon C++ code)
 				tagStrength = 3;
-				tagSequence = 0;
 				tagSequence = 0;
 				tagFlags = 0;
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
+				
+				setValidTagData(true);
 				break;
 			default:
 				// FIXME: Change this to logger
@@ -524,12 +565,12 @@ public class TagSighting {
 //						getTagProtocol(), key_id, reader_id);
 //				hex_dump (&env, 0, sizeof (env));
 				
-				// Fixed values
-				tagId = 0;
-				tagStrength = -1;
-				tagSequence = 0;
-				invalidProtocols++;
-				// res = 0;
+//				// Fixed values
+//				tagId = 0;
+//				tagStrength = -1;
+//				tagSequence = 0;
+//				invalidProtocols++;
+//				// res = 0;
 				
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];
@@ -539,8 +580,8 @@ public class TagSighting {
 		return (tagCRC == (calculateCRC(tagData, 0, 14) & 0xFF));		
 	} // decryptTagData
 	
-	public InetAddress getReader() {
-		return reader;
+	public InetAddress getSendingReader() {
+		return sendingReader;
 	} // getReader
 	
 	public byte[] getRawData() {
@@ -583,13 +624,27 @@ public class TagSighting {
 		return timestamp;
 	} // getTimestamp
 	
+	/**
+	 * @return the validTagData
+	 */
+	public boolean hasValidTagData() {
+		return validTagData;
+	}
+
+	/**
+	 * @param validTagData the validTagData to set
+	 */
+	public void setValidTagData(boolean validTagData) {
+		this.validTagData = validTagData;
+	}
+	
 	public int getTagId() {
 		return tagId;
 	} // getTagId
 	
-	public boolean getTagButtonPressed() {
+	public Boolean isTagButtonPressed() {
 		return tagButtonPressed;
-	} // getTagButtonPressed
+	} // isTagButtonPressed
 	
 	public int getTagProtocol() {
 		return tagProtocol;
@@ -615,6 +670,34 @@ public class TagSighting {
 		return validTagCRC;
 	} // hasValidCRC
 	
+	/**
+	 * @return the tagTime
+	 */
+	public int getTagTime() {
+		return tagTime;
+	}
+
+	/**
+	 * @param tagTime the tagTime to set
+	 */
+	public void setTagTime(int tagTime) {
+		this.tagTime = tagTime;
+	}
+
+	/**
+	 * @return the tagBattery
+	 */
+	public int getTagBattery() {
+		return tagBattery;
+	}
+
+	/**
+	 * @param tagBattery the tagBattery to set
+	 */
+	public void setTagBattery(int tagBattery) {
+		this.tagBattery = tagBattery;
+	}
+	
 	private int calculateCRC(byte[] data, int start, int size) {
 		int crc = 0xFFFF;
 		int p = start;
@@ -633,7 +716,7 @@ public class TagSighting {
 	private int calculateLongCRC(byte[] data, int start, int size) {
 		return (calculateCRC(data, start, size) ^ 0xFFFF);
 	} // calculateLongCRC
-	
+
 	public String toString(boolean rawData) {
 		StringBuffer buffer = new StringBuffer();
 		
@@ -645,36 +728,55 @@ public class TagSighting {
 				buffer.append(data & 0xFF);
 			}
 		} else {
-			buffer.append("CRC: ");
+			buffer.append("Envelope: CRC: ");
 			buffer.append(getEnvelopeCRC());
 			buffer.append(" (Check: ");
 			buffer.append(hasValidEnvelopeCRC());
-			buffer.append(")|");
-			buffer.append("Protocol: ");
+			buffer.append(")|Protocol: ");
 			buffer.append(getProtocol());
 			buffer.append("|Interface: ");
 			buffer.append(getInterface());
 			buffer.append("|Reader ID: ");
 			buffer.append(getReaderId());
+			buffer.append("|Sender: ");
+			
+			if (getSendingReader() == null) {
+				buffer.append("Unknown");
+			} else {
+				buffer.append(getSendingReader().getHostAddress());
+			}
+			
 			buffer.append("|Size: ");
 			buffer.append(getSize());
 			buffer.append("|Sequence: ");
 			buffer.append(getSequence());
 			buffer.append("|Timestamp: ");
 			buffer.append(getTimestamp());
-			buffer.append("|Tag ID: ");
+			buffer.append("\nTag: Valid Data: ");
+			buffer.append(hasValidTagData());
+			buffer.append("|ID: ");
 			buffer.append(getTagId());
-			buffer.append("|Tag Button: ");
-			buffer.append(getTagButtonPressed());
-			buffer.append("|Tag Protocol: ");
+			buffer.append("|Button: ");
+			
+			if (isTagButtonPressed() == null) {
+				buffer.append("null");
+			} else {
+				buffer.append(isTagButtonPressed());
+			}
+			
+			buffer.append("|TagProtocol: ");
 			buffer.append(getTagProtocol());
 			buffer.append("|Flags: ");
 			buffer.append(getFlags());
 			buffer.append("|Strength: ");
 			buffer.append(getStrength());
+			buffer.append("|TagTime: ");
+			buffer.append(getTagTime());
+			buffer.append("|Battery: ");
+			buffer.append(getTagBattery());
 			buffer.append("|TagSequence: ");
 			buffer.append(getTagSequence());
-			buffer.append("|Tag CRC: ");
+			buffer.append("|TagCRC: ");
 			buffer.append(getTagCRC());
 			buffer.append(" (Check: ");
 			buffer.append(hasValidTagCRC());
@@ -682,7 +784,7 @@ public class TagSighting {
 		}
 		
 		return buffer.toString();
-	} // toString(boolean rawData)
+	} // toString (boolean rawData)
 	
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()

@@ -22,9 +22,9 @@
 
 package test;
 
-import obp.listener.Listener;
-import obp.listener.ListenerService;
-import obp.tag.TagSighting;
+import odp.service.listener.Listener;
+import odp.service.listener.ListenerService;
+import odp.service.listener.TagSighting;
 
 public class TestService implements Listener {
 	

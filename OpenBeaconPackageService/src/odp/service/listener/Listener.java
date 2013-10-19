@@ -20,9 +20,7 @@
 
  */
 
-package obp.listener;
-
-import obp.tag.TagSighting;
+package odp.service.listener;
 
 public interface Listener {
 	abstract void messageReceived(TagSighting tagSighting);

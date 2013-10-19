@@ -5,8 +5,8 @@ package obp.index;
 
 import java.util.HashMap;
 
+import obp.reader.Reader;
 import obp.tag.Tag;
-import odp.reader.Reader;
 
 /**
  * @author bbehrens
@@ -14,7 +14,7 @@ import odp.reader.Reader;
  */
 public class DataIndex {
 	private HashMap<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
-	private HashMap<Integer, Reader> readerMap = new HashMap<Integer, Reader>();
+	private HashMap<Integer, Reader> unknownReaderMap = new HashMap<Integer, Reader>();
 	
 	public DataIndex() { } // Constructor
 	
@@ -30,15 +30,15 @@ public class DataIndex {
 		getTagMap().put(tag.getId(), tag);
 	} // addTag
 	
-	public HashMap<Integer, Reader> getReaderMap() {
-		return readerMap;
+	public HashMap<Integer, Reader> getUnknownReaderMap() {
+		return unknownReaderMap;
 	} // getReaderMap
 	
-	public Reader getReaderById(int id) {
-		return getReaderMap().get(id);
-	} // getReaderById
+	public Reader getUnknownReaderById(int id) {
+		return getUnknownReaderMap().get(id);
+	} // getUnknownReaderById
 	
-	public void addReader(Reader reader) {
-		getReaderMap().put(reader.getId(), reader);
-	} // addReader
+	public void addUnknownReader(Reader reader) {
+		getUnknownReaderMap().put(reader.getId(), reader);
+	} // addUnknownReader
 }

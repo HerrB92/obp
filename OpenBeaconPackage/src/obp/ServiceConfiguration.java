@@ -12,7 +12,10 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.HashMap;
 import java.util.Properties;
+
+import obp.reader.Reader;
 
 /**
  * Singleton
@@ -33,12 +36,19 @@ public class ServiceConfiguration {
 	
 	private long[] tagDataKey = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 	
+	private HashMap<Integer, Reader> readers = new HashMap<Integer, Reader>();
+	
 	private ServiceConfiguration() {}
 	
 	public static ServiceConfiguration getInstance() {
 		if (configuration == null) {
 			configuration = new ServiceConfiguration();
 			configuration.loadConfiguration();
+			
+			configuration.getReaders().put(1259, new Reader(1259, 1, 1, 1, 1, 1));
+			configuration.getReaders().put(1391, new Reader(1391, 2, 1, 1, 640, 620));
+			configuration.getReaders().put(1291, new Reader(1291, 3, 1, 1, 1, 1165));
+			configuration.getReaders().put(1300, new Reader(1300, 4, 1, 1, 610, 1395));
 		}
 		
 		return configuration;
@@ -70,7 +80,6 @@ public class ServiceConfiguration {
 	            try {
 					properties.load(inputStream);
 				} catch (IOException e) {
-					// TODO Auto-generated catch block
 					e.printStackTrace();
 				}
 	            
@@ -118,35 +127,35 @@ public class ServiceConfiguration {
 	 */
 	public int getTagButtonActiveSeconds() {
 		return tagButtonActiveSeconds;
-	}
+	} // getTagButtonActiveSeconds
 
 	/**
 	 * @param tagButtonActiveSeconds the tagButtonActiveSeconds to set
 	 */
 	public void setTagButtonActiveSeconds(int tagButtonActiveSeconds) {
 		this.tagButtonActiveSeconds = tagButtonActiveSeconds;
-	}
+	} // setTagButtonActiveSeconds
 
 	/**
 	 * @return the tagReaderSightingActiveSeconds
 	 */
 	public int getTagReaderSightingActiveSeconds() {
 		return tagReaderSightingActiveSeconds;
-	}
+	} // getTagReaderSightingActiveSeconds
 
 	/**
 	 * @param tagReaderSightingActiveSeconds the tagReaderSightingActiveSeconds to set
 	 */
 	public void setTagReaderSightingActiveSeconds(int tagReaderSightingActiveSeconds) {
 		this.tagReaderSightingActiveSeconds = tagReaderSightingActiveSeconds;
-	}
+	} // setTagReaderSightingActiveSeconds
 
 	/**
 	 * @return the strengthAggregationWindowSeconds
 	 */
 	public int getStrengthAggregationWindowSeconds() {
 		return strengthAggregationWindowSeconds;
-	}
+	} // getStrengthAggregationWindowSeconds
 
 	/**
 	 * @param strengthAggregationWindowSeconds the strengthAggregationWindowSeconds to set
@@ -154,35 +163,35 @@ public class ServiceConfiguration {
 	public void setStrengthAggregationWindowSeconds(
 			int strengthAggregationWindowSeconds) {
 		this.strengthAggregationWindowSeconds = strengthAggregationWindowSeconds;
-	}
+	} // setStrengthAggregationWindowSeconds
 
 	/**
 	 * @return the strengthAggregationAgedSeconds
 	 */
 	public int getStrengthAggregationAgedSeconds() {
 		return strengthAggregationAgedSeconds;
-	}
+	} // getStrengthAggregationAgedSeconds
 
 	/**
 	 * @param strengthAggregationAgedSeconds the strengthAggregationAgedSeconds to set
 	 */
 	public void setStrengthAggregationAgedSeconds(int strengthAggregationAgedSeconds) {
 		this.strengthAggregationAgedSeconds = strengthAggregationAgedSeconds;
-	}
+	} // setStrengthAggregationAgedSeconds
 
 	/**
 	 * @return the tagDataKey
 	 */
 	public long[] getTagDataKey() {
 		return tagDataKey;
-	}
+	} // getTagDataKey
 
 	/**
 	 * @param tagDataKey the tagDataKey to set
 	 */
 	public void setTagDataKey(long[] tagDataKey) {
 		this.tagDataKey = tagDataKey;
-	}
+	} // setTagDataKey
 	
 	/**
 	 * @return True, if the configuration has been loaded from file
@@ -190,5 +199,17 @@ public class ServiceConfiguration {
 	 */
 	public boolean getConfigurationLoaded() {
 		return configurationLoaded;
-	}
+	} // getConfigurationLoaded
+	
+	public HashMap<Integer, Reader> getReaders() {
+		return readers;
+	} // getReaders
+	
+	public Reader getReader (Integer id) {
+		return getReaders().get(id);
+	} // getReader
+	
+	public boolean isValidReader(Integer id) {
+		return getReaders().containsKey(id);
+	} // isValidReader
 }

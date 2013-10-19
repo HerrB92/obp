@@ -3,9 +3,13 @@
  */
 package obp.tag;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Map.Entry;
 
 import obp.ServiceConfiguration;
+import obp.reader.Reader;
+import obp.service.Constants;
 
 import org.joda.time.DateTime;
 
@@ -14,6 +18,8 @@ import org.joda.time.DateTime;
  *
  */
 public class Tag {
+	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	
 	private int id;
 	private DateTime created = DateTime.now();
 	private DateTime lastSeen = DateTime.now();
@@ -22,6 +28,7 @@ public class Tag {
 	private DateTime buttonPressedStart;
 	
 	private HashMap<Integer, TagReaderSighting> tagReaderSightings = new HashMap<Integer, TagReaderSighting>();
+	private HashMap<Integer, Boolean> proximitySightings = new HashMap<Integer, Boolean>();
 	
 	private int tagFlags;
 	private int tagStrength;
@@ -32,9 +39,11 @@ public class Tag {
 	private int sequence;
 	private int timestamp;
 	
-	private int[] proxTagId = new int[4];
+	private int x;
+	private int y;
+	private int accuracyLevel;
 	
-	private ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	//private int[] proxTagId = new int[4];
 
 	/**
 	 * @param tagId
@@ -89,20 +98,17 @@ public class Tag {
 	/**
 	 * @param buttonPressed the ButtonPressed to set
 	 */
-	public void setButtonPressed(boolean buttonPressed) {
-		// If the information is received, that the button is pressed,
-		// set buttonPressed to true and update buttonPressedStart date.
-		
-		// If the information is received, that the button is not pressed
-		// anymore (which can also be triggered by a protocol which does
-		// not transmit the "button pressed" information) set buttonPressed
-		// only to false after the specified delay
-		if (buttonPressed == true) {
-			this.buttonPressed = true;
-			setButtonPressedStart(DateTime.now());
-		} else if (isButtonPressed() == true && 
-			getButtonPressedStart().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
-			this.buttonPressed = false;
+	public void setButtonPressed(Boolean buttonPressed) {
+		if (buttonPressed != null) {
+			// If the information is received, that the button is pressed,
+			// set buttonPressed to true and update buttonPressedStart date.			
+			if (buttonPressed == true) {
+				this.buttonPressed = true;
+				setButtonPressedStart(DateTime.now());
+			} else if (isButtonPressed() == true && 
+				getButtonPressedStart().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
+				this.buttonPressed = false;
+			}
 		}
 	} // setButtonPressed
 	
@@ -219,30 +225,148 @@ public class Tag {
 		this.timestamp = timestamp;
 	}
 
-	/**
-	 * @return the proxTagId
-	 */
-	public int[] getProxTagId() {
-		return proxTagId;
-	}
-
-	/**
-	 * @param proxTagId the proxTagId to set
-	 */
-	public void setProxTagId(int[] proxTagId) {
-		this.proxTagId = proxTagId;
-	}
+//	/**
+//	 * @return the proxTagId
+//	 */
+//	public int[] getProxTagId() {
+//		return proxTagId;
+//	}
+//
+//	/**
+//	 * @param proxTagId the proxTagId to set
+//	 */
+//	public void setProxTagId(int[] proxTagId) {
+//		this.proxTagId = proxTagId;
+//	}
 	
 	public HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
 		return tagReaderSightings;
 	} // getTagReaderSightings
 	
+	public ArrayList<TagReaderSighting> getActiveTagReaderSightings() {
+		ArrayList<TagReaderSighting> sightings = new ArrayList<TagReaderSighting>();
+		
+		for (TagReaderSighting sighting : getTagReaderSightings().values()) {
+			if (sighting.isActive()) {
+				sightings.add(sighting);
+			}
+		}
+		
+		return sightings;
+	} // getActiveTagReaderSightings
+	
 	public void updateTagReaderSighting(int readerId, int strength) {
-		TagReaderSighting sighting = getTagReaderSightings().get(readerId);
-		if (sighting == null) {
-			getTagReaderSightings().put(readerId, new TagReaderSighting(readerId, strength));
-		} else {
-			sighting.setStrength(strength);
+		if (readerId > Constants.NOT_DEFINED && strength > Constants.NOT_DEFINED) {
+			TagReaderSighting sighting = getTagReaderSightings().get(readerId);
+			
+			boolean updateEstimation = false;
+			if (sighting == null) {
+				getTagReaderSightings().put(readerId, new TagReaderSighting(readerId, strength));
+				updateEstimation = true;
+			} else {
+				updateEstimation = sighting.setStrength(strength);
+			}
+			
+			if (updateEstimation) {
+				updatePositionEstimation();
+			}
 		}
 	} // updateTagReaderSighting
+	
+	public HashMap<Integer, Boolean> getProximitySightings() {
+		return proximitySightings;
+	} // getProximitySightings
+	
+	public void updateProximitySightings(ArrayList<Integer> sightings) {
+		if (sightings != null) {
+			HashMap<Integer, Boolean> proximitySightings = getProximitySightings();
+			
+			for (Entry<Integer, Boolean> proximitySighting : proximitySightings.entrySet()) {
+				if (sightings.contains(proximitySighting.getKey())) {
+					proximitySighting.setValue(true);
+					sightings.remove(proximitySighting.getKey());
+				} else {
+					proximitySighting.setValue(false);
+				}
+			}
+			
+			// Add new proximity sightings
+			for (Integer proximityTagId : sightings) {
+				proximitySightings.put(proximityTagId, true);
+			}
+		}
+	} // updateProximitySightings
+	
+	private void updatePositionEstimation() {
+		ArrayList<TagReaderSighting> sightings = getActiveTagReaderSightings();
+		
+		if (sightings.size() == 0) {
+			// If there is no reader seeing this tag, we have
+			// left the building...
+			setX(0);
+			setY(0);
+			setAccuracyLevel(Constants.STRENGTH_LEVELS_COUNT);
+			return;
+		}
+		
+		if (sightings.size() == 1) {
+			// If there is only one active reader sighting, than
+			// we can only predict that we are at the position of the 
+			// reader with the inaccuracy of the highest possible power 
+			// level minus the provided minimal power level at the 
+			// last update.
+			TagReaderSighting sighting = sightings.get(0);
+			Reader reader = configuration.getReader(sighting.getReaderId());
+			setX(reader.getX());
+			setY(reader.getY());
+			setAccuracyLevel(Constants.STRENGTH_LEVELS_COUNT - sighting.getMinStrength());
+			return;
+		}
+		
+		for (TagReaderSighting sighting: getActiveTagReaderSightings()) {
+			
+		}		
+	} // updatePositionEstimation
+
+	/**
+	 * @return the x
+	 */
+	public int getX() {
+		return x;
+	}
+
+	/**
+	 * @param x the x to set
+	 */
+	private void setX(int x) {
+		this.x = x;
+	}
+
+	/**
+	 * @return the y
+	 */
+	public int getY() {
+		return y;
+	}
+
+	/**
+	 * @param y the y to set
+	 */
+	private void setY(int y) {
+		this.y = y;
+	}
+	
+	/**
+	 * @return the accuracy level
+	 */
+	public int getAccuracyLevel() {
+		return accuracyLevel;
+	}
+
+	/**
+	 * @param level the accuracy level to set
+	 */
+	private void setAccuracyLevel(int level) {
+		this.accuracyLevel = level;
+	}
 }

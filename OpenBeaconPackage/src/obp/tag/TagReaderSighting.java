@@ -57,17 +57,25 @@ public class TagReaderSighting {
 	
 	/**
 	 * @param strength the minStrength to set
+	 * @return True, if strength value is updated (triggers update
+	 *         of position estimation)
 	 */
-	public void setStrength(int strength) {
+	public boolean setStrength(int strength) {
 		if (getLastUpdate().plusSeconds(configuration.getStrengthAggregationAgedSeconds()).isBeforeNow()) {
 			// If last update plus aggregation aged delta is older than now,
 			// discard previous minimal strength value and use the new one.
 			setMinStrength(strength);
-		} else if (strength <= getMinStrength()) {
+			return true;
+		}
+		
+		if (strength <= getMinStrength()) {
 			// New strength signal is smaller or equal to the current one.
 			// Set the new strength value and update last update datetime
 			setMinStrength(strength);
+			return true;
 		}
+		
+		return false;
 	} // setStrength
 	
 	/**

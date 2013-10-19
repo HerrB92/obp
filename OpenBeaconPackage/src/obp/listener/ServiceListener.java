@@ -5,10 +5,12 @@ package obp.listener;
 
 import org.joda.time.DateTime;
 
+import obp.ServiceConfiguration;
 import obp.index.DataIndex;
+import obp.reader.Reader;
 import obp.tag.Tag;
-import obp.tag.TagSighting;
-import odp.reader.Reader;
+import odp.service.listener.Listener;
+import odp.service.listener.TagSighting;
 
 /**
  * @author bbehrens
@@ -16,7 +18,8 @@ import odp.reader.Reader;
  */
 public class ServiceListener implements Listener {
 	
-	private DataIndex dataIndex; 
+	private DataIndex dataIndex;
+	private ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
 	public ServiceListener() { } // Constructor
 	
@@ -47,24 +50,35 @@ public class ServiceListener implements Listener {
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
 		if (getDataIndex() != null) {
-			DateTime now = DateTime.now();
-			
-			Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
-			if (tag == null) {
-				tag = new Tag(tagSighting.getTagId());
-				getDataIndex().addTag(tag);
+			if (tagSighting.isValid()) {
+				DateTime now = DateTime.now();
+				
+				if (configuration.isValidReader(tagSighting.getReaderId())) {
+					// Reader is known, update data
+					configuration.getReader(tagSighting.getReaderId()).setLastSeen(now);
+					
+					Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
+					if (tag == null) {
+						tag = new Tag(tagSighting.getTagId());
+						getDataIndex().addTag(tag);
+					}
+					tag.setLastSeen(now);
+					tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
+					tag.updateProximitySightings(tagSighting.getProximityTagIds());
+					tag.setButtonPressed(tagSighting.isTagButtonPressed());
+				} else {
+					// Add unknown reader to list of unknown readers
+					
+					Reader reader = getDataIndex().getUnknownReaderById(tagSighting.getReaderId());
+				
+					if (reader == null) {
+						reader = new Reader(tagSighting.getReaderId());
+						getDataIndex().addUnknownReader(reader);
+					}
+				
+					reader.setLastSeen(now);
+				}
 			}
-			tag.setLastSeen(now);
-			tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
-			tag.setButtonPressed(tagSighting.isTagButtonPressed());
-			
-			Reader reader = getDataIndex().getReaderById(tagSighting.getReaderId());
-			if (reader == null) {
-				reader = new Reader(tagSighting.getReaderId());
-				getDataIndex().addReader(reader);
-			}
-			
-			reader.setLastSeen(now);
 		}
 	} // messageReceived
 }

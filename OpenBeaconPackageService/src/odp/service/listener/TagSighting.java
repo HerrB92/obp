@@ -33,15 +33,15 @@
  
  */
 
-package obp.tag;
+package odp.service.listener;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
-import java.util.Arrays;
+import java.util.ArrayList;
 
-import obp.Constants;
-import obp.tools.Tools;
+import obp.service.Constants;
+import obp.service.tools.Tools;
 
 public class TagSighting {
 	// Packet
@@ -68,25 +68,25 @@ public class TagSighting {
 	private int tagSequence = Constants.NOT_DEFINED;
 	private int tagCRC = Constants.NOT_DEFINED;
 	private boolean validTagCRC = false;
-	private int[] proximityTagId = new int[Constants.PROX_TAG_MAX_COUNT];
+	private ArrayList<Integer> proximityTagIds;
 	private Boolean tagButtonPressed;
 	
 	private int tagTime = Constants.NOT_DEFINED;
 	private int tagBattery = Constants.NOT_DEFINED;
 	
-	/**
-	 * Applies default "not set" values for any variables which
-	 * cannot be defined during declaration, for example arrays.
-	 * 
-	 * Why do we not use the objects instead of the primitives?
-	 * Because primitives are way faster (see http://stackoverflow.com/a/4094375)
-	 */
-	private void initializeVariables() {
-		Arrays.fill(proximityTagId, Constants.NOT_DEFINED);
-	} // initializeVariables
+//	/**
+//	 * Applies default "not set" values for any variables which
+//	 * cannot be defined during declaration, for example arrays.
+//	 * 
+//	 * Why do we not use the objects instead of the primitives?
+//	 * Because primitives are way faster (see http://stackoverflow.com/a/4094375)
+//	 */
+//	private void initializeVariables() {
+//		Arrays.fill(proximityTagId, Constants.NOT_DEFINED);
+//	} // initializeVariables
 
 	public TagSighting(DatagramPacket packet, long[] encryptionKey, boolean debug) {
-		initializeVariables();
+//		initializeVariables();
 		
 		ByteBuffer buffer = ByteBuffer.wrap(packet.getData());
 		
@@ -468,14 +468,11 @@ public class TagSighting {
 					tagButtonPressed = true;
 				}
 				
-				proximityTagId[0] = (0xff & tagData[4]) << 8;
-				proximityTagId[0] += 0xff & tagData[5];
-				proximityTagId[1] = (0xff & tagData[6]) << 8;
-				proximityTagId[1] += 0xff & tagData[7];
-				proximityTagId[2] = (0xff & tagData[8]) << 8;
-				proximityTagId[2] += 0xff & tagData[9];
-				proximityTagId[3] = (0xff & tagData[10]) << 8;
-				proximityTagId[3] += 0xff & tagData[11];
+				proximityTagIds = new ArrayList<Integer>();
+				proximityTagIds.add((0xff & tagData[4]) << 8 + (0xff & tagData[5]));
+				proximityTagIds.add((0xff & tagData[6]) << 8 + (0xff & tagData[7]));
+				proximityTagIds.add((0xff & tagData[8]) << 8 + (0xff & tagData[9]));
+				proximityTagIds.add((0xff & tagData[10]) << 8 + (0xff & tagData[11]));
 				
 				// FIXME: Code me!!!
 //				if (tag_sighting)
@@ -670,6 +667,10 @@ public class TagSighting {
 		return validTagCRC;
 	} // hasValidCRC
 	
+	public ArrayList<Integer> getProximityTagIds() {
+		return proximityTagIds;
+	} // getProximityTagIds
+	
 	/**
 	 * @return the tagTime
 	 */
@@ -696,6 +697,10 @@ public class TagSighting {
 	 */
 	public void setTagBattery(int tagBattery) {
 		this.tagBattery = tagBattery;
+	}
+	
+	public boolean isValid() {
+		return (hasValidEnvelopeCRC() && hasValidTagCRC() && hasValidTagData());
 	}
 	
 	private int calculateCRC(byte[] data, int start, int size) {
@@ -756,16 +761,27 @@ public class TagSighting {
 			buffer.append(hasValidTagData());
 			buffer.append("|ID: ");
 			buffer.append(getTagId());
-			buffer.append("|Button: ");
+			buffer.append("|TagProtocol: ");
+			buffer.append(getTagProtocol());
 			
+			buffer.append("|Button: ");
 			if (isTagButtonPressed() == null) {
 				buffer.append("null");
 			} else {
 				buffer.append(isTagButtonPressed());
 			}
 			
-			buffer.append("|TagProtocol: ");
-			buffer.append(getTagProtocol());
+			buffer.append("|Proximity: ");
+			if (getProximityTagIds() == null) {
+				buffer.append("None");
+			} else {
+				for (int proximityTagId : getProximityTagIds()) {
+					buffer.append(proximityTagId);
+					buffer.append(",");
+				}
+				buffer.deleteCharAt(buffer.length() - 1);
+			}
+			
 			buffer.append("|Flags: ");
 			buffer.append(getFlags());
 			buffer.append("|Strength: ");

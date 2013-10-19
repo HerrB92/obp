@@ -18,7 +18,7 @@
 
  */
 
-package obp.tools;
+package obp.service.tools;
 
 
 public class Tools {
@@ -90,7 +90,7 @@ public class Tools {
         return result;
     }
 
-     //Convert int array[16] to byte array.
+     //Convert int array[] to byte array.
     
     private static byte[] toByteArray(int[] data, boolean includeLength) {
         int n = data.length << 2;

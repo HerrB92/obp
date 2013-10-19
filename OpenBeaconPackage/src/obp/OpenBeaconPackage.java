@@ -3,7 +3,7 @@
  */
 package obp;
 
-import obp.listener.ListenerService;
+import odp.service.listener.ListenerService;
 
 /**
  * @author bbehrens

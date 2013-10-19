@@ -17,15 +17,14 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
 
  */
-package obp.listener;
+package odp.service.listener;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import obp.Constants;
-import obp.tag.TagSighting;
+import obp.service.Constants;
 
 /**
  * @author bbehrens
@@ -122,7 +121,7 @@ public class ListenerService implements Runnable {
 				// there is probably a better way..
 				if (ioException.toString().equalsIgnoreCase(
 						"java.net.SocketTimeoutException: Receive timed out")) {
-					System.out.println("No Tags");
+					System.out.println("No Tag Sightings");
 				}
 			}
 		}

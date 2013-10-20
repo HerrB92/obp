@@ -34,7 +34,7 @@ public class ListenerService implements Runnable {
 	private InetAddress server;
 	private DatagramSocket socket;
 	private DatagramPacket packet;
-	private int c = 0;
+	//private int c = 0;
 	private Thread thread;
 	private Listener listener;
 	private boolean debug = false;
@@ -109,12 +109,10 @@ public class ListenerService implements Runnable {
 				if (packet.getLength() == Constants.ENVELOPE_SIZE_BYTE) {
 					tagSighting = new TagSighting(packet, encryptionKey, debug);
 										
-					if (tagSighting.hasValidTagData() && tagSighting.hasValidTagCRC()) {
-						if (listener != null) {
-							listener.messageReceived(tagSighting);
-						}
+					if (tagSighting.isValid() && listener != null) {
+						listener.messageReceived(tagSighting);
 					} else {
-						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC());
+						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC() + " or no listener");
 					}
 				}
 			} catch (IOException ioException) {

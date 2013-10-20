@@ -50,34 +50,31 @@ public class ServiceListener implements Listener {
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
 		if (getDataIndex() != null) {
-			if (tagSighting.isValid()) {
-				DateTime now = DateTime.now();
+			DateTime now = DateTime.now();
+			
+			if (configuration.isValidReader(tagSighting.getReaderId())) {
+				// Reader is known, update data
+				configuration.getReader(tagSighting.getReaderId()).setLastSeen(now);
 				
-				if (configuration.isValidReader(tagSighting.getReaderId())) {
-					// Reader is known, update data
-					configuration.getReader(tagSighting.getReaderId()).setLastSeen(now);
-					
-					Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
-					if (tag == null) {
-						tag = new Tag(tagSighting.getTagId());
-						getDataIndex().addTag(tag);
-					}
-					tag.setLastSeen(now);
-					tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
-					tag.updateProximitySightings(tagSighting.getProximityTagIds());
-					tag.setButtonPressed(tagSighting.isTagButtonPressed());
-				} else {
-					// Add unknown reader to list of unknown readers
-					
-					Reader reader = getDataIndex().getUnknownReaderById(tagSighting.getReaderId());
-				
-					if (reader == null) {
-						reader = new Reader(tagSighting.getReaderId());
-						getDataIndex().addUnknownReader(reader);
-					}
-				
-					reader.setLastSeen(now);
+				Tag tag = getDataIndex().getTagById(tagSighting.getTagId());
+				if (tag == null) {
+					tag = new Tag(tagSighting.getTagId());
+					getDataIndex().addTag(tag);
 				}
+				tag.setLastSeen(now);
+				tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
+				tag.updateProximitySightings(tagSighting.getProximityTagIds());
+				tag.setButtonPressed(tagSighting.isTagButtonPressed());
+			} else {
+				// Add unknown reader to list of unknown readers
+				Reader reader = getDataIndex().getUnknownReaderById(tagSighting.getReaderId());
+			
+				if (reader == null) {
+					reader = new Reader(tagSighting.getReaderId());
+					getDataIndex().addUnknownReader(reader);
+				}
+			
+				reader.setLastSeen(now);
 			}
 		}
 	} // messageReceived

@@ -21,8 +21,8 @@ public class TagReaderSighting {
 	
 	public TagReaderSighting(int readerId, int strength) {
 		setReaderId(readerId);
+		setLastUpdate(DateTime.now()); // Has to be before setStrength!
 		setStrength(strength);
-		setLastUpdate(DateTime.now());
 	} // Constructor
 	
 	/**
@@ -68,11 +68,17 @@ public class TagReaderSighting {
 			return true;
 		}
 		
-		if (strength <= getMinStrength()) {
-			// New strength signal is smaller or equal to the current one.
+		if (strength < getMinStrength()) {
+			// New strength signal is smaller than the current one.
 			// Set the new strength value and update last update datetime
 			setMinStrength(strength);
 			return true;
+		}
+		
+		if (strength == getMinStrength()) {
+			// Strength has not changed, but we now, it is still there - 
+			// so refresh last update time
+			setLastUpdate(DateTime.now());
 		}
 		
 		return false;
@@ -97,7 +103,7 @@ public class TagReaderSighting {
 	 * TAGSIGHTING_ACTIVE_WINDOW_SECONDS
 	 */
 	private void checkActiveStatus() {
-		if (isActive() && 
+		if (active && 
 			getLastUpdate().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
 			setActive(false);
 		}

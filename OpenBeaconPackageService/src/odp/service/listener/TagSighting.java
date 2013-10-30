@@ -68,7 +68,7 @@ public class TagSighting {
 	private int tagSequence = Constants.NOT_DEFINED;
 	private int tagCRC = Constants.NOT_DEFINED;
 	private boolean validTagCRC = false;
-	private ArrayList<Integer> proximityTagIds;
+	private ArrayList<ProximitySighting> proximitySightings;
 	private Boolean tagButtonPressed;
 	
 	private int tagTime = Constants.NOT_DEFINED;
@@ -468,11 +468,41 @@ public class TagSighting {
 					tagButtonPressed = true;
 				}
 				
-				proximityTagIds = new ArrayList<Integer>();
-				proximityTagIds.add((0xff & tagData[4]) << 8 + (0xff & tagData[5]));
-				proximityTagIds.add((0xff & tagData[6]) << 8 + (0xff & tagData[7]));
-				proximityTagIds.add((0xff & tagData[8]) << 8 + (0xff & tagData[9]));
-				proximityTagIds.add((0xff & tagData[10]) << 8 + (0xff & tagData[11]));
+				proximitySightings = new ArrayList<ProximitySighting>();
+				
+				int proximityData;
+				for (int j = 0; j < Constants.PROX_TAG_MAX_COUNT; j++) {
+					proximityData = ((0xff & tagData[4 + (j * 2)]) << 8) + (0xff & tagData[5 + (j * 2)]);
+					
+					if (proximityData > 0) {
+						proximitySightings.add(
+							new ProximitySighting(
+								// Other tag id
+								proximityData & Constants.PROX_TAG_ID_MASK,
+								// Count
+								(proximityData >> Constants.PROX_TAG_ID_BITS) & Constants.PROX_TAG_COUNT_MASK,
+								// Strength
+								(proximityData >> (Constants.PROX_TAG_ID_BITS + Constants.PROX_TAG_COUNT_BITS)) & Constants.PROX_TAG_STRENGTH_MASK));
+//						System.out.print("Tag: " + tagId);
+//						System.out.print(" J: " + j + " ID: " + (proximityData & Constants.PROX_TAG_ID_MASK));
+//						System.out.print(" Count: " + ((proximityData >> Constants.PROX_TAG_ID_BITS) & Constants.PROX_TAG_COUNT_MASK));
+//						System.out.println(" Strength: " + 
+//						((proximityData >> 
+//							(Constants.PROX_TAG_ID_BITS + Constants.PROX_TAG_COUNT_BITS)) & 
+//						 Constants.PROX_TAG_STRENGTH_MASK));
+					}
+				}
+				
+//				proximityTagIds.add((0xff & tagData[4]) << 8 + (0xff & tagData[5]));
+//				proximityTagIds.add((0xff & tagData[6]) << 8 + (0xff & tagData[7]));
+//				proximityTagIds.add((0xff & tagData[8]) << 8 + (0xff & tagData[9]));
+//				proximityTagIds.add((0xff & tagData[10]) << 8 + (0xff & tagData[11]));
+//				
+//				for (Integer tagId : proximityTagIds) {
+//					if (tagId > 0) {
+//						System.out.println("ID: " + tagId.intValue());
+//					}
+//				}
 				
 				// FIXME: Code me!!!
 //				if (tag_sighting)
@@ -667,9 +697,9 @@ public class TagSighting {
 		return validTagCRC;
 	} // hasValidCRC
 	
-	public ArrayList<Integer> getProximityTagIds() {
-		return proximityTagIds;
-	} // getProximityTagIds
+	public ArrayList<ProximitySighting> getProximitySightings() {
+		return proximitySightings;
+	} // getProximitySightings
 	
 	/**
 	 * @return the tagTime
@@ -772,12 +802,16 @@ public class TagSighting {
 			}
 			
 			buffer.append("|Proximity: ");
-			if (getProximityTagIds() == null) {
+			if (getProximitySightings() == null) {
 				buffer.append("None");
 			} else {
-				for (int proximityTagId : getProximityTagIds()) {
-					buffer.append(proximityTagId);
-					buffer.append(",");
+				for (ProximitySighting sighting : getProximitySightings()) {
+					buffer.append(sighting.getTagId());
+					buffer.append(": ");
+					buffer.append(sighting.getStrength());
+					buffer.append(" (");
+					buffer.append(sighting.getCount());
+					buffer.append("),");
 				}
 				buffer.deleteCharAt(buffer.length() - 1);
 			}

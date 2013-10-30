@@ -8,7 +8,6 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import obp.ServiceConfiguration;
-import obp.reader.Reader;
 import obp.service.Constants;
 
 import org.joda.time.DateTime;
@@ -19,6 +18,7 @@ import org.joda.time.DateTime;
  */
 public class Tag {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	protected PositionEstimator estimator = null;
 	
 	private int id;
 	private DateTime created = DateTime.now();
@@ -28,7 +28,7 @@ public class Tag {
 	private DateTime buttonPressedStart;
 	
 	private HashMap<Integer, TagReaderSighting> tagReaderSightings = new HashMap<Integer, TagReaderSighting>();
-	private HashMap<Integer, Boolean> proximitySightings = new HashMap<Integer, Boolean>();
+	private HashMap<Integer, TagProximitySighting> proximitySightings = new HashMap<Integer, TagProximitySighting>();
 	
 	private int tagFlags;
 	private int tagStrength;
@@ -41,16 +41,24 @@ public class Tag {
 	
 	private int x;
 	private int y;
-	private int accuracyLevel;
+//	private int accuracyLevel;
 	
 	//private int[] proxTagId = new int[4];
 
 	/**
-	 * @param tagId
-	 * @param buttonPressed
+	 * @param id Tag id
 	 */
 	public Tag(int id) {
+		this(id, PositionEstimator.getInstance());
+	} // Constructor
+	
+	/**
+	 * @param id Tag id
+	 * @param estimator Position Estimator
+	 */
+	public Tag(int id, PositionEstimator estimator) {
 		setId(id);
+		setPositionEstimator(estimator);
 	} // Constructor
 
 	/**
@@ -239,11 +247,19 @@ public class Tag {
 //		this.proxTagId = proxTagId;
 //	}
 	
-	public HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
+	protected HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
 		return tagReaderSightings;
 	} // getTagReaderSightings
 	
-	public ArrayList<TagReaderSighting> getActiveTagReaderSightings() {
+	protected TagReaderSighting getTagReaderSighting(int readerId) {
+		return getTagReaderSightings().get(readerId);
+	} // getTagReaderSighting
+	
+	protected void addTagReaderSighting(int readerId, int strength) {
+		tagReaderSightings.put(readerId, new TagReaderSighting(configuration.getReader(readerId), strength));
+	} // addTagReaderSighting
+	
+	protected ArrayList<TagReaderSighting> getActiveTagReaderSightings() {
 		ArrayList<TagReaderSighting> sightings = new ArrayList<TagReaderSighting>();
 		
 		for (TagReaderSighting sighting : getTagReaderSightings().values()) {
@@ -257,11 +273,11 @@ public class Tag {
 	
 	public void updateTagReaderSighting(int readerId, int strength) {
 		if (readerId > Constants.NOT_DEFINED && strength > Constants.NOT_DEFINED) {
-			TagReaderSighting sighting = getTagReaderSightings().get(readerId);
+			TagReaderSighting sighting = getTagReaderSighting(readerId);
 			
 			boolean updateEstimation = false;
 			if (sighting == null) {
-				getTagReaderSightings().put(readerId, new TagReaderSighting(readerId, strength));
+				addTagReaderSighting(readerId, strength);
 				updateEstimation = true;
 			} else {
 				updateEstimation = sighting.setStrength(strength);
@@ -269,165 +285,62 @@ public class Tag {
 			
 			if (updateEstimation) {
 				updatePositionEstimation();
+				System.out.println(this.toString());
 			}
 		}
 	} // updateTagReaderSighting
 	
-	public HashMap<Integer, Boolean> getProximitySightings() {
+	public HashMap<Integer, TagProximitySighting> getProximitySightings() {
 		return proximitySightings;
 	} // getProximitySightings
 	
-	public void updateProximitySightings(ArrayList<Integer> sightings) {
-		if (sightings != null) {
-			HashMap<Integer, Boolean> proximitySightings = getProximitySightings();
+	public void updateProximitySightings(HashMap<Integer, TagProximitySighting> newSightings) {
+		if (newSightings != null && newSightings.size() > 0) {
+			HashMap<Integer, TagProximitySighting> proximitySightings = getProximitySightings();
 			
-			for (Entry<Integer, Boolean> proximitySighting : proximitySightings.entrySet()) {
-				if (sightings.contains(proximitySighting.getKey())) {
-					proximitySighting.setValue(true);
-					sightings.remove(proximitySighting.getKey());
-				} else {
-					proximitySighting.setValue(false);
+			boolean output = false;
+			TagProximitySighting sighting;
+			Integer id;
+			for (Entry<Integer, TagProximitySighting> proximitySighting : proximitySightings.entrySet()) {
+				id = proximitySighting.getKey();
+				sighting = proximitySighting.getValue();
+				
+				if (newSightings.containsKey(id)) {
+					sighting.setStrength(newSightings.get(id).getMinStrength());
+					sighting.setCount(newSightings.get(id).getCount());
+					newSightings.remove(id);
+//				} else {
+//					proximitySighting.setValue(false);
 				}
 			}
 			
 			// Add new proximity sightings
-			for (Integer proximityTagId : sightings) {
-				proximitySightings.put(proximityTagId, true);
+			for (TagProximitySighting newSighting: newSightings.values()) {
+				proximitySightings.put(newSighting.getTag().getId(), newSighting);
+				output = true;
+			}
+			
+			if (output) {
+				System.out.println(this.toString());
 			}
 		}
 	} // updateProximitySightings
 	
+	public void setPositionEstimator(PositionEstimator estimator) {
+		this.estimator = estimator;
+	} // setPositionEstimator
+	
+	public PositionEstimator getPositionEstimator() {
+		return estimator;
+	} // getPositionEstimator
+	
+	// FIXME: This code ignores floor and group
 	private void updatePositionEstimation() {
-		Reader reader;
-		TagReaderSighting sighting;
-		
-		ArrayList<TagReaderSighting> sightings = getActiveTagReaderSightings();
-		
-		if (sightings.size() == 0) {
-			// If there is no reader seeing this tag, we have
-			// left the building...
-			setX(0);
-			setY(0);
-			setAccuracyLevel(Constants.STRENGTH_LEVELS_COUNT);
-			return;
-		}
-		
-		if (sightings.size() == 1) {
-			// If there is only one active reader sighting, than
-			// we can only predict that we are at the position of the 
-			// reader with the inaccuracy of the highest possible power 
-			// level minus the provided minimal power level at the 
-			// last update.
-			sighting = sightings.get(0);
-			reader = configuration.getReader(sighting.getReaderId());
-			setX(reader.getX());
-			setY(reader.getY());
-			setAccuracyLevel(Constants.STRENGTH_LEVELS_COUNT - sighting.getMinStrength());
+		if (estimator != null) {
+			estimator.estimate(this);
 			
-			System.out.println("1: X: " + getX() + " Y: " + getY() + " S: " + sighting.getMinStrength());
-			return;
-		}
-		
-		if (sightings.size() == 2) {
-			sighting = sightings.get(0);
-			reader = configuration.getReader(sighting.getReaderId());
-			
-			int x1 = reader.getX();
-			int y1 = reader.getY();
-			int strength1 = sighting.getMinStrength() + 1; // +1: Avoid 0
-			
-			sighting = sightings.get(1);
-			reader = configuration.getReader(sighting.getReaderId());
-			
-			int x2 = reader.getX();
-			int y2 = reader.getY();
-			int strength2 = sighting.getMinStrength() + 1; // +1: Avoid 0
-			
-			double factor = strength1/strength2;
-			
-			// FIXME: Mostly this will result in something funny...
-			setX((int)Math.round(x1 + (factor * Math.abs(x2 - x1))));
-			setY((int)Math.round(y1 + (factor * Math.abs(y2 - y1))));			
-			setAccuracyLevel(0);
-			
-			System.out.println("2: X: " + getX() + " Y: " + getY() + " S1: " + strength1 + " S2: " + strength2);
-			return;
-		}
-		
-		if (sightings.size() > 2) {
-			// Use Trilateration to estimate a position of the first three
-			// reader sightings.
-			
-			// Uses information from http://en.wikipedia.org/wiki/Trilateration, referencing
-			// Manolakis, D.E (2011) 'Efficient Solution and Performance Analysis of 
-			// 3-D Position Estimation by Trilateration' IEEE Transactions on
-			// Aerospace And Electronic Systems, vol. 32, no. 4, pp. 1239-1248
-			// Available at: http://www.general-files.org/download/gs5bac8d73h32i0/IEEE-AES-96-Efficient%20Solution-and-Performance-Analysis-of-3-D%20Position-Estimation-by-Trilateration.pdf.html#
-			// Accessed: 18.10.2013
-			// and Reba, D. (2012) Answer to '2d trilateration' stackoverflow.com [Online]
-			// Available at: http://stackoverflow.com/a/9754358 (Accessed: 18.10.2013)
-			
-			sighting = sightings.get(0);
-			reader = configuration.getReader(sighting.getReaderId());
-			int x1 = reader.getX();
-			int y1 = reader.getY();
-			int strength1 = (4 - sighting.getMinStrength()) * 100;
-			int reader1 = sighting.getReaderId();
-			
-			sighting = sightings.get(1);
-			reader = configuration.getReader(sighting.getReaderId());
-			int x2 = reader.getX();
-			int y2 = reader.getY();
-			int strength2 = (4 - sighting.getMinStrength()) * 100;
-			int reader2 = sighting.getReaderId();
-			
-			sighting = sightings.get(2);
-			reader = configuration.getReader(sighting.getReaderId());
-			int x3 = reader.getX();
-			int y3 = reader.getY();
-			int strength3 = (4 - sighting.getMinStrength()) * 100;
-			int reader3 = sighting.getReaderId();
-			
-			// ex = (P2 - P1) / ‖P2 - P1‖, result: vector
-			double exx = (x2 - x1)/Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-			double exy = (y2 - y1)/Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-			
-			System.out.println("R1: " + reader1 + "(" + strength1 + "/" + x1 + "/" + y1 + ") R2: " + reader2 + " (" + strength2 + "/" + x2 + "/" + y2 + ") R3: " + reader3 + " (" + strength3 + "/" + x3 + "/" + y3 + ")");
-//			System.out.println("Exx: " + exx);
-//			System.out.println("Exy: " + exy);
-			
-			// i = ex · (P3 - P1), result: scalar
-			double i = exx * (x3 - x1) + exy * (y3 - y1);
-//			System.out.println("i: " + i);
-			
-			// ey = (P3 - P1 - i · ex) / ‖P3 - P1 - i · ex‖, result: vector
-			double eyx = (x3 - x1 - (i * exx))/Math.sqrt(Math.pow(x3 - x1 - (i * exx), 2) + Math.pow(y3 - y1 - (i * exy), 2));
-			double eyy = (y3 - y1 - (i * exy))/Math.sqrt(Math.pow(x3 - x1 - (i * exx), 2) + Math.pow(y3 - y1 - (i * exy), 2));
-			
-			// d = ‖P2 - P1‖, result: scalar
-			double d = Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
-//			System.out.println("d: " + d);
-			
-			// j = ey · (P3 - P1), result: scalar
-			double j = eyx * (x3 - x1) + eyy * (y3 - y1);
-//			System.out.println("j: " + j);
-			
-			// x = (r12 - r22 + d2) / 2d, result: scalar
-			double x = (Math.pow(strength1, 2) - Math.pow(strength2, 2) + Math.pow(d, 2)) / (2 * d);
-//			System.out.println("x: " + x);
-			
-			// y = (r12 - r32 + i2 + j2) / 2j - ix / j, result: scalar
-			double y = (Math.pow(strength1, 2) - Math.pow(strength3, 2) + Math.pow(i, 2) + Math.pow(j, 2)) / (2 * j) - (i/j) * x;
-//			System.out.println("y: " + y);
-			
-			// p1,2 = P1 + x*ex + y*ey
-			double xPos = x1 + x*exx + y*eyx;
-			double yPos = y1 + x*exy + y*eyy;
-			
-			setX((int)Math.round(xPos));
-			setY((int)Math.round(yPos));
-			
-			System.out.println("3: X: " + getX() + ", Y: " + getY());
+			setX(estimator.getX());
+			setY(estimator.getY());
 		}
 	} // updatePositionEstimation
 
@@ -441,7 +354,7 @@ public class Tag {
 	/**
 	 * @param x the x to set
 	 */
-	private void setX(int x) {
+	protected void setX(int x) {
 		this.x = x;
 	}
 
@@ -455,21 +368,81 @@ public class Tag {
 	/**
 	 * @param y the y to set
 	 */
-	private void setY(int y) {
+	protected void setY(int y) {
 		this.y = y;
 	}
 	
-	/**
-	 * @return the accuracy level
+//	/**
+//	 * @return the accuracy level
+//	 */
+//	public int getAccuracyLevel() {
+//		return accuracyLevel;
+//	}
+//
+//	/**
+//	 * @param level the accuracy level to set
+//	 */
+//	private void setAccuracyLevel(int level) {
+//		this.accuracyLevel = level;
+//	}
+	
+	/* (non-Javadoc)
+	 * @see java.lang.Object#toString()
 	 */
-	public int getAccuracyLevel() {
-		return accuracyLevel;
-	}
-
-	/**
-	 * @param level the accuracy level to set
-	 */
-	private void setAccuracyLevel(int level) {
-		this.accuracyLevel = level;
-	}
+	@Override
+	public String toString() {
+		StringBuffer buffer = new StringBuffer();
+		
+		buffer.append("Tag: ID: ");
+		buffer.append(getId());
+		buffer.append("|X: ");
+		buffer.append(getX());
+		buffer.append("|Y: ");
+		buffer.append(getY());
+		buffer.append("|Button: ");
+		buffer.append(isButtonPressed());
+		buffer.append("|Readers: ");
+		
+		int counter = 1;
+		for (TagReaderSighting sighting: getTagReaderSightings().values()) {
+			buffer.append("R");
+			buffer.append(counter);
+			buffer.append(": ");
+			buffer.append(sighting.getReader().getId());
+			buffer.append(" (Active: ");
+			buffer.append(sighting.isActive());
+			buffer.append(", Strength: ");
+			buffer.append(sighting.getMinStrength());
+			buffer.append(") ");
+			
+			counter++;
+		}
+		
+		if (counter > 1) {
+			buffer.deleteCharAt(buffer.length() - 1);
+		}
+		
+		counter = 1;
+		for (TagProximitySighting sighting: getProximitySightings().values()) {
+			buffer.append("P");
+			buffer.append(counter);
+			buffer.append(": ");
+			buffer.append(sighting.getTag().getId());
+			buffer.append(" (Active: ");
+			buffer.append(sighting.isActive());
+			buffer.append(", Strength: ");
+			buffer.append(sighting.getMinStrength());
+			buffer.append(", Count: ");
+			buffer.append(sighting.getCount());
+			buffer.append(") ");
+			
+			counter++;
+		}
+		
+		if (counter > 1) {
+			buffer.deleteCharAt(buffer.length() - 1);
+		}
+		
+		return buffer.toString();
+	} // toString
 }

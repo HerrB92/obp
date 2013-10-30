@@ -55,7 +55,7 @@ public class TestTagSightingProtocol24 {
 		assertEquals(24, tagSighting.getTagProtocol());
 		assertEquals(0, tagSighting.getFlags());
 		assertEquals(2, tagSighting.getStrength());
-		assertNull(tagSighting.getProximityTagIds());
+		assertNull(tagSighting.getProximitySightings());
 		assertEquals(-1, tagSighting.getTagTime());
 		assertEquals(-1, tagSighting.getTagBattery());
 		assertEquals(1770132, tagSighting.getTagSequence());

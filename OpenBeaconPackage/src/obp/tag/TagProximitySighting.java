@@ -4,7 +4,6 @@
 package obp.tag;
 
 import obp.ServiceConfiguration;
-import obp.reader.Reader;
 
 import org.joda.time.DateTime;
 
@@ -12,33 +11,35 @@ import org.joda.time.DateTime;
  * @author bbehrens
  *
  */
-public class TagReaderSighting {
+public class TagProximitySighting {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
-	private Reader reader;
+	private Tag tag;
 	private int minStrength;
+	private int count;
 	private DateTime lastUpdate;
 	private boolean active = true;
 		
-	public TagReaderSighting(Reader reader, int strength) {
-		setReader(reader);
-		setLastUpdate(DateTime.now()); // Has to be before setStrength!
-		setStrength(strength);
+	public TagProximitySighting(Tag tag, int strength, int count) {
+		setTag(tag);
+		setLastUpdate(DateTime.now()); // Has to be before setMaxStrength!
+		setMinStrength(strength);
+		setCount(count);
 	} // Constructor
 	
 	/**
-	 * @return the reader
+	 * @return the tag
 	 */
-	public Reader getReader() {
-		return reader;
-	} // getReader
+	public Tag getTag() {
+		return tag;
+	} // getTag
 	
 	/**
-	 * @param reader the reader to set
+	 * @param tag the tag to set
 	 */
-	private void setReader(Reader reader) {
-		this.reader = reader;
-	} // setReader
+	private void setTag(Tag tag) {
+		this.tag = tag;
+	} // setTagr
 	
 	/**
 	 * @return the minStrength
@@ -77,7 +78,7 @@ public class TagReaderSighting {
 		}
 		
 		if (strength == getMinStrength()) {
-			// Strength has not changed, but we now, it is still there - 
+			// Strength has not changed, but we know, it is still there - 
 			// so refresh last update time
 			setLastUpdate(DateTime.now());
 		}
@@ -105,7 +106,7 @@ public class TagReaderSighting {
 	 */
 	private void checkActiveStatus() {
 		if (active && 
-			getLastUpdate().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
+			getLastUpdate().plusSeconds(configuration.getTagProximitySightingActiveSeconds()).isBeforeNow()) {
 			setActive(false);
 		}
 	} // checkActiveStatus
@@ -125,4 +126,18 @@ public class TagReaderSighting {
 	private void setActive(boolean active) {
 		this.active = active;
 	} // setActive
+
+	/**
+	 * @return the count
+	 */
+	public int getCount() {
+		return count;
+	}
+
+	/**
+	 * @param count the count to set
+	 */
+	public void setCount(int count) {
+		this.count = count;
+	}
 }

@@ -3,13 +3,18 @@
  */
 package obp.listener;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+
 import org.joda.time.DateTime;
 
 import obp.ServiceConfiguration;
 import obp.index.DataIndex;
 import obp.reader.Reader;
 import obp.tag.Tag;
+import obp.tag.TagProximitySighting;
 import odp.service.listener.Listener;
+import odp.service.listener.ProximitySighting;
 import odp.service.listener.TagSighting;
 
 /**
@@ -46,6 +51,23 @@ public class ServiceListener implements Listener {
 	private void setDataIndex(DataIndex dataIndex) {
 		this.dataIndex = dataIndex;
 	}
+	
+	private HashMap<Integer, TagProximitySighting> convertProximitySightings(ArrayList<ProximitySighting> rawSightings) {
+		HashMap<Integer, TagProximitySighting> sightings = new HashMap<Integer, TagProximitySighting>();
+		
+		if (rawSightings != null && rawSightings.size() > 0) {
+			Tag tag;
+			for (ProximitySighting sighting : rawSightings) {
+				tag = getDataIndex().getTagById(sighting.getTagId());
+				
+				if (tag != null) {
+					sightings.put(tag.getId(), new TagProximitySighting(tag, sighting.getStrength(), sighting.getCount()));
+				}
+			}
+		}
+		
+		return sightings;
+	} // convertProximitySightings
 
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
@@ -63,7 +85,7 @@ public class ServiceListener implements Listener {
 				}
 				tag.setLastSeen(now);
 				tag.updateTagReaderSighting(tagSighting.getReaderId(), tagSighting.getStrength());
-				tag.updateProximitySightings(tagSighting.getProximityTagIds());
+				tag.updateProximitySightings(convertProximitySightings(tagSighting.getProximitySightings()));
 				tag.setButtonPressed(tagSighting.isTagButtonPressed());
 			} else {
 				// Add unknown reader to list of unknown readers

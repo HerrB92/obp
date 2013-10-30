@@ -13,9 +13,12 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
+import java.util.Map.Entry;
 import java.util.Properties;
+import java.util.Set;
 
 import obp.reader.Reader;
+import obp.service.Constants;
 
 /**
  * Singleton
@@ -31,12 +34,14 @@ public class ServiceConfiguration {
 	
 	private int tagButtonActiveSeconds = 5;
 	private int tagReaderSightingActiveSeconds = 5;
+	private int tagProximitySightingActiveSeconds = 5;
 	private int strengthAggregationWindowSeconds = 2;
 	private int strengthAggregationAgedSeconds = strengthAggregationWindowSeconds + 2;
 	
 	private long[] tagDataKey = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 	
 	private HashMap<Integer, Reader> readers = new HashMap<Integer, Reader>();
+	private HashMap<Integer, HashMap<Integer, Long>> readerDistanceMap = new HashMap<Integer, HashMap<Integer, Long>>();
 	
 	private ServiceConfiguration() {}
 	
@@ -45,10 +50,14 @@ public class ServiceConfiguration {
 			configuration = new ServiceConfiguration();
 			configuration.loadConfiguration();
 			
-			configuration.getReaders().put(1259, new Reader(1259, 1, 1, 1, 1, 1));
-			configuration.getReaders().put(1391, new Reader(1391, 2, 1, 1, 640, 620));
-			configuration.getReaders().put(1291, new Reader(1291, 3, 1, 1, 1, 1165));
-			configuration.getReaders().put(1300, new Reader(1300, 4, 1, 1, 610, 1395));
+			configuration.addReader(1259, 1, 1, 1, 1, 1); 		// Sleeping room, Window
+			configuration.addReader(1391, 2, 1, 1, 640, 620); 	// Sleeping Room
+			configuration.addReader(1291, 3, 1, 1, 1, 1165); 	// Living Room
+			configuration.addReader(1300, 4, 1, 1, 610, 1395); 	// Kitchen
+			
+//			configuration.addReader(1300, 1, 1, 1, 1, 1);
+//			configuration.addReader(1291, 1, 1, 1, 1, 550);
+//			configuration.addReader(1259, 1, 1, 1, 400, 550);
 		}
 		
 		return configuration;
@@ -87,6 +96,8 @@ public class ServiceConfiguration {
 	            	new Integer(properties.getProperty("TAG_BUTTON_ACTIVE_SECONDS", "5"));
 	            tagReaderSightingActiveSeconds = 
 	            	new Integer(properties.getProperty("TAG_READER_SIGHTING_ACTIVE_SECONDS", "5"));
+	            tagProximitySightingActiveSeconds = 
+		            new Integer(properties.getProperty("TAG_PROXIMITY_SIGHTING_ACTIVE_SECONDS", "5"));
 	            strengthAggregationWindowSeconds  = 
 	            	new Integer(properties.getProperty("STRENGTH_AGGREGATION_WINDOW_SECONDS", "2"));
 	            strengthAggregationAgedSeconds  = 
@@ -107,6 +118,7 @@ public class ServiceConfiguration {
 			Properties properties = new Properties();
 			properties.setProperty("TAG_BUTTON_ACTIVE_SECONDS", Integer.toString(tagButtonActiveSeconds));
 			properties.setProperty("TAG_READER_SIGHTING_ACTIVE_SECONDS", Integer.toString(tagReaderSightingActiveSeconds));
+			properties.setProperty("TAG_PROXIMITY_SIGHTING_ACTIVE_SECONDS", Integer.toString(tagProximitySightingActiveSeconds));
 			properties.setProperty("STRENGTH_AGGREGATION_WINDOW_SECONDS", Integer.toString(strengthAggregationWindowSeconds));
 			properties.setProperty("STRENGTH_AGGREGATION_AGED_SECONDS", Integer.toString(strengthAggregationAgedSeconds));
 			
@@ -149,6 +161,20 @@ public class ServiceConfiguration {
 	public void setTagReaderSightingActiveSeconds(int tagReaderSightingActiveSeconds) {
 		this.tagReaderSightingActiveSeconds = tagReaderSightingActiveSeconds;
 	} // setTagReaderSightingActiveSeconds
+	
+	/**
+	 * @return the tagProximitySightingActiveSeconds
+	 */
+	public int getTagProximitySightingActiveSeconds() {
+		return tagProximitySightingActiveSeconds;
+	} // getTagProximitySightingActiveSeconds
+
+	/**
+	 * @param tagProximitySightingActiveSeconds the tagProximitySightingActiveSeconds to set
+	 */
+	public void setTagProximitySightingActiveSeconds(int tagProximitySightingActiveSeconds) {
+		this.tagProximitySightingActiveSeconds = tagProximitySightingActiveSeconds;
+	} // setTagProximitySightingActiveSeconds
 
 	/**
 	 * @return the strengthAggregationWindowSeconds
@@ -208,6 +234,58 @@ public class ServiceConfiguration {
 	public Reader getReader (Integer id) {
 		return getReaders().get(id);
 	} // getReader
+	
+	private Long calcDistance(int x1, int y1, int x2, int y2) {
+		// Pythagoras: a2 + b2 = c2
+		return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
+	} // calcDistance
+	
+	public void addReader (Integer id, int room, int floor, int group, int x, int y) {
+		if (!readers.containsKey(id)) {
+			HashMap<Integer, Long> distances = new HashMap<Integer, Long>();
+			
+			// If there are other readers, calculate distance between each reader
+			// and store information in hash map for faster access
+			if (readers.size() > 0) {
+				Reader reader;
+				Long distance;
+				
+				// The readerDistanceMap stores the distance as
+				// HashMap<ReaderId1, HashMap<ReaderId2, Distance>>
+				// Get through the list of existing relations and add
+				// new relation for new reader, if the reader is on
+				// the same room, floor and group.
+				Set<Entry<Integer, HashMap<Integer, Long>>> distanceSet = readerDistanceMap.entrySet();
+				for (Entry<Integer, HashMap<Integer, Long>> distanceEntry : distanceSet) {
+					reader = getReader(distanceEntry.getKey());
+					
+					if (reader.getFloor() == floor && reader.getGroup() == group) {
+						distance = calcDistance(x, reader.getX(), y, reader.getY());
+					} else {
+						distance = Long.valueOf(Constants.NOT_DEFINED);
+					}
+					
+					// Add distance information to existing reader
+					distanceEntry.getValue().put(id, distance);
+					
+					// Add distance information to new reader
+					distances.put(distanceEntry.getKey(), distance);
+				}
+			}
+			
+			// Add reader to reader and reader distance map
+			readers.put(id, new Reader(id, room, floor, group, x, y));
+			readerDistanceMap.put(id, distances);
+		}
+	} // addReader
+	
+	public long getDistance(Integer readerId1, Integer readerId2) {
+		try {
+			return readerDistanceMap.get(readerId1).get(readerId2);
+		} catch (Exception e) {
+			return Long.valueOf(Constants.NOT_DEFINED);
+		}
+	} // getDistance
 	
 	public boolean isValidReader(Integer id) {
 		return getReaders().containsKey(id);

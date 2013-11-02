@@ -15,14 +15,16 @@ public class TagProximitySighting {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
 	private Tag tag;
+	private Tag otherTag;
 	private int minStrength;
 	private int count;
 	private DateTime lastUpdate;
 	private boolean active = true;
 		
-	public TagProximitySighting(Tag tag, int strength, int count) {
+	public TagProximitySighting(Tag tag, Tag otherTag, int strength, int count) {
 		setTag(tag);
-		setLastUpdate(DateTime.now()); // Has to be before setMaxStrength!
+		setOtherTag(otherTag);
+		setLastUpdate(DateTime.now()); // Has to be before setMinStrength!
 		setMinStrength(strength);
 		setCount(count);
 	} // Constructor
@@ -33,13 +35,27 @@ public class TagProximitySighting {
 	public Tag getTag() {
 		return tag;
 	} // getTag
-	
+
 	/**
 	 * @param tag the tag to set
 	 */
 	private void setTag(Tag tag) {
 		this.tag = tag;
-	} // setTagr
+	} // setTag
+	
+	/**
+	 * @return the other tag
+	 */
+	public Tag getOtherTag() {
+		return otherTag;
+	} // getOtherTag
+	
+	/**
+	 * @param tag the tag to set
+	 */
+	private void setOtherTag(Tag otherTag) {
+		this.otherTag = otherTag;
+	} // setOtherTag
 	
 	/**
 	 * @return the minStrength

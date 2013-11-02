@@ -12,13 +12,15 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import obp.reader.Reader;
 import obp.service.Constants;
+import obp.spots.Reader;
+import obp.spots.SpotTag;
 
 /**
  * Singleton
@@ -40,7 +42,8 @@ public class ServiceConfiguration {
 	
 	private long[] tagDataKey = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 	
-	private HashMap<Integer, Reader> readers = new HashMap<Integer, Reader>();
+	private HashMap<Integer, Reader> readerMap = new HashMap<Integer, Reader>();
+	private HashMap<Integer, SpotTag> spotTagMap = new HashMap<Integer, SpotTag>();
 	private HashMap<Integer, HashMap<Integer, Long>> readerDistanceMap = new HashMap<Integer, HashMap<Integer, Long>>();
 	
 	private ServiceConfiguration() {}
@@ -50,10 +53,12 @@ public class ServiceConfiguration {
 			configuration = new ServiceConfiguration();
 			configuration.loadConfiguration();
 			
-			configuration.addReader(1259, 1, 1, 1, 1, 1); 		// Sleeping room, Window
-			configuration.addReader(1391, 2, 1, 1, 640, 620); 	// Sleeping Room
-			configuration.addReader(1291, 3, 1, 1, 1, 1165); 	// Living Room
-			configuration.addReader(1300, 4, 1, 1, 610, 1395); 	// Kitchen
+			configuration.addReader(1259, "Spider", 1, 1, 1, 1, 1); 		// Sleeping room, Window
+			configuration.addReader(1391, "Sleeper", 2, 1, 1, 640, 620); 	// Sleeping Room
+			configuration.addReader(1291, "Relax", 3, 1, 1, 1, 1165); 		// Living Room
+			configuration.addReader(1300, "Cooking", 4, 1, 1, 610, 1395); 	// Kitchen
+			
+			configuration.addSpotTag(1279, "Weird", 1, 1, 1, 10, 1165);
 			
 //			configuration.addReader(1300, 1, 1, 1, 1, 1);
 //			configuration.addReader(1291, 1, 1, 1, 1, 550);
@@ -76,7 +81,7 @@ public class ServiceConfiguration {
 	 
 	    try {
 	        if (inputStream == null) {
-	            // Try loading from classpath
+	            // Try loading from class path
 	            inputStream = getClass().getResourceAsStream(CONFIGURATION_FILE_NAME);
 	        }
 	    } catch (Exception e) {
@@ -227,26 +232,18 @@ public class ServiceConfiguration {
 		return configurationLoaded;
 	} // getConfigurationLoaded
 	
-	public HashMap<Integer, Reader> getReaders() {
-		return readers;
-	} // getReaders
-	
-	public Reader getReader (Integer id) {
-		return getReaders().get(id);
-	} // getReader
-	
 	private Long calcDistance(int x1, int y1, int x2, int y2) {
 		// Pythagoras: a2 + b2 = c2
 		return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
 	} // calcDistance
 	
-	public void addReader (Integer id, int room, int floor, int group, int x, int y) {
-		if (!readers.containsKey(id)) {
+	public void addReader(Integer id, String name, int room, int floor, int group, int x, int y) {
+		if (!readerMap.containsKey(id)) {
 			HashMap<Integer, Long> distances = new HashMap<Integer, Long>();
 			
 			// If there are other readers, calculate distance between each reader
 			// and store information in hash map for faster access
-			if (readers.size() > 0) {
+			if (readerMap.size() > 0) {
 				Reader reader;
 				Long distance;
 				
@@ -274,10 +271,22 @@ public class ServiceConfiguration {
 			}
 			
 			// Add reader to reader and reader distance map
-			readers.put(id, new Reader(id, room, floor, group, x, y));
+			readerMap.put(id, new Reader(id, name, room, floor, group, x, y));
 			readerDistanceMap.put(id, distances);
 		}
 	} // addReader
+	
+	protected HashMap<Integer, Reader> getReaderMap() {
+		return readerMap;
+	} // getReaders
+	
+	public Collection<Reader> getReaders() {
+		return getReaderMap().values();
+	} // getReaders
+	
+	public Reader getReader (Integer id) {
+		return getReaderMap().get(id);
+	} // getReader
 	
 	public long getDistance(Integer readerId1, Integer readerId2) {
 		try {
@@ -288,6 +297,20 @@ public class ServiceConfiguration {
 	} // getDistance
 	
 	public boolean isValidReader(Integer id) {
-		return getReaders().containsKey(id);
+		return getReaderMap().containsKey(id);
 	} // isValidReader
+	
+	public void addSpotTag(Integer id, String name, int room, int floor, int group, int x, int y) {
+		if (!spotTagMap.containsKey(id)) {
+			spotTagMap.put(id, new SpotTag(id, name, room, floor, group, x, y));
+		}
+	} // addSpotTag
+	
+	protected HashMap<Integer, SpotTag> getSpotTagMap() {
+		return spotTagMap;
+	} // getSpotTagMap
+	
+	public Collection<SpotTag> getSpotTags() {
+		return getSpotTagMap().values();
+	} // getSpotTags
 }

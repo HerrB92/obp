@@ -4,7 +4,7 @@
 package obp.tag;
 
 import obp.ServiceConfiguration;
-import obp.reader.Reader;
+import obp.spots.Reader;
 
 import org.joda.time.DateTime;
 

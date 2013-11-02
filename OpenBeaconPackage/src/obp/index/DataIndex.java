@@ -3,9 +3,11 @@
  */
 package obp.index;
 
+import java.util.Collection;
 import java.util.HashMap;
 
-import obp.reader.Reader;
+import obp.ServiceConfiguration;
+import obp.spots.Reader;
 import obp.tag.Tag;
 
 /**
@@ -13,14 +15,19 @@ import obp.tag.Tag;
  *
  */
 public class DataIndex {
-	private HashMap<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
-	private HashMap<Integer, Reader> unknownReaderMap = new HashMap<Integer, Reader>();
+	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance(); 
+	protected HashMap<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
+	protected HashMap<Integer, Reader> unknownReaderMap = new HashMap<Integer, Reader>();
 	
 	public DataIndex() { } // Constructor
 	
-	public HashMap<Integer, Tag> getTagMap() {
+	protected HashMap<Integer, Tag> getTagMap() {
 		return tagMap;
 	} // getTagMap
+	
+	public Collection<Tag> getTags() {
+		return getTagMap().values();
+	} // getTags
 	
 	public Tag getTagById(int id) {
 		return getTagMap().get(id);
@@ -30,9 +37,17 @@ public class DataIndex {
 		getTagMap().put(tag.getId(), tag);
 	} // addTag
 	
-	public HashMap<Integer, Reader> getUnknownReaderMap() {
+	public Collection<Reader> getKnownReaders() {
+		return configuration.getReaders();
+	} // getKnownReaders
+	
+	protected HashMap<Integer, Reader> getUnknownReaderMap() {
 		return unknownReaderMap;
-	} // getReaderMap
+	} // getUnknownReaderMap
+	
+	public Collection<Reader> getUnknownReaders() {
+		return getUnknownReaderMap().values();
+	} // getUnknownReaders
 	
 	public Reader getUnknownReaderById(int id) {
 		return getUnknownReaderMap().get(id);

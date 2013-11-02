@@ -9,6 +9,8 @@ import java.util.Map.Entry;
 
 import obp.ServiceConfiguration;
 import obp.service.Constants;
+import obp.tag.estimation.EstimationMethod;
+import obp.tag.estimation.PositionEstimator;
 
 import org.joda.time.DateTime;
 
@@ -18,7 +20,7 @@ import org.joda.time.DateTime;
  */
 public class Tag {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
-	protected PositionEstimator estimator = null;
+	private PositionEstimator estimator;
 	
 	private int id;
 	private DateTime created = DateTime.now();
@@ -35,22 +37,21 @@ public class Tag {
 	private int tagSequence;
 	
 	private int readerInterface;
-	private int readerId;
+	private int lastReaderId;
 	private int sequence;
 	private int timestamp;
 	
 	private int x;
 	private int y;
+	private EstimationMethod method;
 //	private int accuracyLevel;
-	
-	//private int[] proxTagId = new int[4];
 
-	/**
-	 * @param id Tag id
-	 */
-	public Tag(int id) {
-		this(id, PositionEstimator.getInstance());
-	} // Constructor
+//	/**
+//	 * @param id Tag id
+//	 */
+//	public Tag(int id) {
+//		this(id, DefaultPositionEstimator.getInstance());
+//	} // Constructor
 	
 	/**
 	 * @param id Tag id
@@ -192,17 +193,17 @@ public class Tag {
 	}
 
 	/**
-	 * @return the readerId
+	 * @return the lastReaderId
 	 */
-	public int getReaderId() {
-		return readerId;
+	public int getLastReaderId() {
+		return lastReaderId;
 	}
 
 	/**
-	 * @param readerId the readerId to set
+	 * @param lastReaderId the last reader Id to set
 	 */
-	public void setReaderId(int readerId) {
-		this.readerId = readerId;
+	protected void setLastReaderId(int readerId) {
+		this.lastReaderId = readerId;
 	}
 
 	/**
@@ -247,7 +248,7 @@ public class Tag {
 //		this.proxTagId = proxTagId;
 //	}
 	
-	protected HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
+	public HashMap<Integer, TagReaderSighting> getTagReaderSightings() {
 		return tagReaderSightings;
 	} // getTagReaderSightings
 	
@@ -259,7 +260,7 @@ public class Tag {
 		tagReaderSightings.put(readerId, new TagReaderSighting(configuration.getReader(readerId), strength));
 	} // addTagReaderSighting
 	
-	protected ArrayList<TagReaderSighting> getActiveTagReaderSightings() {
+	public ArrayList<TagReaderSighting> getActiveTagReaderSightings() {
 		ArrayList<TagReaderSighting> sightings = new ArrayList<TagReaderSighting>();
 		
 		for (TagReaderSighting sighting : getTagReaderSightings().values()) {
@@ -273,6 +274,8 @@ public class Tag {
 	
 	public void updateTagReaderSighting(int readerId, int strength) {
 		if (readerId > Constants.NOT_DEFINED && strength > Constants.NOT_DEFINED) {
+			setLastReaderId(readerId);
+			
 			TagReaderSighting sighting = getTagReaderSighting(readerId);
 			
 			boolean updateEstimation = false;
@@ -341,6 +344,7 @@ public class Tag {
 			
 			setX(estimator.getX());
 			setY(estimator.getY());
+			setMethod(estimator.getMethod());
 		}
 	} // updatePositionEstimation
 
@@ -372,6 +376,20 @@ public class Tag {
 		this.y = y;
 	}
 	
+	/**
+	 * @return the method
+	 */
+	public EstimationMethod getMethod() {
+		return method;
+	}
+
+	/**
+	 * @param method the method to set
+	 */
+	protected void setMethod(EstimationMethod method) {
+		this.method = method;
+	}
+	
 //	/**
 //	 * @return the accuracy level
 //	 */
@@ -395,6 +413,8 @@ public class Tag {
 		
 		buffer.append("Tag: ID: ");
 		buffer.append(getId());
+		buffer.append("|Method: ");
+		buffer.append(getMethod());
 		buffer.append("|X: ");
 		buffer.append(getX());
 		buffer.append("|Y: ");

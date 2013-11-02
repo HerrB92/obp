@@ -1,7 +1,7 @@
 /**
  * 
  */
-package obp.reader;
+package obp.spots;
 
 import org.joda.time.DateTime;
 
@@ -9,8 +9,9 @@ import org.joda.time.DateTime;
  * @author bbehrens
  *
  */
-public class Reader {
+public abstract class Spot {
 	private int id;
+	private String name;
 	private int room;
 	private int floor;
 	private int group;
@@ -19,19 +20,16 @@ public class Reader {
 	private DateTime created = DateTime.now();
 	private DateTime lastSeen = DateTime.now();
 	
-	public Reader(int id) {
+	protected Spot(int id, String name, int room, int floor, int group, int x, int y) {
 		setId(id);
-	} // Constructor
-	
-	public Reader(int id, int room, int floor, int group, int x, int y) {
-		setId(id);
+		setName(name);
 		setRoom(room);
 		setFloor(floor);
 		setGroup(room);
 		setX(x);
 		setY(y);
 	} // Constructor
-
+	
 	/**
 	 * @return the reader id
 	 */
@@ -45,6 +43,20 @@ public class Reader {
 	public void setId(int id) {
 		this.id = id;
 	} // setId
+	
+	/**
+	 * @return the name
+	 */
+	public String getName() {
+		return name;
+	} // getName
+
+	/**
+	 * @param name a name for the reader
+	 */
+	public void setName(String name) {
+		this.name = name;
+	} // setName
 	
 	/**
 	 * @return Created joda datetime

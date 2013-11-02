@@ -33,25 +33,27 @@ import obp.service.Constants;
 public class ListenerService implements Runnable {
 	private InetAddress server;
 	private DatagramSocket socket;
-	private DatagramPacket packet;
-	//private int c = 0;
+	private DatagramPacket packet = new DatagramPacket(new byte[256], 256);
+	
 	private Thread thread;
 	private Listener listener;
+	
 	private boolean debug = false;
 	private boolean running = false;
 	private long[] encryptionKey;
 	private TagSighting tagSighting;
-	//private Tag tag;
+	
+	private long lostCRC = 0;
 	
 	public ListenerService(String host, int port, int timeout, long[] key, boolean debug)
 		throws InterruptedException {
 		
 		setDebug(debug);
-		this.encryptionKey = key;
+		setEncryptionKey(key);
 		
 		int attempts = 0;
 		boolean bound = false;
-		while (!(bound || (attempts >= 3))) {
+		while (!(bound || attempts >= 3)) {
 			try {
 				server = InetAddress.getByName(host);
 				
@@ -91,14 +93,67 @@ public class ListenerService implements Runnable {
 						+ socket.getReceiveBufferSize() + "  timeout: "
 						+ socket.getSoTimeout());
 			} catch (IOException ioException) {
-				System.err
-						.println("Error printing info ListenerService: "
+				System.err.println("Error printing info ListenerService: "
 								+ ioException.toString());
 			}
 		}
-
-		packet = new DatagramPacket(new byte[256], 256);
+//
+//		packet = new DatagramPacket(new byte[256], 256);
 	} // Constructor
+	
+	public void setDebug(boolean debug) {
+		this.debug = debug;
+	} // setDebug
+	
+	public boolean isDebug() {
+		return debug;
+	} // isDebug
+	
+	/**
+	 * @param encryptionKey the encryptionKey to set
+	 */
+	private void setEncryptionKey(long[] encryptionKey) {
+		this.encryptionKey = encryptionKey;
+	}
+	
+	/**
+	 * @return the encryptionKey
+	 */
+	public long[] getEncryptionKey() {
+		return encryptionKey;
+	}
+	
+	public void setMessageListener(Listener listener) {
+		this.listener = listener;
+	} // setMessageListener
+	
+	private Listener getMessageListener() {
+		return listener;
+	} // getMessageListener
+
+	/**
+	 * @return the lostCRC
+	 */
+	public long getLostCRC() {
+		return lostCRC;
+	} // getLostCRC
+	
+	private void setRunning(boolean running) {
+		this.running = running;
+	} // setRunning
+
+	public boolean isRunning() {
+		return running;
+	} // isRunning
+
+	public void start() {
+		if (getMessageListener() == null) {
+			throw new IllegalStateException("ListenerService: No message listener specified");
+		}
+		
+		setRunning(true);
+		thread.start();
+	} // start
 	
 	@Override
 	public void run() {
@@ -109,10 +164,11 @@ public class ListenerService implements Runnable {
 				if (packet.getLength() == Constants.ENVELOPE_SIZE_BYTE) {
 					tagSighting = new TagSighting(packet, encryptionKey, debug);
 										
-					if (tagSighting.isValid() && listener != null) {
-						listener.messageReceived(tagSighting);
+					if (tagSighting.isValid()) {
+						getMessageListener().messageReceived(tagSighting);
 					} else {
-						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC() + " or no listener");
+						lostCRC++;
+						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC());
 					}
 				}
 			} catch (IOException ioException) {
@@ -124,21 +180,4 @@ public class ListenerService implements Runnable {
 			}
 		}
 	} // run
-
-	public void start() {
-		running = true;
-		thread.start();
-	}
-	
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	}
-
-	public boolean isRunning() {
-		return running;
-	}
-
-	public void setMessageListener(Listener listener) {
-		this.listener = listener;
-	}
 }

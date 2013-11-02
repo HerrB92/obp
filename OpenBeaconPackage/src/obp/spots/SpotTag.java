@@ -17,4 +17,9 @@ public class SpotTag extends Spot {
 	public SpotTag(int id, String name, int room, int floor, int group, int x, int y) {
 		super(id, name, room, floor, group, x, y);
 	} // Constructor (full)
+
+	@Override
+	public SpotType getType() {
+		return SpotType.SpotTag;
+	} // getType
 }

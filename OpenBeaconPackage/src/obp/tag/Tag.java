@@ -30,6 +30,7 @@ public class Tag {
 	private DateTime buttonPressedStart;
 	
 	private HashMap<Integer, TagReaderSighting> tagReaderSightings = new HashMap<Integer, TagReaderSighting>();
+	private HashMap<Integer, TagSpotTagSighting> tagSpotTagSightings = new HashMap<Integer, TagSpotTagSighting>();
 	private HashMap<Integer, TagProximitySighting> proximitySightings = new HashMap<Integer, TagProximitySighting>();
 	
 	private int tagFlags;
@@ -296,6 +297,30 @@ public class Tag {
 	public HashMap<Integer, TagProximitySighting> getProximitySightings() {
 		return proximitySightings;
 	} // getProximitySightings
+	
+	public HashMap<Integer, TagSpotTagSighting> getTagSpotTagSightings() {
+		return tagSpotTagSightings;
+	} // getTagSpotTagSightings
+	
+	protected TagSpotTagSighting getTagSpotTagSighting(int tagId) {
+		return getTagSpotTagSightings().get(tagId);
+	} // getTagSpotTagSighting
+	
+	protected void addTagSpotTagSighting(int tagId, int strength) {
+		tagSpotTagSightings.put(tagId, new TagSpotTagSighting(configuration.getSpotTag(tagId), strength));
+	} // addTagSpotTagSighting
+	
+	public ArrayList<TagSpotTagSighting> getActiveTagSpotTagSightings() {
+		ArrayList<TagSpotTagSighting> sightings = new ArrayList<TagSpotTagSighting>();
+		
+		for (TagSpotTagSighting sighting : getTagSpotTagSightings().values()) {
+			if (sighting.isActive()) {
+				sightings.add(sighting);
+			}
+		}
+		
+		return sightings;
+	} // getActiveTagSpotTagSightings
 	
 	public void updateProximitySightings(HashMap<Integer, TagProximitySighting> newSightings) {
 		if (newSightings != null && newSightings.size() > 0) {

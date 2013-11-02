@@ -4,7 +4,7 @@
 package obp.tag;
 
 import obp.ServiceConfiguration;
-import obp.spots.Reader;
+import obp.spots.SpotTag;
 
 import org.joda.time.DateTime;
 
@@ -12,33 +12,33 @@ import org.joda.time.DateTime;
  * @author bbehrens
  *
  */
-public class TagReaderSighting {
+public class TagSpotTagSighting {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
-	private Reader reader;
+	private SpotTag spotTag;
 	private int minStrength;
 	private DateTime lastUpdate;
 	private boolean active = true;
 		
-	public TagReaderSighting(Reader reader, int strength) {
-		setReader(reader);
+	public TagSpotTagSighting(SpotTag spotTag, int strength) {
+		setSpotTag(spotTag);
 		setLastUpdate(DateTime.now()); // Has to be before setStrength!
 		setStrength(strength);
 	} // Constructor
 	
 	/**
-	 * @return the reader
+	 * @return the spotTag
 	 */
-	public Reader getReader() {
-		return reader;
-	} // getReader
+	public SpotTag getSpotTag() {
+		return spotTag;
+	} // getSpotTag
 	
 	/**
-	 * @param reader the reader to set
+	 * @param spotTag the spotTag to set
 	 */
-	private void setReader(Reader reader) {
-		this.reader = reader;
-	} // setReader
+	private void setSpotTag(SpotTag spotTag) {
+		this.spotTag = spotTag;
+	} // setSpotTag
 	
 	/**
 	 * @return the minStrength
@@ -62,7 +62,7 @@ public class TagReaderSighting {
 	 *         of position estimation)
 	 */
 	public boolean setStrength(int strength) {
-		if (getLastUpdate().plusSeconds(configuration.getStrengthAggregationAgedSeconds()).isBeforeNow()) {
+		if (getLastUpdate().plusSeconds(configuration.getTagSpotTagSightingActiveSeconds()).isBeforeNow()) {
 			// If last update plus aggregation aged delta is older than now,
 			// discard previous minimal strength value and use the new one.
 			setMinStrength(strength);
@@ -101,11 +101,11 @@ public class TagReaderSighting {
 	
 	/**
 	 * Set active status to inactive, if last update is older than
-	 * TagReaderSightingActiveSeconds
+	 * TagSpotTagSightingActiveSeconds
 	 */
 	private void checkActiveStatus() {
 		if (active && 
-			getLastUpdate().plusSeconds(configuration.getTagReaderSightingActiveSeconds()).isBeforeNow()) {
+			getLastUpdate().plusSeconds(configuration.getTagSpotTagSightingActiveSeconds()).isBeforeNow()) {
 			setActive(false);
 		}
 	} // checkActiveStatus

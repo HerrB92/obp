@@ -36,6 +36,7 @@ public class ServiceConfiguration {
 	
 	private int tagButtonActiveSeconds = 5;
 	private int tagReaderSightingActiveSeconds = 5;
+	private int tagSpotTagSightingActiveSeconds = 2;
 	private int tagProximitySightingActiveSeconds = 5;
 	private int strengthAggregationWindowSeconds = 2;
 	private int strengthAggregationAgedSeconds = strengthAggregationWindowSeconds + 2;
@@ -101,6 +102,8 @@ public class ServiceConfiguration {
 	            	new Integer(properties.getProperty("TAG_BUTTON_ACTIVE_SECONDS", "5"));
 	            tagReaderSightingActiveSeconds = 
 	            	new Integer(properties.getProperty("TAG_READER_SIGHTING_ACTIVE_SECONDS", "5"));
+	            tagSpotTagSightingActiveSeconds = 
+			        new Integer(properties.getProperty("TAG_SPOT_SIGHTING_ACTIVE_SECONDS", "2"));
 	            tagProximitySightingActiveSeconds = 
 		            new Integer(properties.getProperty("TAG_PROXIMITY_SIGHTING_ACTIVE_SECONDS", "5"));
 	            strengthAggregationWindowSeconds  = 
@@ -123,6 +126,7 @@ public class ServiceConfiguration {
 			Properties properties = new Properties();
 			properties.setProperty("TAG_BUTTON_ACTIVE_SECONDS", Integer.toString(tagButtonActiveSeconds));
 			properties.setProperty("TAG_READER_SIGHTING_ACTIVE_SECONDS", Integer.toString(tagReaderSightingActiveSeconds));
+			properties.setProperty("TAG_SPOT_SIGHTING_ACTIVE_SECONDS", Integer.toString(tagSpotTagSightingActiveSeconds));
 			properties.setProperty("TAG_PROXIMITY_SIGHTING_ACTIVE_SECONDS", Integer.toString(tagProximitySightingActiveSeconds));
 			properties.setProperty("STRENGTH_AGGREGATION_WINDOW_SECONDS", Integer.toString(strengthAggregationWindowSeconds));
 			properties.setProperty("STRENGTH_AGGREGATION_AGED_SECONDS", Integer.toString(strengthAggregationAgedSeconds));
@@ -166,6 +170,20 @@ public class ServiceConfiguration {
 	public void setTagReaderSightingActiveSeconds(int tagReaderSightingActiveSeconds) {
 		this.tagReaderSightingActiveSeconds = tagReaderSightingActiveSeconds;
 	} // setTagReaderSightingActiveSeconds
+	
+	/**
+	 * @return the tagSpotTagSightingActiveSeconds
+	 */
+	public int getTagSpotTagSightingActiveSeconds() {
+		return tagSpotTagSightingActiveSeconds;
+	} // getTagSpotTagSightingActiveSeconds
+
+	/**
+	 * @param tagSpotTagSightingActiveSeconds the tagSpotTagSightingActiveSeconds to set
+	 */
+	public void setTagSpotTagSightingActiveSeconds(int tagSpotTagSightingActiveSeconds) {
+		this.tagSpotTagSightingActiveSeconds = tagSpotTagSightingActiveSeconds;
+	} // setTagSpotTagSightingActiveSeconds
 	
 	/**
 	 * @return the tagProximitySightingActiveSeconds
@@ -313,4 +331,8 @@ public class ServiceConfiguration {
 	public Collection<SpotTag> getSpotTags() {
 		return getSpotTagMap().values();
 	} // getSpotTags
+	
+	public SpotTag getSpotTag (Integer id) {
+		return getSpotTagMap().get(id);
+	} // getSpotTag
 }

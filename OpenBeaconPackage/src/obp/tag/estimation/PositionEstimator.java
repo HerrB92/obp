@@ -3,6 +3,7 @@
  */
 package obp.tag.estimation;
 
+import obp.spots.SpotType;
 import obp.tag.Tag;
 
 /**
@@ -14,4 +15,5 @@ public interface PositionEstimator {
 	public int getX();
 	public int getY();
 	public EstimationMethod getMethod();
+	public SpotType getLastEstimationSpotType();
 }

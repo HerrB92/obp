@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import obp.ServiceConfiguration;
 import obp.service.Constants;
 import obp.spots.Reader;
+import obp.spots.SpotType;
 import obp.tag.Tag;
 import obp.tag.TagReaderSighting;
 
@@ -220,7 +221,13 @@ public class DefaultPositionEstimator implements PositionEstimator {
 		this.method = method;
 	} // setMethod
 	
+	@Override
 	public EstimationMethod getMethod() {
 		return method;
 	} // getMethod
+
+	@Override
+	public SpotType getLastEstimationSpotType() {
+		return null;
+	} // getLastEstimationSpotType
 }

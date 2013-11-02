@@ -148,4 +148,6 @@ public abstract class Spot {
 	public void setY(int y) {
 		this.y = y;
 	}
+	
+	public abstract SpotType getType();
 }

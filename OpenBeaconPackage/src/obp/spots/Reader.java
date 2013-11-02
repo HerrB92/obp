@@ -16,5 +16,10 @@ public class Reader extends Spot {
 	
 	public Reader(int id, String name, int room, int floor, int group, int x, int y) {
 		super(id, name, room, floor, group, x, y);
-	} // Constructor (full)
+	} // Constructor (full)	
+
+	@Override
+	public SpotType getType() {
+		return SpotType.Reader;
+	} // getType
 }

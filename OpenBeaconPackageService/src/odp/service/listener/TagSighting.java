@@ -527,6 +527,8 @@ public class TagSighting {
 				tagCRC = 0xff & tagData[15];
 				
 				// Fixed value (as in the original OpenBeacon C++ code)
+				// This is always energy level 3, as only on level 3
+				// the protocol 70 is used.
 				tagStrength = Constants.PROX_TAG_STRENGTH_MASK;
 				
 				setValidTagData(true);

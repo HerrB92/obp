@@ -5,13 +5,12 @@ package obp.listener;
 
 import java.util.ArrayList;
 
-import javax.sound.sampled.LineUnavailableException;
+//import org.joda.time.DateTime;
 
-import org.joda.time.DateTime;
 
 import obp.ServiceConfiguration;
-import obp.SoundUtils;
 import obp.service.Constants;
+import obp.service.tools.SoundUtils;
 import odp.service.listener.Listener;
 import odp.service.listener.ProximitySighting;
 import odp.service.listener.TagSighting;
@@ -21,54 +20,38 @@ import odp.service.listener.TagSighting;
  *
  */
 public class ServiceListener implements Listener {
-	private SoundUtils sound = new SoundUtils();
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
 	private final int movingTagId = 1119;
-	private final int proximityTagId1 = 1279;
+	private final int proximityTagId1 = 1278;
 	private final int proximityTagId2 = 382;
 	
-	private final int readerId = 1259;
-	
-	private int minReaderStrength = 99;
+//	private final int readerId = 1259;
+//	
+//	private int minReaderStrength = 99;
 	private int minProximityStrength = 99;
-	
-	private int lastSequence;
-	private int lastStrength;
-	
+		
 	private int count = 0;
-	private int strength0;
-	private int strength1;
-	private int strength2;
-	private int strength3;
 	
 	/**
 	 * @param dataIndex
 	 * @param estimator
 	 */
-	public ServiceListener() {
-	} // Constructor
-	
-	private void beep(int hz) {
-		try {
-			SoundUtils.tone(hz, 485, 1);
-		} catch (LineUnavailableException e) {
-			e.printStackTrace();
-		}
-	} // beep
+	public ServiceListener() {} // Constructor
 
 	/* (non-Javadoc)
 	 * @see obp.listener.Listener#messageReceived(obp.tag.TagSighting)
 	 */
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
-		DateTime now = DateTime.now();
+		//DateTime now = DateTime.now();
 		
 		int strength = tagSighting.getStrength();
 		if (configuration.isValidReader(tagSighting.getReaderId()) && 
 			strength != Constants.NOT_DEFINED) {
-			int id = tagSighting.getTagId();
 			
+			int id = tagSighting.getTagId();
+						
 			// First signal
 //			if (id == movingTagId && tagSighting.getReaderId() == readerId) {
 //				beep();
@@ -182,35 +165,47 @@ public class ServiceListener implements Listener {
 //				}
 //			}
 			
-//			System.out.println(tagSighting.getTagSequence() + " " + tagSighting.getInterface() + 
-//					" " + tagSighting.getTagProtocol() + " " + tagSighting.getStrength());
-			
+			// Proximity
 			if (id == movingTagId) {
-//				System.out.println("ID: " + id + " Strength: " + tagSighting.getStrength());
+				if (tagSighting.getTagProtocol() == 70) {
+					System.out.println(
+							"ID: " + id +
+							" TagSeq: " + tagSighting.getTagSequence() + 
+							" Intrfc: " + tagSighting.getInterface() +
+							" Prox: " + tagSighting.getProximitySightings().size() + 
+							// " Prot: " + tagSighting.getTagProtocol() + 
+							" Strength: " + tagSighting.getStrength());
+				}
+				
 				ArrayList<ProximitySighting> sightings = tagSighting.getProximitySightings();
+				int proxId;
 				
 				if (sightings != null && sightings.size() > 0) {
 					count++;
 					for (ProximitySighting sighting : sightings) {
-						if (sighting.getTagId() == proximityTagId1 ||
-							sighting.getTagId() == proximityTagId2) {
+						proxId = sighting.getTagId();
+						if (proxId == proximityTagId1 ||
+							proxId == proximityTagId2) {
 							strength = sighting.getStrength();
 							
-							System.out.println("ID: " + id + ": Prox1: " + strength + "| Count: " + count);
-							switch (sighting.getTagId()) {
+							System.out.println("ID: " + id + ": Prox: " + proxId + "| Count: " + count);
+							switch (proxId) {
 							case proximityTagId1:
-								beep(500);
+								SoundUtils.setHz(500);
+								new SoundUtils().start();
 								break;
 							case proximityTagId2:
-								beep(1000);
+								SoundUtils.setHz(1000);
+								new SoundUtils().start();
 								break;
 							}
 							
 							if (strength < minProximityStrength) {
 								minProximityStrength = strength;
-								System.out.println("ID: " + id + "|Prox1: " + strength);
+								System.out.println("ID: " + id + "|Strength: " + strength);
 								
-								beep(750);
+								SoundUtils.setHz(750);
+								new SoundUtils().start();
 							}
 						}
 					}

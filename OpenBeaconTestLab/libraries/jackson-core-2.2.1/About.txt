@@ -1,4 +1,0 @@
-Description: Jackson JSON Serializer/Deserializer (Jackson core module)
-Homepage:    https://github.com/FasterXML/jackson-core/wiki
-JavaDoc:     http://fasterxml.github.io/jackson-core/javadoc/2.2.0/
-Get Started: http://wiki.fasterxml.com/JacksonInFiveMinutes

@@ -27,7 +27,6 @@ public class OpenBeaconPackage {
 	 * @throws InterruptedException 
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		//int[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 		ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 		//System.out.println(configuration.getConfigurationLoaded());
 		//configuration.saveConfiguration();
@@ -42,7 +41,10 @@ public class OpenBeaconPackage {
 		
 		outputJSON = new JSONOutputService("/var/www/html/json/obp.json");
 		
-		timer = new Timer();
+		// Timer(true) -> Make the timer a daemon thread. If the only 
+		// remaining threads are daemon threads, the application exits.
+		// See http://www.math.uni-hamburg.de/doc/java/tutorial/essential/threads/timer.html
+		timer = new Timer(true);
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {

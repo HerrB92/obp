@@ -1,4 +1,0 @@
-Description: Joda (Advanced) DateTime implementation for Java
-Homepage:    http://joda.sourceforge.net/
-JavaDoc:     http://www.joda.org/joda-time/apidocs/index.html
-Get Started: http://joda-time.sourceforge.net/quickstart.html

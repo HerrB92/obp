@@ -165,6 +165,9 @@ public class ServiceListener implements Listener {
 //				}
 //			}
 			
+//			Class.forName( "com.mysql.jdbc.Driver" );
+//			cn = DriverManager.getConnection( "jdbc:mysql://MyDbComputerNameOrIP:3306/myDatabaseName", dbUsr, dbPwd );
+			
 			// Proximity
 			if (id == movingTagId) {
 				if (tagSighting.getTagProtocol() == 70) {

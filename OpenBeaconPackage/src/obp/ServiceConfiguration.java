@@ -21,6 +21,7 @@ import java.util.Set;
 import obp.service.Constants;
 import obp.spots.Reader;
 import obp.spots.SpotTag;
+import obp.tag.Tag;
 
 /**
  * Singleton
@@ -45,8 +46,13 @@ public class ServiceConfiguration {
 	
 	private HashMap<Integer, Reader> readerMap = new HashMap<Integer, Reader>();
 	private HashMap<Integer, SpotTag> spotTagMap = new HashMap<Integer, SpotTag>();
-	private HashMap<Integer, HashMap<Integer, Long>> readerDistanceMap = new HashMap<Integer, HashMap<Integer, Long>>();
-	private HashMap<Integer, HashMap<Integer, Long>> spotTagDistanceMap = new HashMap<Integer, HashMap<Integer, Long>>();
+	private HashMap<Integer, HashMap<Integer, Long>> readerDistanceMap = 
+			new HashMap<Integer, HashMap<Integer, Long>>();
+	private HashMap<Integer, HashMap<Integer, Long>> spotTagDistanceMap = 
+			new HashMap<Integer, HashMap<Integer, Long>>();
+	
+	protected HashMap<Integer, Tag> registrationTags = new HashMap<Integer, Tag>();
+	protected HashMap<Integer, Tag> deRegistrationTags = new HashMap<Integer, Tag>();
 	
 	private ServiceConfiguration() {}
 	

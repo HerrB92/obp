@@ -15,7 +15,9 @@ import obp.tag.Tag;
  *
  */
 public class DataIndex {
-	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance(); 
+	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	
+	protected HashMap<Integer, Tag> registeredTags = new HashMap<Integer, Tag>();
 	protected HashMap<Integer, Tag> tagMap = new HashMap<Integer, Tag>();
 	protected HashMap<Integer, Reader> unknownReaderMap = new HashMap<Integer, Reader>();
 	

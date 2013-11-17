@@ -11,6 +11,7 @@
 		<property name="hibernate.connection.url">jdbc:mysql://localhost:3306/obp</property>
 		<property name="hibernate.connection.username">root</property>
 		<property name="hibernate.connection.password"></property>
+		<property name="hibernate.connection.zeroDateTimeBehavior">convertToNull</property>
 		
 		<!-- JDBC connection pool (use the built-in) -->
 		<property name="hibernate.connection.pool_size">1</property>

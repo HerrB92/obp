@@ -14,7 +14,7 @@
 	<classpathentry kind="lib" path="lib/hibernate-core-4.2.7.SP1.jar" sourcepath="libraries/hibernate-release-4.2.7.SP1/project/hibernate-core/src"/>
 	<classpathentry kind="lib" path="lib/mysql-connector-java-5.1.27-bin.jar"/>
 	<classpathentry kind="lib" path="lib/hibernate-entitymanager-4.2.7.SP1.jar"/>
-	<classpathentry kind="lib" path="lib/hibernate-jpa-2.0-api-1.0.1.Final.jar" sourcepath="libraries/hibernate-release-4.2.7.SP1/project/hibernate-core/src"/>
+	<classpathentry kind="lib" path="lib/hibernate-jpa-2.0-api-1.0.1.Final.jar" sourcepath="/OpenBeaconPackage/libraries/hibernate-jpa-2.0-api-1.0.1.Final-sources/hibernate-jpa-2.0-api-1.0.1.Final-sources.jar"/>
 	<classpathentry kind="lib" path="lib/dom4j-1.6.1.jar"/>
 	<classpathentry kind="lib" path="lib/antlr-2.7.7.jar"/>
 	<classpathentry kind="lib" path="lib/javassist-3.18.1-GA.jar"/>

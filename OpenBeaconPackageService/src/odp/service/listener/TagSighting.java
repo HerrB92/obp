@@ -258,7 +258,7 @@ public class TagSighting {
 				} else {
 					// tagStrength = -1;
 					// tagSequence = 0;
-					System.out.printf("\t\tunknown old packet protocol2[%i] key[%i] ", tempProtocol);
+					System.out.println("Unknown tag protocol 2: " + tempProtocol);
 				}
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_EXT:

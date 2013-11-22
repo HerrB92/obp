@@ -33,7 +33,7 @@ public class SoundUtils extends Thread {
 	
 	// Beep duration in milliseconds. On the system used for development,
 	// 450 was the lowest working value
-	private static int milliseconds = 450; 
+	private static int milliseconds = 500; 
 	
 	// Prevent trying to play a sound
 	// while a sound is already played

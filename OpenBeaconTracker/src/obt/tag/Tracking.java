@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 
+import obt.tag.estimation.EstimationMethod;
+
 import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
@@ -47,11 +49,16 @@ public class Tracking {
 	@Column
 	private boolean button;
 	
+	@Column
+	@Enumerated(EnumType.STRING)
+	private EstimationMethod method;
+	
 	public Tracking() {
-		this(0, "", TrackingAction.Unknown, 0, 0, false);
+		this(0, "", TrackingAction.Unknown, 0, 0, false, EstimationMethod.None);
 	}
 	
-	public Tracking(long runId, String tagKey, TrackingAction action, int x, int y, boolean button) {
+	public Tracking(long runId, String tagKey, TrackingAction action, 
+					int x, int y, boolean button, EstimationMethod method) {
 		this.runId = runId;
 		this.timestamp = DateTime.now();
 		this.tagKey = tagKey;
@@ -59,5 +66,6 @@ public class Tracking {
 		this.x = x;
 		this.y = y;
 		this.button = button;
+		this.method = method;
 	}
 }

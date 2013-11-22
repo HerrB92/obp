@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 
+import obp.service.tools.SoundUtils;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.persistence.DatabaseSessionFactory;
@@ -97,8 +98,10 @@ public class ServiceListener implements Listener {
 	private void saveTrack(Tag tag, TrackingAction action) {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
 		session.beginTransaction();
-		session.save(new Tracking(getRunId(), tag.getKey(), action, tag.getX(), tag.getY(), tag.isButtonPressed()));
+		session.save(new Tracking(getRunId(), tag.getKey(), action, tag.getX(), tag.getY(), tag.isButtonPressed(), tag.getMethod()));
 		session.getTransaction().commit();
+		
+		tag.resetMainDataChanged();
 	} // saveTrack
 	
 	/* (non-Javadoc)
@@ -143,21 +146,30 @@ public class ServiceListener implements Listener {
 									getDataIndex().addTag(tag);
 								}
 								
-								if (!tag.isRegistered() && configuration.isRegisterTag(tagKey)) {
-									tag.setRegistered(true);
+								SoundUtils.setHz(500);
+								new SoundUtils().start();
+								
+								tag.setLastSeen(now);
+								
+								if (tag.isRegistered()) {
+									if (configuration.isUnRegisterTag(tagKey)) {
+										tag.unregister(spotTag.getX(), spotTag.getY());
+										saveTrack(tag, TrackingAction.UnRegister);
+									}
+								} else if (configuration.isRegisterTag(tagKey)) {
+									tag.register();
 									saveTrack(tag, TrackingAction.Register);
-								} else if (tag.isRegistered() && configuration.isUnRegisterTag(tagKey)) {
-									tag.setRegistered(false);
-									saveTrack(tag, TrackingAction.UnRegister);
 								}
 								
-								tag.addSpotTagSighting(spotTag, sighting.getStrength());
+								if (tag.isRegistered()) {
+									tag.addSpotTagSighting(spotTag, sighting.getStrength());
 								
-								if (tag.needsEstimation()) {
-									tag.updatePositionEstimation();
+									if (tag.needsEstimation()) {
+										tag.updatePositionEstimation();
 									
-									if (tag.isRegistered()) {
-										saveTrack(tag, TrackingAction.Spot);
+										if (tag.isMainDataChanged()) {
+											saveTrack(tag, TrackingAction.Spot);
+										}
 									}
 								}
 							}
@@ -179,32 +191,44 @@ public class ServiceListener implements Listener {
 						tagSighting.getProximitySightings().size() > 0) {
 						
 						String otherTagKey;
+						Spot spotTag;
 						for (ProximitySighting sighting : tagSighting.getProximitySightings()) {
 							otherTagKey = "T" + sighting.getTagId();
 							
 							if (configuration.isSpotTag(otherTagKey)) {
-								if (!tag.isRegistered() && configuration.isRegisterTag(otherTagKey)) {
-									tag.setRegistered(true);
+								SoundUtils.setHz(750);
+								new SoundUtils().start();
+								
+								spotTag = configuration.getSpot(otherTagKey);
+								
+								if (tag.isRegistered()) {
+									if (configuration.isUnRegisterTag(otherTagKey)) {
+										tag.unregister(spotTag.getX(), spotTag.getY());
+										saveTrack(tag, TrackingAction.UnRegister);
+									}
+								} else if (configuration.isRegisterTag(otherTagKey)) {
+									tag.register();
 									saveTrack(tag, TrackingAction.Register);
-								} else if (tag.isRegistered() && configuration.isUnRegisterTag(otherTagKey)) {
-									tag.setRegistered(false);
-									saveTrack(tag, TrackingAction.UnRegister);
 								}
 								
-								tag.addSpotTagSighting(configuration.getSpot(otherTagKey), sighting.getStrength());
-							} else {
+								if (tag.isRegistered()) {
+									tag.addSpotTagSighting(spotTag, sighting.getStrength());
+								}
+							} else if (tag.isRegistered()) {
 								tag.addProximitySighting(sighting);
 							}
 						}
 					}
 					
-					tag.setButtonPressed(tagSighting.isTagButtonPressed());
-					
-					if (tag.needsEstimation()) {
-						tag.updatePositionEstimation();
+					if (tag.isRegistered()) {
+						tag.setButtonPressed(tagSighting.isTagButtonPressed());
 						
-						if (tag.isRegistered()) {
-							saveTrack(tag, TrackingAction.Spot);
+						if (tag.needsEstimation()) {
+							tag.updatePositionEstimation();
+							
+							if (tag.isMainDataChanged()) {
+								saveTrack(tag, TrackingAction.Spot);
+							}
 						}
 					}
 				}

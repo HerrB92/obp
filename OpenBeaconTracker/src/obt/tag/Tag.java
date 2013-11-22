@@ -31,12 +31,12 @@ public class Tag {
 	private String lastReaderKey = "";
 	private String lastSpotTagKey = "";
 		
-	private int tagFlags;
-	private int tagStrength;
-	private int tagSequence;
+//	private int tagFlags;
+//	private int tagStrength;
+	//private int tagSequence;
 	
-	private int sequence;
-	private int timestamp;
+//	private int sequence;
+//	private int timestamp;
 	
 //	private HashMap<String, TagReaderSighting> tagReaderSightings = new HashMap<String, TagReaderSighting>();
 	private HashMap<String, TagSpotTagSighting> spotTagSightings = new HashMap<String, TagSpotTagSighting>();
@@ -47,6 +47,7 @@ public class Tag {
 	private EstimationMethod method;
 	private boolean needsEstimation = false;
 	private boolean registered = false;
+	private boolean mainDataChanged = false;
 	
 	/**
 	 * @param id Tag id
@@ -122,10 +123,16 @@ public class Tag {
 			// If the information is received, that the button is pressed,
 			// set buttonPressed to true and update buttonPressedStart date.			
 			if (buttonPressed == true) {
+				if (isButtonPressed() == false) {
+					setMainDataChanged(true);
+				}
+				
 				this.buttonPressed = true;
 				setButtonPressedStart(DateTime.now());
 			} else if (isButtonPressed() == true && 
 				getButtonPressedStart().plusSeconds(configuration.getTagButtonActiveSeconds()).isBeforeNow()) {
+				
+				setMainDataChanged(true);
 				this.buttonPressed = false;
 			}
 		}
@@ -174,75 +181,75 @@ public class Tag {
 		this.lastSpotTagKey = key;
 	}
 
-	/**
-	 * @return the tagFlags
-	 */
-	public int getTagFlags() {
-		return tagFlags;
-	} // getTagFlags
-
-	/**
-	 * @param tagFlags the tagFlags to set
-	 */
-	public void setTagFlags(int tagFlags) {
-		this.tagFlags = tagFlags;
-	} // setTagFlags
-
-	/**
-	 * @return the tagStrength
-	 */
-	public int getTagStrength() {
-		return tagStrength;
-	} // getTagStrength
-
-	/**
-	 * @param tagStrength the tagStrength to set
-	 */
-	public void setTagStrength(int tagStrength) {
-		this.tagStrength = tagStrength;
-	} // setTagStrength
-
-	/**
-	 * @return the tagSequence
-	 */
-	public int getTagSequence() {
-		return tagSequence;
-	} // getTagSequence
-
-	/**
-	 * @param tagSequence the tagSequence to set
-	 */
-	public void setTagSequence(int tagSequence) {
-		this.tagSequence = tagSequence;
-	}
-
-	/**
-	 * @return the sequence
-	 */
-	public int getSequence() {
-		return sequence;
-	}
-
-	/**
-	 * @param sequence the sequence to set
-	 */
-	public void setSequence(int sequence) {
-		this.sequence = sequence;
-	}
-
-	/**
-	 * @return the timestamp
-	 */
-	public int getTimestamp() {
-		return timestamp;
-	}
-
-	/**
-	 * @param timestamp the timestamp to set
-	 */
-	public void setTimestamp(int timestamp) {
-		this.timestamp = timestamp;
-	}
+//	/**
+//	 * @return the tagFlags
+//	 */
+//	public int getTagFlags() {
+//		return tagFlags;
+//	} // getTagFlags
+//
+//	/**
+//	 * @param tagFlags the tagFlags to set
+//	 */
+//	public void setTagFlags(int tagFlags) {
+//		this.tagFlags = tagFlags;
+//	} // setTagFlags
+//
+//	/**
+//	 * @return the tagStrength
+//	 */
+//	public int getTagStrength() {
+//		return tagStrength;
+//	} // getTagStrength
+//
+//	/**
+//	 * @param tagStrength the tagStrength to set
+//	 */
+//	public void setTagStrength(int tagStrength) {
+//		this.tagStrength = tagStrength;
+//	} // setTagStrength
+//
+////	/**
+////	 * @return the tagSequence
+////	 */
+////	public int getTagSequence() {
+////		return tagSequence;
+////	} // getTagSequence
+////
+////	/**
+////	 * @param tagSequence the tagSequence to set
+////	 */
+////	public void setTagSequence(int tagSequence) {
+////		this.tagSequence = tagSequence;
+////	}
+//
+//	/**
+//	 * @return the sequence
+//	 */
+//	public int getSequence() {
+//		return sequence;
+//	}
+//
+//	/**
+//	 * @param sequence the sequence to set
+//	 */
+//	public void setSequence(int sequence) {
+//		this.sequence = sequence;
+//	}
+//
+//	/**
+//	 * @return the timestamp
+//	 */
+//	public int getTimestamp() {
+//		return timestamp;
+//	}
+//
+//	/**
+//	 * @param timestamp the timestamp to set
+//	 */
+//	public void setTimestamp(int timestamp) {
+//		this.timestamp = timestamp;
+//	}
 	
 	public void addProximitySighting(ProximitySighting newSighting) {
 		String tagKey = "T" + newSighting.getTagId();
@@ -381,7 +388,10 @@ public class Tag {
 	 * @param x the x to set
 	 */
 	protected void setX(int x) {
-		this.x = x;
+		if (this.x != x) {
+			this.x = x;
+			setMainDataChanged(true);
+		}
 	}
 
 	/**
@@ -395,7 +405,10 @@ public class Tag {
 	 * @param y the y to set
 	 */
 	protected void setY(int y) {
-		this.y = y;
+		if (this.y != y) {
+			this.y = y;
+			setMainDataChanged(true);
+		}
 	}
 	
 	/**
@@ -439,9 +452,22 @@ public class Tag {
 	 * @param registered Set to true to signal that the the tag is registered or
 	 *        false to signal that the flag is unregistered
 	 */
-	public void setRegistered(boolean registered) {
-		this.registered = registered;
-	}
+	public void register() {		
+		registered = true;
+	} // register
+	
+	/**
+	 * @param spotTagX X coordinate of the unregister spot tag
+	 * @param spotTagY Y coordinate of the unregister spot tag
+	 */
+	public void unregister(int spotTagX, int spotTagY) {
+		registered = false;
+		
+		setX(spotTagX);
+		setY(spotTagY);
+		setMethod(EstimationMethod.OneSpotTag);
+		needsEstimation = false;
+	} // unregister
 	
 //	/**
 //	 * @return the accuracy level
@@ -457,6 +483,29 @@ public class Tag {
 //		this.accuracyLevel = level;
 //	}
 	
+	/**
+	 * Signals, if x/y position or button pressed information has changed
+	 * 
+	 * @return the changed
+	 */
+	public boolean isMainDataChanged() {
+		return mainDataChanged;
+	}
+
+	/**
+	 * @param changed the changed to set
+	 */
+	protected void setMainDataChanged(boolean changed) {
+		this.mainDataChanged = changed;
+	}
+	
+	/**
+	 * Set the MainDataChanged flag to false
+	 */
+	public void resetMainDataChanged() {
+		this.mainDataChanged = false;
+	}
+
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */

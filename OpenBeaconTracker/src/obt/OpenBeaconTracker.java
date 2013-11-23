@@ -10,7 +10,9 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.index.ObtRun;
-import obt.index.output.JSONOutputService;
+import obt.index.output.OutputJSONRegisteredTagKeys;
+import obt.index.output.OutputJSONTagData;
+import obt.index.output.OutputJSONUnRegisteredTagKeys;
 import obt.listener.ServiceListener;
 import obt.persistence.DatabaseSessionFactory;
 import odp.service.listener.ListenerService;
@@ -33,18 +35,17 @@ import odp.service.listener.ListenerService;
  * 
  * @author Björn Behrens
  */
-public class OpenBeaconTracker {
-	// Provide a globally available in-memory data store
-	private static DataIndex index = new DataIndex();
-	
+public class OpenBeaconTracker {	
 	// JSON output writer service
-	private static JSONOutputService outputJSON;
+	private static OutputJSONTagData outputJSONTagData;
+	private static OutputJSONRegisteredTagKeys outputJSONRegisteredTagKeys;
+	private static OutputJSONUnRegisteredTagKeys outputJSONUnRegisteredTagKeys;
 	
 	// Time object to frequently write the current in-memory
 	// data in a certain format as JSON into a file, accessible
 	// by the web client.
 	private static Timer timer;
-
+	
 	/**
 	 * @param args
 	 * @throws InterruptedException
@@ -52,6 +53,7 @@ public class OpenBeaconTracker {
 	public static void main(String[] args) throws InterruptedException {
 		// Load configuration
 		ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+		DataIndex index = DataIndex.getInstance();
 		
 		ObtRun run = new ObtRun();
 		
@@ -68,7 +70,9 @@ public class OpenBeaconTracker {
 		service.start();
 		
 		// Create JSON output service
-		outputJSON = new JSONOutputService("/var/www/html/json/obtracker.json");
+		outputJSONTagData = new OutputJSONTagData("/var/www/html/json/obtracker.json");
+		outputJSONRegisteredTagKeys = new OutputJSONRegisteredTagKeys("/var/www/html/json/obtregistered.json");
+		outputJSONUnRegisteredTagKeys = new OutputJSONUnRegisteredTagKeys("/var/www/html/json/obtunregistered.json");
 
 		// Create the Timer object to frequently update the
 		// JSON data.
@@ -82,7 +86,9 @@ public class OpenBeaconTracker {
 			@Override
 			public void run() {
 				try {
-					outputJSON.update(index);
+					outputJSONRegisteredTagKeys.update();
+					outputJSONUnRegisteredTagKeys.update();
+					outputJSONTagData.update();
 				} catch (JsonGenerationException e) {
 					e.printStackTrace();
 					timer.cancel();

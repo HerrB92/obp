@@ -15,13 +15,22 @@ import obt.tag.Tag;
  *
  */
 public class DataIndex {
+	private static DataIndex instance = null;
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
-//	protected ArrayList<String> registeredTags = new ArrayList<String>();
+	protected final HashMap<String, Tag> tagMap = new HashMap<String, Tag>();
+	protected final CircularQueue<String> registeredTagKeys = new CircularQueue<String>(10);
+	protected final CircularQueue<String> unRegisteredTagKeys = new CircularQueue<String>(10);
 	
-	protected HashMap<String, Tag> tagMap = new HashMap<String, Tag>();
+	private DataIndex() {} // Constructor
 	
-	public DataIndex() { } // Constructor
+	public static DataIndex getInstance() {
+		if (instance == null) {
+			instance = new DataIndex();
+		}
+		
+		return instance;
+	} // getInstance
 	
 	protected HashMap<String, Tag> getTagMap() {
 		return tagMap;
@@ -43,25 +52,19 @@ public class DataIndex {
 		return configuration.getReaders();
 	} // getKnownReaders
 	
-//	public void registerTag(Tag tag) {
-//		if (!registeredTags.contains(tag.getKey())) {
-//			tag.setRegistered(true);
-//			registeredTags.add(tag.getKey());
-//			
-//			System.out.println(tag.getKey() + " registered ");
-//		}
-//	} // registerTag
-//	
-//	public boolean isRegistered(String key) {
-//		return registeredTags.contains(key);
-//	} // isRegistered
-//	
-//	public void unRegisterTag(Tag tag) {
-//		if (registeredTags.contains(tag.getKey())) {
-//			tag.setRegistered(false);
-//			registeredTags.remove(tag.getKey());
-//			
-//			System.out.println(tag.getKey() + " unRegistered ");
-//		}
-//	} // unRegisterTag
+	public void registerTagKey(String tagKey) {
+		registeredTagKeys.offer(tagKey);
+	} // registerTagKey
+	
+	public CircularQueue<String> getRegisteredTagKeys() {
+		return registeredTagKeys;
+	} // getRegisteredTagKeys
+	
+	public void unRegisterTagKey(String tagKey) {
+		unRegisteredTagKeys.offer(tagKey);
+	} // registerTagKey
+	
+	public CircularQueue<String> getUnRegisteredTagKeys() {
+		return unRegisteredTagKeys;
+	} // getUnRegisteredTagKeys
 }

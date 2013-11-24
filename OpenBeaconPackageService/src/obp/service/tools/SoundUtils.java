@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obp.service.tools;
 
@@ -18,12 +29,12 @@ import javax.sound.sampled.*;
  * played.
  * 
  * Partly based on code provided by
- * Gagnon, R. as user RealHowTo (2011) 'Answer to: How to play a sound (alert) in a java application?'
+ * Gagnon, R. as RealHowTo (2011) 'Answer to: How to play a sound (alert) in a java application?'
  * stackoverflow.com, 14.07.2011, 21:17 [Online]
  * Available at: http://stackoverflow.com/a/6700039 (Accessed: 12.10.2013)
  * 
- * @author bbehrens
- * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class SoundUtils extends Thread {
 	private static final float SAMPLE_RATE = 8000f;
@@ -39,9 +50,10 @@ public class SoundUtils extends Thread {
 	// while a sound is already played
 	private static boolean playing = false;
 
-	/* Method called for a new thread of SoundUtils
+	/**
+	 * Method called for a new thread of SoundUtils
 	 * 
-	 * Synchronized: Avoid being called by different SoundUtils
+	 * Tagged as synchronized: Avoid being called by different SoundUtils
 	 * threads with an in-between state of the "playing" variable.
 	 * 
 	 * (non-Javadoc)
@@ -83,6 +95,10 @@ public class SoundUtils extends Thread {
 		SoundUtils.milliseconds = milliseconds;
 	} // setDurationMilliseconds
 
+	/**
+	 * @param hz
+	 * @param msecs
+	 */
 	public static void beep(int hz, int msecs) {
 		try {
 			tone(hz, msecs, 1.0);
@@ -91,11 +107,22 @@ public class SoundUtils extends Thread {
 		}
 	} // beep
 
+	/**
+	 * @param hz
+	 * @param msecs
+	 * @throws LineUnavailableException
+	 */
 	public static void tone(int hz, int msecs)
 		throws LineUnavailableException {
 		tone(hz, msecs, 1.0);
 	} // tone
 
+	/**
+	 * @param hz
+	 * @param msecs
+	 * @param volume
+	 * @throws LineUnavailableException
+	 */
 	public static void tone(int hz, int msecs, double volume)
 		throws LineUnavailableException {
 		

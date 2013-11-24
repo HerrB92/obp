@@ -7,10 +7,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 import obt.configuration.ServiceConfiguration;
+import obt.index.DataIndex;
 import obt.spots.Spot;
 import obt.tag.estimation.EstimationMethod;
 import obt.tag.estimation.PositionEstimator;
-import odp.service.listener.ProximitySighting;
+import odp.service.sighting.ProximitySighting;
 
 import org.joda.time.DateTime;
 
@@ -20,6 +21,7 @@ import org.joda.time.DateTime;
  */
 public class Tag {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	private final DataIndex index = DataIndex.getInstance();
 	private PositionEstimator estimator;
 	
 	private int id;
@@ -440,20 +442,14 @@ public class Tag {
 	protected void setNeedsEstimation(boolean estimate) {
 		this.needsEstimation = estimate;
 	}
-	
-	/**
-	 * @return Returns true, if the tag is currently registered. False otherwise. 
-	 */
-	public boolean isRegistered() {
-		return registered;
-	}
 
 	/**
 	 * @param registered Set to true to signal that the the tag is registered or
 	 *        false to signal that the flag is unregistered
 	 */
-	public void register() {		
+	public void register() {
 		registered = true;
+		index.registerTagKey(getKey());
 	} // register
 	
 	/**
@@ -462,12 +458,20 @@ public class Tag {
 	 */
 	public void unregister(int spotTagX, int spotTagY) {
 		registered = false;
+		index.unRegisterTagKey(getKey());
 		
 		setX(spotTagX);
 		setY(spotTagY);
 		setMethod(EstimationMethod.OneSpotTag);
 		needsEstimation = false;
 	} // unregister
+	
+	/**
+	 * @return Returns true, if the tag is currently registered. False otherwise. 
+	 */
+	public boolean isRegistered() {
+		return registered;
+	}
 	
 //	/**
 //	 * @return the accuracy level

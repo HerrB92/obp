@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.listener;
 
@@ -8,7 +19,6 @@ import java.util.ArrayList;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 
-import obp.service.tools.SoundUtils;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.persistence.DatabaseSessionFactory;
@@ -19,12 +29,16 @@ import obt.tag.TrackingAction;
 import obt.tag.estimation.DefaultPositionEstimator;
 import obt.tag.estimation.PositionEstimator;
 import odp.service.listener.Listener;
-import odp.service.listener.ProximitySighting;
-import odp.service.listener.TagSighting;
+import odp.service.sighting.ProximitySighting;
+import odp.service.sighting.TagSighting;
 
 /**
- * @author bbehrens
- *
+ * 
+ * Code based on the work of
+ * 2007 Alessandro Marianantoni <alex@alexrieti.com>
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class ServiceListener implements Listener {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
@@ -135,7 +149,7 @@ public class ServiceListener implements Listener {
 						String otherTagKey;
 						
 						for (ProximitySighting sighting : rawSightings) {
-							otherTagKey = "T" + sighting.getTagId();
+							otherTagKey = sighting.getTagKey();
 							
 							if (!configuration.isSpotTag(otherTagKey)) {
 								tag = getDataIndex().getTagByKey(otherTagKey);
@@ -146,8 +160,8 @@ public class ServiceListener implements Listener {
 									getDataIndex().addTag(tag);
 								}
 								
-								SoundUtils.setHz(500);
-								new SoundUtils().start();
+//								SoundUtils.setHz(500);
+//								new SoundUtils().start();
 								
 								tag.setLastSeen(now);
 								
@@ -196,8 +210,8 @@ public class ServiceListener implements Listener {
 							otherTagKey = "T" + sighting.getTagId();
 							
 							if (configuration.isSpotTag(otherTagKey)) {
-								SoundUtils.setHz(750);
-								new SoundUtils().start();
+//								SoundUtils.setHz(750);
+//								new SoundUtils().start();
 								
 								spotTag = configuration.getSpot(otherTagKey);
 								

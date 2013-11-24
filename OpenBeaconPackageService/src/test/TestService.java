@@ -24,7 +24,7 @@ package test;
 
 import odp.service.listener.Listener;
 import odp.service.listener.ListenerService;
-import odp.service.listener.TagSighting;
+import odp.service.sighting.TagSighting;
 
 public class TestService implements Listener {
 	

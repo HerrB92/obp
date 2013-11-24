@@ -1,38 +1,54 @@
-// Tools for decryption 
-// based on a java implementation of Ma Bingyao optimized for 16 byte data
- 
-
- /*
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU General Public License as published by
- the Free Software Foundation; version 2.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU General Public License along
- with this program; if not, write to the Free Software Foundation, Inc.,
- 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-
+/**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-
 package obp.service.tools;
 
 
+/**
+ * Code based on the work of
+ * 2007 Alessandro Marianantoni <alex@alexrieti.com>
+ * 
+ * "Tools for decryption based on a java implementation of 
+ * Ma Bingyao optimized for 16 byte data"
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
+ */
 public class Tools {
-    
-    // Decrypt data with key.
+	
+    /**
+     * Decrypt data using provided encryption key (array of four long values).
+     * 
+     * @param data
+     * @param key
+     * @return
+     */
     public static byte[] decrypt(byte[] data, long[] key) {
         if (data.length == 0) {
             return data;
         }
         
         return toByteArray(decrypt(toIntArray(data, false), key), true);
-    }
+    } // decrypt
 
-    // Decrypt data with key.
+    /**
+     * Decrypt data using provided encryption key (array of four long values).
+     * 
+     * @param v
+     * @param k
+     * @return
+     */
     public static int[] decrypt(int[] v, long[] k) {
         int n = v.length - 1;
 
@@ -68,8 +84,13 @@ public class Tools {
         }
         
         return v;
-    }
+    } // decrypt
 
+    /**
+     * @param data
+     * @param includeLength
+     * @return
+     */
     private static int[] toIntArray(byte[] data, boolean includeLength) {
         int n = (((data.length & 3) == 0)
                 ? (data.length >>> 2)
@@ -88,10 +109,15 @@ public class Tools {
             result[i >>> 2] |= (0x000000ff & data[i]) << ((i & 3) << 3);
         }
         return result;
-    }
+    } // toIntArray
 
-     //Convert int array[] to byte array.
-    
+    /**
+     * Convert int array[] to byte array.
+     * 
+     * @param data
+     * @param includeLength
+     * @return
+     */
     private static byte[] toByteArray(int[] data, boolean includeLength) {
         int n = data.length << 2;
         byte[] result = new byte[n];
@@ -100,8 +126,12 @@ public class Tools {
             result[i] = (byte) ((data[i >>> 2] >>> ((i & 3) << 3)) & 0xff);
         }
         return result;
-    }
+    } // toByteArray
     
+    /**
+     * @param input
+     * @return
+     */
     public static byte[] flipArray(byte[] input) {
 		int INT_SIZE = 4;
 		int i, j;
@@ -113,5 +143,5 @@ public class Tools {
 			}
 		}
 		return flipped_array;
-	}
+	} // flipArray
 }

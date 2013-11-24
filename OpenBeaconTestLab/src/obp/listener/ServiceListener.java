@@ -8,12 +8,14 @@ import java.util.ArrayList;
 //import org.joda.time.DateTime;
 
 
+
+
 import obp.ServiceConfiguration;
 import obp.service.Constants;
 import obp.service.tools.SoundUtils;
 import odp.service.listener.Listener;
-import odp.service.listener.ProximitySighting;
-import odp.service.listener.TagSighting;
+import odp.service.sighting.ProximitySighting;
+import odp.service.sighting.TagSighting;
 
 /**
  * @author bbehrens

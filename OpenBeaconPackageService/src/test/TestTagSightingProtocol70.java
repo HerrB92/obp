@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import java.net.DatagramPacket;
 
-import odp.service.listener.TagSighting;
+import odp.service.sighting.TagSighting;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -29,7 +29,7 @@ public class TestTagSightingProtocol70 {
 	}
 
 	/**
-	 * Test method for {@link obp.service.tagsighting.TagSighting#TagSighting(java.net.DatagramPacket, int[])}.
+	 * Test method for {@link odp.service.sighting.tagsighting.TagSighting#TagSighting(java.net.DatagramPacket, int[])}.
 	 */
 	@Test
 	public final void testTagSighting() {		
@@ -37,7 +37,7 @@ public class TestTagSightingProtocol70 {
 	}
 
 	/**
-	 * Test method for {@link obp.service.tagsighting.TagSighting#checkCRC()}.
+	 * Test method for {@link odp.service.sighting.tagsighting.TagSighting#checkCRC()}.
 	 */
 	@Test
 	public final void testData() {		

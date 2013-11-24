@@ -5,6 +5,8 @@ package obt.index.output;
 
 import java.io.IOException;
 
+import org.joda.time.DateTime;
+
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.spots.Reader;
@@ -40,6 +42,10 @@ public class OutputJSONTagData extends OutputJSON {
 	@Override
 	protected void process(JsonGenerator generator)
 			throws JsonGenerationException, IOException {
+		DateTime nowWindow = DateTime.now().minusSeconds(5);
+		
+		generator.writeNumberField("maxX", configuration.getMaxX());
+		generator.writeNumberField("maxY", configuration.getMaxY());
 		
 		generator.writeObjectFieldStart("packets");
 		generator.writeNumberField("rate", 0); // FIXME
@@ -81,8 +87,9 @@ public class OutputJSONTagData extends OutputJSON {
 		for (Reader reader: index.getKnownReaders()) {
 			generator.writeStartObject();
 			generator.writeStringField("id", reader.getKey());
+			generator.writeStringField("name", reader.getName());
 			
-			if (reader.getLastSeen() == null) {
+			if (reader.getLastSeen() == null || reader.getLastSeen().isBefore(nowWindow)) {
 				generator.writeStringField("lastseen", "0000-00-00 00:00:00");
 			} else {
 				generator.writeStringField("lastseen", reader.getLastSeen().toString());
@@ -104,9 +111,10 @@ public class OutputJSONTagData extends OutputJSON {
 		for (Spot spotTag: configuration.getSpotTags()) {
 			generator.writeStartObject();
 			generator.writeStringField("id", spotTag.getKey());
+			generator.writeStringField("name", spotTag.getName());
 			generator.writeStringField("type", spotTag.getType().name());
 			
-			if (spotTag.getLastSeen() == null) {
+			if (spotTag.getLastSeen() == null || spotTag.getLastSeen().isBefore(nowWindow)) {
 				generator.writeStringField("lastseen", "0000-00-00 00:00:00");
 			} else {
 				generator.writeStringField("lastseen", spotTag.getLastSeen().toString());

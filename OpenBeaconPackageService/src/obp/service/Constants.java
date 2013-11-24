@@ -41,4 +41,7 @@ public class Constants {
 	public static final int PROX_TAG_STRENGTH_MASK = (1<<PROX_TAG_STRENGTH_BITS)-1;
 	
 	public static final int NOT_DEFINED = -1;
+	
+	public static final String TagPrefix = "T";
+	public static final String ReaderPrefix = "R";
 }

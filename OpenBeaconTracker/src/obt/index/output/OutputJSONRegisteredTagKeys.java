@@ -26,7 +26,7 @@ public class OutputJSONRegisteredTagKeys extends OutputJSON {
 		generator.writeArrayFieldStart("tag");
 		
 		for (String tagKey: index.getRegisteredTagKeys()) {
-			generator.writeStringField("id", tagKey);
+			generator.writeString(tagKey);
 		}
 		
 		generator.writeEndArray();

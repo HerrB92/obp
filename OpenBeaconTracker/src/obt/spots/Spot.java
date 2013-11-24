@@ -55,7 +55,7 @@ public abstract class Spot implements Serializable {
 	
 	@Column
 	@Type(type="obt.persistence.joda.PersistentDateTime")
-	private DateTime lastSeen = DateTime.now();
+	private DateTime lastSeen;
 	
 	protected Spot() {
 		this(0, "-", true, 0, 0, 0, 0, 0);

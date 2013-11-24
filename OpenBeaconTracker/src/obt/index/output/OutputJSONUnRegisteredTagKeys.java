@@ -26,7 +26,7 @@ public class OutputJSONUnRegisteredTagKeys extends OutputJSON {
 		generator.writeArrayFieldStart("tag");
 		
 		for (String tagKey: index.getUnRegisteredTagKeys()) {
-			generator.writeStringField("id", tagKey);
+			generator.writeString(tagKey);
 		}
 		
 		generator.writeEndArray();

@@ -47,6 +47,9 @@ public class ServiceConfiguration {
 	private HashMap<String, HashMap<String, Long>> spotTagDistanceMap = 
 			new HashMap<String, HashMap<String, Long>>();
 	
+	private int maxX = 0;
+	private int maxY = 0;
+	
 	private ServiceConfiguration() {}
 	
 	public static ServiceConfiguration getInstance() {
@@ -62,6 +65,16 @@ public class ServiceConfiguration {
 		
 		return configuration;
 	} // getInstance
+	
+	private void updateMaxDimension(int x, int y) {
+		if (x > maxX) {
+			setMaxX(x);
+		}
+		
+		if (y > maxY) {
+			setMaxY(y);
+		}
+	} // updateMaxDimension
 	
 	private void loadConfiguration() {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
@@ -81,29 +94,42 @@ public class ServiceConfiguration {
 		List<?> readers = session.createQuery("from Reader where active = true").list();
 		
 		readerMap.clear();
+		Reader reader;
 		for (Object object : readers) {
-			addReader((Reader)object);
+			reader = (Reader)object;
+			addReader(reader);
+			updateMaxDimension(reader.getX(), reader.getY());
 		}
 		
 		// Spots
 		spotTagMap.clear();
 		
 		// SpotTags
+		SpotTag spotTag;
+		
 		List<?> spots = session.createQuery("from SpotTag where active = true").list();
 		for (Object object : spots) {
-			addSpot((SpotTag)object);
+			spotTag = (SpotTag)object;
+			addSpot(spotTag);
+			updateMaxDimension(spotTag.getX(), spotTag.getY());
 		}
 		
 		// RegisterTags
+		RegisterTag registerTag;
 		List<?> registerTags = session.createQuery("from RegisterTag where active = true").list();
 		for (Object object : registerTags) {
-			addSpot((RegisterTag)object);
+			registerTag = (RegisterTag)object;
+			addSpot(registerTag);
+			updateMaxDimension(registerTag.getX(), registerTag.getY());
 		}
 		
 		// UnRegisterTags
+		UnRegisterTag unRegisterTag;
 		List<?> unUnRegisterTags = session.createQuery("from UnRegisterTag where active = true").list();
 		for (Object object : unUnRegisterTags) {
-			addSpot((UnRegisterTag)object);
+			unRegisterTag = (UnRegisterTag)object;
+			addSpot(unRegisterTag);
+			updateMaxDimension(unRegisterTag.getX(), unRegisterTag.getY());
 		}
 		
 		// TagKeys
@@ -344,4 +370,32 @@ public class ServiceConfiguration {
 			return Long.valueOf(Constants.NOT_DEFINED);
 		}
 	} // getSpotTagDistance	
+
+	/**
+	 * @return the maxX
+	 */
+	public int getMaxX() {
+		return maxX;
+	}
+
+	/**
+	 * @param maxX the maxX to set
+	 */
+	private void setMaxX(int maxX) {
+		this.maxX = maxX;
+	}
+
+	/**
+	 * @return the maxY
+	 */
+	public int getMaxY() {
+		return maxY;
+	}
+
+	/**
+	 * @param maxY the maxY to set
+	 */
+	private void setMaxY(int maxY) {
+		this.maxY = maxY;
+	}
 }

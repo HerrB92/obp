@@ -33,7 +33,8 @@ import odp.service.listener.ListenerService;
  * and the timer object which refreshes the JSON file once
  * a second.
  * 
- * @author Björn Behrens
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class OpenBeaconTracker {	
 	// JSON output writer service
@@ -70,9 +71,12 @@ public class OpenBeaconTracker {
 		service.start();
 		
 		// Create JSON output service
-		outputJSONTagData = new OutputJSONTagData("/var/www/html/json/obtracker.json");
-		outputJSONRegisteredTagKeys = new OutputJSONRegisteredTagKeys("/var/www/html/json/obtregistered.json");
-		outputJSONUnRegisteredTagKeys = new OutputJSONUnRegisteredTagKeys("/var/www/html/json/obtunregistered.json");
+		outputJSONTagData = 
+				new OutputJSONTagData("/var/www/html/json/obtracker.json");
+		outputJSONRegisteredTagKeys = 
+				new OutputJSONRegisteredTagKeys("/var/www/html/json/obtregistered.json");
+		outputJSONUnRegisteredTagKeys = 
+				new OutputJSONUnRegisteredTagKeys("/var/www/html/json/obtunregistered.json");
 
 		// Create the Timer object to frequently update the
 		// JSON data.

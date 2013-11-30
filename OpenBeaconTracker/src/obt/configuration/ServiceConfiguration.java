@@ -1,8 +1,16 @@
 /**
- * Idea and base code taken from:
- * Bruno, E. (2011) 'Read/Write Properties Files in Java' Dr.Dobb's, 
- * The World of Software Development [Online]
- * Available at: http://www.drdobbs.com/jvm/readwrite-properties-files-in-java/231000005 (Accessed: 01.10.2013)
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.configuration;
 
@@ -26,46 +34,65 @@ import obt.spots.UnRegisterTag;
 import obt.tag.TagKey;
 
 /**
- * Singleton
+ * Singleton class which loads the available configuration data from the
+ * database on first load.
  * 
- * @author bbehrens
- *
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class ServiceConfiguration {
+	// Instance
 	private static ServiceConfiguration configuration = null;
+	
+	// Information, if configuration has been loaded
 	private boolean configurationLoaded = false;
-		
+	
+	// Data maps for settings, reader and spot tags
 	private HashMap<SettingType, Setting> settingsMap = new HashMap<SettingType, Setting>();
-		
 	private HashMap<String, Reader> readerMap = new HashMap<String, Reader>();
-	protected HashMap<String, Spot> spotTagMap = new HashMap<String, Spot>();
+	private HashMap<String, Spot> spotTagMap = new HashMap<String, Spot>();
 	
-	protected ArrayList<long[]> tagKeyList = new ArrayList<long[]>();
+	// List of tag encryption keys. Each key consists of an array
+	// of four long values.
+	private ArrayList<long[]> tagKeyList = new ArrayList<long[]>();
 	
+	// Helper maps to store pre-calculated distances between the 
+	// readers and spot tags.
 	private HashMap<String, HashMap<String, Long>> readerDistanceMap = 
 			new HashMap<String, HashMap<String, Long>>();
 	private HashMap<String, HashMap<String, Long>> spotTagDistanceMap = 
 			new HashMap<String, HashMap<String, Long>>();
 	
+	// Maximum X and Y values over all reader and spot tag positions.
 	private int maxX = 0;
 	private int maxY = 0;
 	
+	/**
+	 * Private constructor (singleton)
+	 */
 	private ServiceConfiguration() {}
 	
+	/**
+	 * Loads configuration from database on first request and
+	 * returns created instance.
+	 * 
+	 * @return Instance of ServiceConfiguration class
+	 */
 	public static ServiceConfiguration getInstance() {
 		if (configuration == null) {
 			configuration = new ServiceConfiguration();
 			configuration.loadConfiguration();
-			
-//			configuration.addReader(1259, "Spider", 1, 1, 1, 1, 1); 		// Sleeping room, Window
-//			configuration.addReader(1391, "Sleeper", 2, 1, 1, 640, 620); 	// Sleeping Room
-//			configuration.addReader(1291, "Relax", 3, 1, 1, 1, 1165); 		// Living Room
-//			configuration.addReader(1300, "Cooking", 4, 1, 1, 610, 1395); 	// Kitchen
 		}
 		
 		return configuration;
 	} // getInstance
 	
+	/**
+	 * Helper method to determine maximum X and Y values.
+	 * 
+	 * @param x
+	 * @param y
+	 */
 	private void updateMaxDimension(int x, int y) {
 		if (x > maxX) {
 			setMaxX(x);
@@ -76,6 +103,10 @@ public class ServiceConfiguration {
 		}
 	} // updateMaxDimension
 	
+	/**
+	 * Loads settings, reader, spot tag and encryption key data
+	 * from database.
+	 */
 	private void loadConfiguration() {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
 		session.beginTransaction();
@@ -152,6 +183,10 @@ public class ServiceConfiguration {
 		configurationLoaded = true;
 	} // loadConfiguration
 		
+	/**
+	 * @param settingType
+	 * @return
+	 */
 	private int getIntValue(SettingType settingType) {
 		if (settingsMap.containsKey(settingType)) {
 			return settingsMap.get(settingType).getIntValue();
@@ -217,11 +252,21 @@ public class ServiceConfiguration {
 		return configurationLoaded;
 	} // getConfigurationLoaded
 	
+	/**
+	 * @param x1
+	 * @param y1
+	 * @param x2
+	 * @param y2
+	 * @return
+	 */
 	private Long calcDistance(int x1, int y1, int x2, int y2) {
-		// Pythagoras: a2 + b2 = c2
+		// Pythagoras: a^2 + b^2 = c^2
 		return Math.round(Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2)));
 	} // calcDistance
 	
+	/**
+	 * @param newReader
+	 */
 	protected void addReader(Reader newReader) {
 		if (!readerMap.containsKey(newReader.getKey())) {
 			HashMap<String, Long> distances = new HashMap<String, Long>();
@@ -263,18 +308,33 @@ public class ServiceConfiguration {
 		}
 	} // addReader
 	
+	/**
+	 * @return
+	 */
 	protected HashMap<String, Reader> getReaderMap() {
 		return readerMap;
 	} // getReaders
 	
+	/**
+	 * @return
+	 */
 	public Collection<Reader> getReaders() {
 		return getReaderMap().values();
 	} // getReaders
 	
-	public Reader getReader (String key) {
+	/**
+	 * @param key
+	 * @return
+	 */
+	public Reader getReader(String key) {
 		return getReaderMap().get(key);
 	} // getReader
 	
+	/**
+	 * @param readerKey1
+	 * @param readerKey2
+	 * @return
+	 */
 	public long getReaderDistance(String readerKey1, String readerKey2) {
 		try {
 			return readerDistanceMap.get(readerKey1).get(readerKey2);
@@ -283,10 +343,17 @@ public class ServiceConfiguration {
 		}
 	} // getReaderDistance
 	
+	/**
+	 * @param key
+	 * @return
+	 */
 	public boolean isValidReader(String key) {
 		return getReaderMap().containsKey(key);
 	} // isValidReader
 	
+	/**
+	 * @param newSpotTag
+	 */
 	protected void addSpot(Spot newSpotTag) {
 		if (!spotTagMap.containsKey(newSpotTag.getKey())) {
 			HashMap<String, Long> distances = new HashMap<String, Long>();
@@ -329,23 +396,41 @@ public class ServiceConfiguration {
 		}
 	} // addSpotTag
 	
+	/**
+	 * @return
+	 */
 	protected HashMap<String, Spot> getSpotTagMap() {
 		return spotTagMap;
 	} // getSpotTagMap
 	
+	/**
+	 * @return
+	 */
 	public Collection<Spot> getSpotTags() {
 		return getSpotTagMap().values();
 	} // getSpotTags
 	
-	public Spot getSpot (String key) {
+	/**
+	 * @param key
+	 * @return
+	 */
+	public Spot getSpot(String key) {
 		return getSpotTagMap().get(key);
 	} // getSpotTag
 	
-	public boolean isSpotTag (String key) {
+	/**
+	 * @param key
+	 * @return
+	 */
+	public boolean isSpotTag(String key) {
 		return getSpotTagMap().containsKey(key);
 	} // isValidSpotTag
 	
-	public boolean isRegisterTag (String key) {
+	/**
+	 * @param key
+	 * @return
+	 */
+	public boolean isRegisterTag(String key) {
 		if (isSpotTag(key)) {
 			if (getSpotTagMap().get(key) instanceof RegisterTag) {
 				return true;
@@ -354,7 +439,11 @@ public class ServiceConfiguration {
 		return false;
 	} // isRegisterTag
 	
-	public boolean isUnRegisterTag (String key) {
+	/**
+	 * @param key
+	 * @return
+	 */
+	public boolean isUnRegisterTag(String key) {
 		if (isSpotTag(key)) {
 			if (getSpotTagMap().get(key) instanceof UnRegisterTag) {
 				return true;
@@ -363,6 +452,11 @@ public class ServiceConfiguration {
 		return false;
 	} // isUnRegisterTag
 	
+	/**
+	 * @param tagKey1
+	 * @param tagKey2
+	 * @return
+	 */
 	public long getSpotDistance(String tagKey1, String tagKey2) {
 		try {
 			return spotTagDistanceMap.get(tagKey1).get(tagKey2);
@@ -376,26 +470,26 @@ public class ServiceConfiguration {
 	 */
 	public int getMaxX() {
 		return maxX;
-	}
+	} // getMaxX
 
 	/**
 	 * @param maxX the maxX to set
 	 */
 	private void setMaxX(int maxX) {
 		this.maxX = maxX;
-	}
+	} // setMaxX
 
 	/**
 	 * @return the maxY
 	 */
 	public int getMaxY() {
 		return maxY;
-	}
+	} // getMaxY
 
 	/**
 	 * @param maxY the maxY to set
 	 */
 	private void setMaxY(int maxY) {
 		this.maxY = maxY;
-	}
+	} // setMaxY
 }

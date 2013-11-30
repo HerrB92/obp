@@ -20,8 +20,7 @@
  51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 
-
-package test;
+package obt;
 
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;

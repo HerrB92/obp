@@ -60,10 +60,6 @@ public class TestTagSightingProtocol70 {
 		assertEquals(17638, tagSighting.getTagSequence());
 		assertNotNull(tagSighting.getProximitySightings());
 		assertEquals(0, tagSighting.getProximitySightings().size());
-//		assertEquals(0, (int)tagSighting.getProximityTagIds().get(0));
-//		assertEquals(0, (int)tagSighting.getProximityTagIds().get(1));
-//		assertEquals(0, (int)tagSighting.getProximityTagIds().get(2));
-//		assertEquals(0, (int)tagSighting.getProximityTagIds().get(3));
 		assertEquals(12, tagSighting.getTagCRC());
 		assertTrue(tagSighting.hasValidTagCRC());
 	}

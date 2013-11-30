@@ -23,6 +23,7 @@ import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.persistence.DatabaseSessionFactory;
 import obt.spots.Spot;
+import obt.tag.RawData;
 import obt.tag.Tag;
 import obt.tag.Tracking;
 import obt.tag.TrackingAction;
@@ -43,7 +44,7 @@ import odp.service.sighting.TagSighting;
 public class ServiceListener implements Listener {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
-	private DataIndex dataIndex;
+	private DataIndex dataIndex = DataIndex.getInstance();
 	private long runId;
 	private PositionEstimator estimator;
 	
@@ -107,6 +108,16 @@ public class ServiceListener implements Listener {
 	}
 	
 	/**
+	 * @param rawData
+	 */
+	private void saveRawData(byte[] rawData) {
+		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
+		session.beginTransaction();
+		session.save(new RawData(getRunId(), rawData));
+		session.getTransaction().commit();
+	} // saveRawData
+	
+	/**
 	 * @param tag
 	 */
 	private void saveTrack(Tag tag, TrackingAction action) {
@@ -123,132 +134,132 @@ public class ServiceListener implements Listener {
 	 */
 	@Override
 	public void messageReceived(TagSighting tagSighting) {
-		if (getDataIndex() != null) {
-			DateTime now = DateTime.now();
-			String readerKey = "R" + tagSighting.getReaderId();
-			Tag tag;
+		saveRawData(tagSighting.getRawData());
+		
+		DateTime now = DateTime.now();
+		String readerKey = tagSighting.getReaderKey();
+		Tag tag;
+		
+		if (configuration.isValidReader(readerKey)) {
+			// Reader is known, update data
+			configuration.getReader(readerKey).setLastSeen(now);
 			
-			if (configuration.isValidReader(readerKey)) {
-				// Reader is known, update data
-				configuration.getReader(readerKey).setLastSeen(now);
+			String tagKey = tagSighting.getTagKey();
+			
+			if (configuration.isSpotTag(tagKey)) {
+				// A spot tag can be a spot tag, a register tag or an unregister tag
+				// Get proximity sightings and if the current tag is a:
+				// Spot Tag: update position of moving tag
+				// Register Tag: register moving tag and update position
+				// Unregister Tag: unregister moving tag and update position
+				Spot spotTag = configuration.getSpot(tagKey);
+				spotTag.setLastSeen(DateTime.now());
 				
-				String tagKey = "T" + tagSighting.getTagId();
+				ArrayList<ProximitySighting> rawSightings = tagSighting.getProximitySightings();
 				
-				if (configuration.isSpotTag(tagKey)) {
-					// A spot tag can be a spot tag, a register tag or an unregister tag
-					// Get proximity sightings and if the current tag is a:
-					// Spot Tag: update position of moving tag
-					// Register Tag: register moving tag and update position
-					// Unregister Tag: unregister moving tag and update position
-					Spot spotTag = configuration.getSpot(tagKey);
-					spotTag.setLastSeen(DateTime.now());
+				if (rawSightings != null && rawSightings.size() > 0) {
+					String otherTagKey;
 					
-					ArrayList<ProximitySighting> rawSightings = tagSighting.getProximitySightings();
-					
-					if (rawSightings != null && rawSightings.size() > 0) {
-						String otherTagKey;
+					for (ProximitySighting sighting : rawSightings) {
+						otherTagKey = sighting.getTagKey();
 						
-						for (ProximitySighting sighting : rawSightings) {
-							otherTagKey = sighting.getTagKey();
+						if (!configuration.isSpotTag(otherTagKey)) {
+							tag = getDataIndex().getTagByKey(otherTagKey);
 							
-							if (!configuration.isSpotTag(otherTagKey)) {
-								tag = getDataIndex().getTagByKey(otherTagKey);
-								
-								if (tag == null) {
-									// new tag
-									tag = new Tag(tagSighting.getTagId(), getPositionEstimator());
-									getDataIndex().addTag(tag);
-								}
-								
+							if (tag == null) {
+								// new tag
+								tag = new Tag(tagSighting.getTagId(), getPositionEstimator());
+								getDataIndex().addTag(tag);
+							}
+							
 //								SoundUtils.setHz(500);
 //								new SoundUtils().start();
-								
-								tag.setLastSeen(now);
-								
-								if (tag.isRegistered()) {
-									if (configuration.isUnRegisterTag(tagKey)) {
-										tag.unregister(spotTag.getX(), spotTag.getY());
-										saveTrack(tag, TrackingAction.UnRegister);
-									}
-								} else if (configuration.isRegisterTag(tagKey)) {
-									tag.register();
-									saveTrack(tag, TrackingAction.Register);
-								}
-								
-								if (tag.isRegistered()) {
-									tag.addSpotTagSighting(spotTag, sighting.getStrength());
-								
-									if (tag.needsEstimation()) {
-										tag.updatePositionEstimation();
-									
-										if (tag.isMainDataChanged()) {
-											saveTrack(tag, TrackingAction.Spot);
-										}
-									}
-								}
-							}
-						}
-					}
-				} else {
-					tag = getDataIndex().getTagByKey(tagKey);
-					
-					if (tag == null) {
-						// new tag
-						tag = new Tag(tagSighting.getTagId(), getPositionEstimator());
-						getDataIndex().addTag(tag);
-					}
-					
-					tag.setLastReaderKey("R" + tagSighting.getReaderId());
-					tag.setLastSeen(now);
-					
-					if (tagSighting.getProximitySightings() != null && 
-						tagSighting.getProximitySightings().size() > 0) {
-						
-						String otherTagKey;
-						Spot spotTag;
-						for (ProximitySighting sighting : tagSighting.getProximitySightings()) {
-							otherTagKey = "T" + sighting.getTagId();
 							
-							if (configuration.isSpotTag(otherTagKey)) {
-//								SoundUtils.setHz(750);
-//								new SoundUtils().start();
-								
-								spotTag = configuration.getSpot(otherTagKey);
-								
-								if (tag.isRegistered()) {
-									if (configuration.isUnRegisterTag(otherTagKey)) {
-										tag.unregister(spotTag.getX(), spotTag.getY());
-										saveTrack(tag, TrackingAction.UnRegister);
-									}
-								} else if (configuration.isRegisterTag(otherTagKey)) {
-									tag.register();
-									saveTrack(tag, TrackingAction.Register);
-								}
-								
-								if (tag.isRegistered()) {
-									tag.addSpotTagSighting(spotTag, sighting.getStrength());
-								}
-							} else if (tag.isRegistered()) {
-								tag.addProximitySighting(sighting);
-							}
-						}
-					}
-					
-					if (tag.isRegistered()) {
-						tag.setButtonPressed(tagSighting.isTagButtonPressed());
-						
-						if (tag.needsEstimation()) {
-							tag.updatePositionEstimation();
+							tag.setLastSeen(now);
 							
-							if (tag.isMainDataChanged()) {
-								saveTrack(tag, TrackingAction.Spot);
+							if (tag.isRegistered()) {
+								if (configuration.isUnRegisterTag(tagKey)) {
+									tag.unregister(spotTag.getX(), spotTag.getY());
+									saveTrack(tag, TrackingAction.UnRegister);
+								}
+							} else if (configuration.isRegisterTag(tagKey)) {
+								tag.register();
+								saveTrack(tag, TrackingAction.Register);
+							}
+							
+							if (tag.isRegistered()) {
+								tag.addSpotTagSighting(spotTag, sighting.getStrength());
+							
+								if (tag.needsEstimation()) {
+									tag.updatePositionEstimation();
+								
+									if (tag.isMainDataChanged()) {
+										saveTrack(tag, TrackingAction.Spot);
+									}
+								}
 							}
 						}
 					}
 				}
 			} else {
-				System.out.println("Unknown reader: " + tagSighting.getReaderId());
+				tag = getDataIndex().getTagByKey(tagKey);
+				
+				if (tag == null) {
+					// new tag
+					tag = new Tag(tagSighting.getTagId(), getPositionEstimator());
+					getDataIndex().addTag(tag);
+				}
+				
+				tag.setLastReaderKey(readerKey);
+				tag.setLastSeen(now);
+				
+				if (tagSighting.getProximitySightings() != null && 
+					tagSighting.getProximitySightings().size() > 0) {
+					
+					String otherTagKey;
+					Spot spotTag;
+					for (ProximitySighting sighting : tagSighting.getProximitySightings()) {
+						otherTagKey = sighting.getTagKey();
+						
+						if (configuration.isSpotTag(otherTagKey)) {
+//								SoundUtils.setHz(750);
+//								new SoundUtils().start();
+							
+							spotTag = configuration.getSpot(otherTagKey);
+							
+							if (tag.isRegistered()) {
+								if (configuration.isUnRegisterTag(otherTagKey)) {
+									tag.unregister(spotTag.getX(), spotTag.getY());
+									saveTrack(tag, TrackingAction.UnRegister);
+								}
+							} else if (configuration.isRegisterTag(otherTagKey)) {
+								tag.register();
+								saveTrack(tag, TrackingAction.Register);
+							}
+							
+							if (tag.isRegistered()) {
+								tag.addSpotTagSighting(spotTag, sighting.getStrength());
+							}
+						} else if (tag.isRegistered()) {
+							tag.addProximitySighting(sighting);
+						}
+					}
+				}
+				
+				if (tag.isRegistered()) {
+					tag.setButtonPressed(tagSighting.isTagButtonPressed());
+					
+					if (tag.needsEstimation()) {
+						tag.updatePositionEstimation();
+						
+						if (tag.isMainDataChanged()) {
+							saveTrack(tag, TrackingAction.Spot);
+						}
+					}
+				}
 			}
+		} else {
+			System.out.println("Unknown reader: " + tagSighting.getReaderId());
 		}
 	} // messageReceived
 }

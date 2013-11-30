@@ -1,0 +1,9 @@
+Description: Classes taken from the Jadira project.
+             To avoid including the complete (huge) Jadira sources
+             relevant classes have been extracted and added to
+             the OpenBeaconTracker project as single package.
+Homepage:    http://jadira.sourceforge.net/
+Source:      https://github.com/JadiraOrg/jadira/
+JavaDoc:     http://jadira.sourceforge.net/apidocs/index.html
+Get Started: http://jadira.sourceforge.net/usertype-userguide.html
+License:     Apache 2: http://jadira.sourceforge.net/license.html

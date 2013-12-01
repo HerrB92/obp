@@ -3,11 +3,16 @@ package obt.configuration;
 import static org.junit.Assert.*;
 import obt.configuration.ServiceConfiguration;
 import obt.spots.Reader;
+import obt.spots.RegisterTag;
+import obt.spots.SpotTag;
+import obt.spots.UnRegisterTag;
 
 import org.junit.Before;
 import org.junit.Test;
 
 /**
+ * Test class for service configuration
+ * 
  * @author Björn Behrens
  */
 public class TestServiceConfiguration {
@@ -53,7 +58,7 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetTagSpotTagSightingActiveSeconds() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(5, configuration.getTagSpotTagSightingActiveSeconds());
+		assertEquals(2, configuration.getTagSpotTagSightingActiveSeconds());
 	}
 
 	/**
@@ -71,7 +76,7 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetStrengthAggregationWindowSeconds() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(5, configuration.getStrengthAggregationWindowSeconds());
+		assertEquals(2, configuration.getStrengthAggregationWindowSeconds());
 	}
 
 	/**
@@ -80,7 +85,7 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetStrengthAggregationAgedSeconds() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(5, configuration.getStrengthAggregationAgedSeconds());
+		assertEquals(4, configuration.getStrengthAggregationAgedSeconds());
 	}
 
 	/**
@@ -108,14 +113,16 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testAddReader() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(4, configuration.getReaders().size());
-		assertNull(configuration.getReader("R-1"));
 		
-		Reader reader = new Reader(-1);
+		int count = configuration.getReaders().size();
+		
+		assertNull(configuration.getReader("R-1000"));
+		
+		Reader reader = new Reader(-1000);
 		configuration.addReader(reader);
 		
-		assertEquals(5, configuration.getReaders().size());
-		assertNotNull(configuration.getReader("R-1"));
+		assertEquals(count + 1, configuration.getReaders().size());
+		assertNotNull(configuration.getReader("R-1000"));
 	}
 
 	/**
@@ -124,7 +131,8 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetReaderMap() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(4, configuration.getReaderMap().size());
+		assertNotNull(configuration.getReaderMap());
+		assertTrue(configuration.getReaderMap().size() > 0);
 	}
 
 	/**
@@ -133,7 +141,8 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetReaders() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertEquals(4, configuration.getReaders().size());
+		assertNotNull(configuration.getReaders());
+		assertTrue(configuration.getReaders().size() > 0);
 	}
 
 	/**
@@ -142,15 +151,29 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testGetReader() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertNotNull(configuration.getReader("R1276"));
+		
+		Reader reader = new Reader(-1010);
+		configuration.addReader(reader);
+		
+		assertNotNull(configuration.getReader("R-1010"));
 	}
 
 	/**
-	 * Test method for {@link obt.configuration.ServiceConfiguration#getReaderDistance(java.lang.String, java.lang.String)}.
+	 * Test method for 
+	 * {@link obt.configuration.ServiceConfiguration#getReaderDistance(java.lang.String, java.lang.String)}.
+	 * 
+	 * Also tests, if distance calculation works.
 	 */
 	@Test
 	public final void testGetReaderDistance() {
-		fail("Not yet implemented"); // TODO
+		Reader reader;
+		reader = new Reader(-1020, "DistanceTest1", true, 1, 1, 1, 1000, 1000);
+		configuration.addReader(reader);
+		
+		reader = new Reader(-1030, "DistanceTest2", true, 1, 1, 1, 2000, 2000);
+		configuration.addReader(reader);
+		
+		assertEquals(1414, configuration.getReaderDistance("R-1020","R-1030"));
 	}
 
 	/**
@@ -159,8 +182,13 @@ public class TestServiceConfiguration {
 	@Test
 	public final void testIsValidReader() {
 		assertTrue(configuration.getConfigurationLoaded());
-		assertTrue(configuration.isValidReader("R1276"));
-		assertFalse(configuration.isValidReader("R1280"));
+		
+		Reader reader;
+		reader = new Reader(-1040, "ValidTest", true, 1, 1, 1, 1000, 1000);
+		configuration.addReader(reader);
+		
+		assertTrue(configuration.isValidReader("R-1040"));
+		assertFalse(configuration.isValidReader("R-9999"));
 	}
 
 	/**
@@ -168,7 +196,23 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testAddSpot() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(configuration.getConfigurationLoaded());
+		
+		int spotCount = configuration.getSpotTags().size();
+		
+		SpotTag spotTag = new SpotTag(-3000);
+		configuration.addSpot(spotTag);
+		
+		RegisterTag registerTag = new RegisterTag(-3001);
+		configuration.addSpot(registerTag);
+		
+		UnRegisterTag unRegisterTag = new UnRegisterTag(-3002);
+		configuration.addSpot(unRegisterTag);
+		
+		assertEquals(spotCount + 3, configuration.getSpotTags().size());
+		assertTrue(configuration.isSpotTag("T-3000"));
+		assertTrue(configuration.isSpotTag("T-3001"));
+		assertTrue(configuration.isSpotTag("T-3002"));
 	}
 
 	/**
@@ -176,7 +220,9 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testGetSpotTagMap() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(configuration.getConfigurationLoaded());
+		assertNotNull(configuration.getSpotTagMap());
+		assertTrue(configuration.getSpotTagMap().size() > 0);
 	}
 
 	/**
@@ -184,7 +230,9 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testGetSpotTags() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(configuration.getConfigurationLoaded());
+		assertNotNull(configuration.getSpotTags());
+		assertTrue(configuration.getSpotTags().size() > 0);
 	}
 
 	/**
@@ -192,7 +240,12 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testGetSpot() {
-		fail("Not yet implemented"); // TODO
+		assertTrue(configuration.getConfigurationLoaded());
+		
+		SpotTag spotTag = new SpotTag(-3005);
+		configuration.addSpot(spotTag);
+		
+		assertEquals(spotTag, configuration.getSpot("T-3005"));
 	}
 
 	/**
@@ -200,7 +253,10 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testIsSpotTag() {
-		fail("Not yet implemented"); // TODO
+		SpotTag spotTag = new SpotTag(-3010);
+		configuration.addSpot(spotTag);
+		
+		assertTrue(configuration.isSpotTag("T-3010"));
 	}
 
 	/**
@@ -208,7 +264,10 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testIsRegisterTag() {
-		fail("Not yet implemented"); // TODO
+		RegisterTag registerTag = new RegisterTag(-3015);
+		configuration.addSpot(registerTag);
+		
+		assertTrue(configuration.isRegisterTag("T-3015"));
 	}
 
 	/**
@@ -216,7 +275,10 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testIsUnRegisterTag() {
-		fail("Not yet implemented"); // TODO
+		UnRegisterTag unRegisterTag = new UnRegisterTag(-3020);
+		configuration.addSpot(unRegisterTag);
+		
+		assertTrue(configuration.isSpotTag("T-3020"));
 	}
 
 	/**
@@ -224,7 +286,14 @@ public class TestServiceConfiguration {
 	 */
 	@Test
 	public final void testGetSpotDistance() {
-		fail("Not yet implemented"); // TODO
+		SpotTag spotTag;
+		spotTag = new SpotTag(-3050, "DistanceTest1", true, 1, 1, 1, 1000, 1000);
+		configuration.addSpot(spotTag);
+		
+		spotTag = new SpotTag(-3051, "DistanceTest2", true, 1, 1, 1, 2000, 2000);
+		configuration.addSpot(spotTag);
+		
+		assertEquals(1414, configuration.getSpotDistance("T-3050","T-3051"));
 	}
 
 	/**
@@ -236,7 +305,7 @@ public class TestServiceConfiguration {
 		assertTrue(configuration.getMaxX() > 0);
 		assertTrue(configuration.getMaxX() < 10000);
 		
-		Reader reader = new Reader(-1, "Test", true, 1, 1, 1, 10000, 10000);
+		Reader reader = new Reader(-4000, "Test", true, 1, 1, 1, 10000, 10000);
 		configuration.addReader(reader);
 		
 		assertEquals(10000, configuration.getMaxX());
@@ -249,12 +318,11 @@ public class TestServiceConfiguration {
 	public final void testGetMaxY() {
 		assertTrue(configuration.getConfigurationLoaded());
 		assertTrue(configuration.getMaxY() > 0);
-		assertTrue(configuration.getMaxY() < 10000);
+		assertTrue(configuration.getMaxY() < 10005);
 		
-		Reader reader = new Reader(-2, "Test2", true, 1, 1, 1, 10000, 10000);
+		Reader reader = new Reader(-4010, "Test2", true, 1, 1, 1, 10005, 10005);
 		configuration.addReader(reader);
 		
-		assertEquals(10000, configuration.getMaxY());
+		assertEquals(10005, configuration.getMaxY());
 	}
-
 }

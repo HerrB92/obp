@@ -126,7 +126,7 @@ public class Setting implements Serializable {
 	public Setting(SettingType settingType, String value) {
 		setSettingType(settingType);
 		setValue(value);
-	} // Constructor /full)
+	} // Constructor (full)
 		
 	/**
 	 * @return the setting type

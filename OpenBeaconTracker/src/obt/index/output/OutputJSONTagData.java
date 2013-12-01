@@ -73,6 +73,11 @@ public class OutputJSONTagData extends OutputJSON {
 			if (tag.isRegistered()) {
 				generator.writeStartObject();
 				generator.writeStringField("id", tag.getKey());
+				if (tag.getLastSeen() == null || tag.getLastSeen().isBefore(nowWindow)) {
+					generator.writeStringField("lastseen", "0000-00-00 00:00:00");
+				} else {
+					generator.writeStringField("lastseen", tag.getLastSeen().toString());
+				}
 				generator.writeArrayFieldStart("loc");
 				generator.writeNumber(tag.getX());
 				generator.writeNumber(tag.getY());

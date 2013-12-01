@@ -129,7 +129,6 @@ public class ServiceConfiguration {
 		for (Object object : readers) {
 			reader = (Reader)object;
 			addReader(reader);
-			updateMaxDimension(reader.getX(), reader.getY());
 		}
 		
 		// Spots
@@ -142,7 +141,6 @@ public class ServiceConfiguration {
 		for (Object object : spots) {
 			spotTag = (SpotTag)object;
 			addSpot(spotTag);
-			updateMaxDimension(spotTag.getX(), spotTag.getY());
 		}
 		
 		// RegisterTags
@@ -151,7 +149,6 @@ public class ServiceConfiguration {
 		for (Object object : registerTags) {
 			registerTag = (RegisterTag)object;
 			addSpot(registerTag);
-			updateMaxDimension(registerTag.getX(), registerTag.getY());
 		}
 		
 		// UnRegisterTags
@@ -160,7 +157,6 @@ public class ServiceConfiguration {
 		for (Object object : unUnRegisterTags) {
 			unRegisterTag = (UnRegisterTag)object;
 			addSpot(unRegisterTag);
-			updateMaxDimension(unRegisterTag.getX(), unRegisterTag.getY());
 		}
 		
 		// TagKeys
@@ -302,9 +298,10 @@ public class ServiceConfiguration {
 			}
 			
 			// Add reader to reader and reader distance map
-
 			readerMap.put(newReader.getKey(), newReader);
 			readerDistanceMap.put(newReader.getKey(), distances);
+			
+			updateMaxDimension(newReader.getX(), newReader.getY());
 		}
 	} // addReader
 	
@@ -393,6 +390,8 @@ public class ServiceConfiguration {
 			// Add spot tag to spot tag and spot tag distance map
 			spotTagMap.put(newSpotTag.getKey(), newSpotTag);
 			spotTagDistanceMap.put(newSpotTag.getKey(), distances);
+			
+			updateMaxDimension(newSpotTag.getX(), newSpotTag.getY());
 		}
 	} // addSpotTag
 	

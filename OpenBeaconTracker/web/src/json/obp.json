@@ -1,0 +1,43 @@
+{
+  "id" : 11,
+  "api" : {
+    "name" : "OBP",
+    "ver" : "1.0"
+  },
+  "time" : 1384100434109,
+  "packets" : {
+    "rate" : 0,
+    "ignored" : 0,
+    "invalid_protocol" : 0,
+    "unknown_reader" : 0,
+    "crc_error" : 0,
+    "crc_ok" : 0
+  },
+  "tag" : [ ],
+  "reader" : [ {
+    "id" : 1291,
+    "loc" : [ 1, 1165 ],
+    "room" : 3,
+    "floor" : 1,
+    "group" : 3
+  }, {
+    "id" : 1391,
+    "loc" : [ 640, 620 ],
+    "room" : 2,
+    "floor" : 1,
+    "group" : 2
+  }, {
+    "id" : 1259,
+    "loc" : [ 1, 1 ],
+    "room" : 1,
+    "floor" : 1,
+    "group" : 1
+  }, {
+    "id" : 1300,
+    "loc" : [ 610, 1395 ],
+    "room" : 4,
+    "floor" : 1,
+    "group" : 4
+  } ],
+  "edge" : [ ]
+}

@@ -18,6 +18,7 @@ import java.io.IOException;
 
 import org.joda.time.DateTime;
 
+import obp.service.Constants;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.spots.Reader;
@@ -58,42 +59,60 @@ public class OutputJSONTagData extends OutputJSON {
 		generator.writeNumberField("maxX", configuration.getMaxX());
 		generator.writeNumberField("maxY", configuration.getMaxY());
 		
-		generator.writeObjectFieldStart("packets");
-		generator.writeNumberField("rate", 0); // FIXME
-		generator.writeNumberField("ignored", 0); // FIXME
-		generator.writeNumberField("invalid_protocol", 0); // FIXME
-		generator.writeNumberField("unknown_reader", 0); // FIXME
-		generator.writeNumberField("crc_error", 0); // FIXME
-		generator.writeNumberField("crc_ok", 0); // FIXME
-		generator.writeEndObject();
+		// Elements of the original OpenBeacon JSON format,
+		// currently not provided or used.
+//		generator.writeObjectFieldStart("packets");
+//		generator.writeNumberField("rate", 0); // FIXME
+//		generator.writeNumberField("ignored", 0); // FIXME
+//		generator.writeNumberField("invalid_protocol", 0); // FIXME
+//		generator.writeNumberField("unknown_reader", 0); // FIXME
+//		generator.writeNumberField("crc_error", 0); // FIXME
+//		generator.writeNumberField("crc_ok", 0); // FIXME
+//		generator.writeEndObject();
 		
 		generator.writeArrayFieldStart("tag");
 		
 		for (Tag tag: index.getTags()) {
+			generator.writeStartObject();
+			generator.writeStringField("id", tag.getKey());
+			generator.writeBooleanField("registered", tag.isRegistered());
+			
 			if (tag.isRegistered()) {
-				generator.writeStartObject();
-				generator.writeStringField("id", tag.getKey());
+				// If registered, check, if the tag was not seen for some time
+				// and output position
+				
 				if (tag.getLastSeen() == null || tag.getLastSeen().isBefore(nowWindow)) {
 					generator.writeStringField("lastseen", "0000-00-00 00:00:00");
 				} else {
 					generator.writeStringField("lastseen", tag.getLastSeen().toString());
 				}
+				
 				generator.writeArrayFieldStart("loc");
 				generator.writeNumber(tag.getX());
 				generator.writeNumber(tag.getY());
 				generator.writeEndArray();
+			} else {
+				// If the tag is not registered, always report
+				// default values for lastseen and location.
 				
-				// For OpenBeaconPackage, this is currently always 0.
-				// The original C++ implementation provides the feature 
-				// to define different keys for decryption to support
-				// different OpenBeacon keys used on different events 
-				// (e.g. CCC 2010).
-				generator.writeNumberField("key", 0);
+				generator.writeStringField("lastseen", "0000-00-00 00:00:00");
 				
-				generator.writeStringField("reader", tag.getLastReaderKey());
-				generator.writeBooleanField("button", tag.isButtonPressed());
-				generator.writeEndObject();
+				generator.writeArrayFieldStart("loc");
+				generator.writeNumber(Constants.NOT_DEFINED);
+				generator.writeNumber(Constants.NOT_DEFINED);
+				generator.writeEndArray();
 			}
+			
+			// For OpenBeaconPackage, this is currently always 0.
+			// The original C++ implementation provides the feature 
+			// to define different keys for decryption to support
+			// different OpenBeacon keys used on different events 
+			// (e.g. CCC 2010).
+			generator.writeNumberField("key", 0);
+			
+			generator.writeStringField("reader", tag.getLastReaderKey());
+			generator.writeBooleanField("button", tag.isButtonPressed());
+			generator.writeEndObject();
 		}
 		
 		generator.writeEndArray();

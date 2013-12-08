@@ -19,57 +19,27 @@
  * Available at: http://bl.ocks.org/mbostock/3887118
  * (Accessed: 30.08.2013)
  * 
+ * getScreenCoordinates is based on
+ * t.888 (2013) Answer to 'Getting Screen Positions of D3 Nodes After Transform'
+ * stackoverflow.com, 02.09.2013
+ * Available at: http://stackoverflow.com/a/18561829 (Accessed: 08.12.2013)
+ * 
  * Copyright 2013 Björn Behrens <uol@btech.de>
+ * 
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation; version 3.
+ * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program; if not, write to the Free Software Foundation,
+ * Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  *
  ***************************************************************/
-
-/*
- This program is free software; you can redistribute it and/or modify
- it under the terms of the GNU Affero General Public License as published
- by the Free Software Foundation; version 3.
-
- This program is distributed in the hope that it will be useful,
- but WITHOUT ANY WARRANTY; without even the implied warranty of
- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- GNU General Public License for more details.
-
- You should have received a copy of the GNU Affero General Public License
- along with this program; if not, write to the Free Software Foundation,
- Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
-*/
-
-/* // Margins, area width & height
-var margin = {top: 10, right: 10, bottom: 20, left: 40},
-    width = 320 - margin.left - margin.right,
-    height = 700 - margin.top - margin.bottom;
-
-// Define a new linear scale for the x axis
-var x = d3.scale.linear()
-    .range([0, width]);
-
-// Define a new linear scale for the y axis
-var y = d3.scale.linear()
-    .range([height, 0]);
-
-// Create an x axis (bottom)
-var xAxis = d3.svg.axis()
-    .scale(x)
-    .orient("bottom");
-
-// Create an y axis (left)
-var yAxis = d3.svg.axis()
-    .scale(y)
-    .orient("left");
-
-// Create an SVG object within the page body based on the
-// given width & height values.
-// For the transform attribute see:
-// http://www.w3.org/TR/SVG/coords.html#TransformAttribute  
-var svg = d3.select("#chart").append("svg")
-    .attr("width", width + margin.left + margin.right)
-    .attr("height", height + margin.top + margin.bottom)
-    .append("g")
-    .attr("transform", "translate(" + margin.left + "," + margin.top + ")"); */
 
 // Plot area object
 var svg;
@@ -77,39 +47,75 @@ var svg;
 // List if legend colors
 var color;
 
-// Plot area width
+// Width of plot area
 var width;
 
 // x and y axis objects
 var x, y;
 
+var ctm;
+
 // Data area
 var inactiveReaderTableBody;
 var inactiveSpotTableBody;
-var inactiveTagTableBody;
+var movingTagTableBody;
 
+// Get the div element showing the data date and time of the processed data
 var replayDateDOMObject = d3.select('#date'),
     replayDate = new Date();
 
-// Prepare arrays to store received reader and tag information
-var movingTags = new Array(),
-    spotTags = new Array(),
-    readers = new Array();
-    
+// Prepare arrays to store SVG dot references for moving and spot tags and
+// readers
+var movingTagDots = new Array(),
+    spotTagDots = new Array(),
+    readerDots = new Array();
+
+// Prepare list of tags which path is also shown
+var trackTags = new Array();
+
+// Sort function used to sort readers, other spots and tags by id
+function sortElements(element1, element2) {
+	if (element1.id > element2.id) {
+		return 1;
+	} else if (element1.id == element2.id) {
+		return 0;
+	}
+	
+	return -1;
+} // sortElements
+
+// Activate showing track for the specified tag id
+function showTrack(id) {
+	if (trackTags == null || trackTags.indexOf(id) == -1) {
+		trackTags.push(id);
+	}
+} // showTrack
+
+// Calculate screen positions from data coordinates
+function getScreenCoordinates(givenX, givenY) {
+	var screenX = x(givenX);
+	var screenY = y(givenY);
+		
+	return { x: screenX, y: screenY };    
+} // getScreenCoordinates
+
+// Main method to process the loaded JSON file containing
+// the reader, other spots and tags data
 function processJSON(json) {
     var dot;
     var reader;
     var spotTag;
     var tag;
     var i;
-    var changed = false;
     var dots = new Array();
     var tagX, tagY;
     var inactiveReaders = new Array();
     var inactiveSpots = new Array();
-    var inactiveTags = new Array();
+    var movingTags = new Array();
     var element;
-    var tr, td;
+    var tr;
+    var startPos;
+    var endPos;
 
 	if (json.time) {
 		replayDate.setTime(parseInt(json.time));
@@ -128,9 +134,7 @@ function processJSON(json) {
 		
 			inactiveReaders.push(element);
 		} else {
-			if(!readers[reader.id]) {
-				changed = true;
-
+			if(!readerDots[reader.id]) {
 				dot = new Object;
 				dot.id = reader.id;
 				dot.name = 'Reader ' + reader.name + ' (' + reader.id + ')';
@@ -138,27 +142,31 @@ function processJSON(json) {
 				dot.x = reader.loc[0];
 				dot.y = reader.loc[1];
 
-				readers[reader.id] = dot;
+				readerDots[reader.id] = dot;
 				dots.push(dot);
 			} else {
-				dots.push(readers[reader.id]);
+				dots.push(readerDots[reader.id]);
 			}
 		}
     }
     
     // Update inactive reader table
-    // Remove existing rows
-    inactiveReaderTableBody.selectAll("tr").remove();
-    
-    // Add elements
-	tr = inactiveReaderTableBody.selectAll("tr")
-		.data(inactiveReaders)
-		.enter().append("tr");
-
-	td = tr.selectAll("td")
-        .data(function(element) { return [element.id]; })
+    // Sort elements
+    inactiveReaders.sort(sortElements);
+       
+    // Add/Update elements
+	inactiveReaderTableBody.selectAll("tr")
+		 .data(inactiveReaders)
+		.enter().append("tr").selectAll("td")
+         .data(function(element) { return [element.id]; })
 		.enter().append("td")
-        .text(function(cell) { return cell; });
+         .text(function(cell) { return cell; });
+	
+	// Remove old elements
+	inactiveReaderTableBody.selectAll("tr")
+	     .data(inactiveReaders)
+        .exit()
+         .remove();
     
     // Get through JSON spot tag objects and identify new
 	// spot tags. As spot tags are not moving, no update
@@ -172,9 +180,7 @@ function processJSON(json) {
 		
 			inactiveSpots.push(element);
 		} else {
-			if(!spotTags[spotTag.id]) {
-				changed = true;
-
+			if(!spotTagDots[spotTag.id]) {
 				dot = new Object;
 				dot.id = spotTag.id;
 				
@@ -192,27 +198,31 @@ function processJSON(json) {
 				dot.x = spotTag.loc[0];
 				dot.y = spotTag.loc[1];
 
-				spotTags[spotTag.id] = dot;
+				spotTagDots[spotTag.id] = dot;
 				dots.push(dot);
 			} else {
-				dots.push(spotTags[spotTag.id]);
+				dots.push(spotTagDots[spotTag.id]);
 			}
 		}
     }
     
     // Update inactive spot table
-    // Remove existing rows
-    inactiveSpotTableBody.selectAll("tr").remove();
-    
-    // Add elements
-	tr = inactiveSpotTableBody.selectAll("tr")
-		.data(inactiveSpots)
-		.enter().append("tr");
-
-	td = tr.selectAll("td")
-        .data(function(element) { return [element.id]; })
+    // Sort elements
+    inactiveSpots.sort(sortElements);
+       
+    // Add/Update elements
+	inactiveSpotTableBody.selectAll("tr")
+		 .data(inactiveSpots)
+		.enter().append("tr").selectAll("td")
+         .data(function(element) { return [element.id]; })
 		.enter().append("td")
-        .text(function(cell) { return cell; });
+         .text(function(cell) { return cell; });
+	
+	// Remove old elements
+	inactiveSpotTableBody.selectAll("tr")
+	     .data(inactiveSpots)
+        .exit()
+         .remove();
     
     // Get through JSON tag objects and identify tags.
     // If a tag has been found before, update position.
@@ -220,12 +230,16 @@ function processJSON(json) {
     for (i in json.tag) {
 		tag = json.tag[i];
 		
-		if (tag.lastseen == null || tag.lastseen == '0000-00-00 00:00:00') {
-			element = new Object();
-			element.id = tag.id;
+		element = new Object();
+		element.id = tag.id;
 		
-			inactiveTags.push(element);
+		if (!tag.registered) {
+			element.color = "black";
+		} else if (tag.lastseen == null || tag.lastseen == '0000-00-00 00:00:00') {
+			element.color = "red";
 		} else {
+			element.color = "green";
+			
 			if (!tag.loc) {
 				tagX = 1;
 				tagY = 1;
@@ -234,25 +248,33 @@ function processJSON(json) {
 				tagY = tag.loc[1];
 			}
 			
-			if (movingTags[tag.id]) {
-				dot = movingTags[tag.id];
+			if (movingTagDots[tag.id]) {
+				dot = movingTagDots[tag.id];
 				
 				if (dot.x != tagX || dot.y != tagY) {
-					changed = true;
+					if (trackTags != null && trackTags.indexOf(tag.id) > -1) {
+						startPos = getScreenCoordinates(dot.x, dot.y);
+						endPos = getScreenCoordinates(tagX, tagY);
+						
+						svg.append("svg:line")
+						    .attr("x1", startPos.x)
+						    .attr("y1", startPos.y)
+						    .attr("x2", endPos.x)
+						    .attr("y2", endPos.y)
+						    .style("stroke", "rgb(6,120,155)");
+					}
 					
 					dot.x = tagX;
 					dot.y = tagY;
 				}
 			} else {
-				changed = true;
-
 				dot = new Object;
 				dot.id = tag.id;
 				dot.name = 'Tag ' + tag.id;
 				dot.x = tagX;
 				dot.y = tagY;
 
-				movingTags[tag.id] = dot;
+				movingTagDots[tag.id] = dot;
 			}
 			
 			if (tag.button) {
@@ -263,22 +285,32 @@ function processJSON(json) {
 				
 			dots.push(dot);
 		}
+		
+		movingTags.push(element);
 	}
 	
-	// Update inactive tags table
-    // Remove existing rows
-    inactiveTagTableBody.selectAll("tr").remove();
+	// Update moving tags table
+    // Sort elements
+    movingTags.sort(sortElements);
     
-    // Add elements
-	tr = inactiveTagTableBody.selectAll("tr")
-		.data(inactiveTags)
-		.enter().append("tr");
-
-	td = tr.selectAll("td")
-        .data(function(element) { return [element.id]; })
-		.enter().append("td")
-        .text(function(cell) { return cell; });
+    // Remove existing rows
+    //movingTagTableBody.selectAll("tr").remove();
+    
+    // Add/Update elements
+	movingTagTableBody.selectAll("tr")
+		 .data(movingTags)
+		.enter().append("tr").append("td")
+		 .html(function(element) { return "<span onclick=\"showTrack('" + element.id + "');\">" + element.id + "</span>"; })
+         //.text(function(element) { return element.id; })
+         .style("color", function(element) { return element.color; });
 	
+	// Remove old elements
+	movingTagTableBody.selectAll("tr")
+	     .data(movingTags)
+        .exit()
+         .remove();
+	
+	// Create/Update legend
 	if (dots.length) {  
 		var legend = svg.selectAll(".legend")
             .data(color.domain())
@@ -300,40 +332,42 @@ function processJSON(json) {
 			.text(function(d) { return d; });
     }
     
-    //if (changed) {
-    
-		svg.selectAll(".dot")
-			.data(dots)
-		   .enter().append("circle")
-			.attr("class", "dot")
-            .attr("r", 3.5)
-            .attr("cx", function(d) { return x(d.x); })
-            .attr("cy", function(d) { return y(d.y); })
-            .style("fill", function(d) { return color(d.category); })
-           .append('svg:title')
-			.text(function(d) { return d.name; });
-    
-		svg.selectAll(".dot")
-			.data(dots)
-			.transition()
-            .duration(10)
-            .attr("cx", function(d) { return x(d.x); })
-            .attr("cy", function(d) { return y(d.y); })
-            .style("fill", function(d) { return color(d.category); });
-            
-        // Remove old
-		svg.selectAll(".dot")
-			.data(dots)
-            .exit()
-            .remove();
-            
-       	//window.alert("Change");
-		//svg.start();
-	//}
+	// Main magic: Add or update all dots provided in
+	// the dots array.
+	svg.selectAll(".dot")
+		.data(dots)
+	   .enter().append("circle")
+		.attr("class", "dot")
+        .attr("r", 3.5)
+        .attr("cx", function(d) { return x(d.x); })
+        .attr("cy", function(d) { return y(d.y); })
+        .style("fill", function(d) { return color(d.category); })
+       .append('svg:title')
+		.text(function(d) { return d.name; });
+
+	// If a dot has changed, change dot from old to new
+	// position by a transition
+	svg.selectAll(".dot")
+		.data(dots)
+	   .transition()
+        .duration(10)
+        .attr("cx", function(d) { return x(d.x); })
+        .attr("cy", function(d) { return y(d.y); })
+        .style("fill", function(d) { return color(d.category); });
+        
+    // Remove old dots: Remove all dots, which are part of the 
+	// plot area but not of the dots array anymore
+	svg.selectAll(".dot")
+		.data(dots)
+       .exit()
+        .remove();
 } // processJSON
 
+// Initialize plot area and required objects (e.g. tables)
 function initialize(json) {
-	// Plot area
+	// Calculate available plot area
+	
+	// Default values
 	var maxX = 320;
 	var maxY = 700;
 	
@@ -399,12 +433,13 @@ function initialize(json) {
 	
 	// Create an SVG object within the page body based on the
 	// given width & height values.
+	//
 	// For the transform attribute see:
-	// http://www.w3.org/TR/SVG/coords.html#TransformAttribute  
+	// http://www.w3.org/TR/SVG/coords.html#TransformAttribute
 	svg = d3.select("#chart").append("svg")
 		.attr("width", width + margin.left + margin.right)
 		.attr("height", height + margin.top + margin.bottom)
-		.append("g")
+	   .append("g")
 		.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 	
 	x.domain([0, maxX + 200]).nice();
@@ -447,20 +482,23 @@ function initialize(json) {
     inactiveSpotTable.append("thead").append("th").text("Inactive Spots");
 	inactiveSpotTableBody = inactiveSpotTable.append("tbody");
 	
-	// Add table for inactive tags
-	var inactiveTagTable = d3.select("#inactiveTags").append("table");
-    inactiveTagTable.append("thead").append("th").text("Inactive Tags");
-	inactiveTagTableBody = inactiveTagTable.append("tbody");
+	// Add table for moving tags
+	var movingTagTable = d3.select("#movingTags").append("table");
+    movingTagTable.append("thead").append("th").text("Moving Tags");
+	movingTagTableBody = movingTagTable.append("tbody");
+	
+	refreshSVG();
 } // initialize
 
+// Get JSON data from specified URL and process the data
 function refreshSVG() {
 	// Get JSON data from the specified URL
 	d3.json('http://' + window.location.hostname + '/json/obtracker.json', processJSON);
 
 	// Get data and refresh view every 500ms
 	window.setTimeout(refreshSVG, 500);
-}
+} // refreshJSON
 
 // Get the JSON file once to read the maximum coordinates
+// and call initialize function
 d3.json('http://' + window.location.hostname + '/json/obtracker.json', initialize);
-refreshSVG();

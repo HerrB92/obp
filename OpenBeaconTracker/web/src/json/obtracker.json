@@ -1,10 +1,10 @@
 {
-  "id" : 1643,
+  "id" : 143,
   "api" : {
     "name" : "OBT",
     "ver" : "1.0"
   },
-  "time" : 1385913540204,
+  "time" : 1386272092666,
   "maxX" : 627,
   "maxY" : 1145,
   "packets" : {
@@ -16,459 +16,39 @@
     "crc_ok" : 0
   },
   "tag" : [ {
-    "id" : "T1270",
-    "lastseen" : "2013-12-01T16:58:58.166+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1239",
-    "lastseen" : "2013-12-01T16:58:59.886+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1320",
-    "lastseen" : "2013-12-01T16:58:58.443+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1321",
+    "id" : "T5711",
+    "registered" : true,
+    "lastseen" : "08/15",
+    "loc" : [ 500, 1000 ],
+    "reader" : "R1234",
+    "button": false
+  } , {
+    "id" : "T5712",
+    "registered" : false,
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1322",
-    "lastseen" : "2013-12-01T16:58:59.864+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1323",
-    "lastseen" : "2013-12-01T16:58:58.000+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1275",
-    "lastseen" : "2013-12-01T16:58:59.997+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1274",
-    "lastseen" : "2013-12-01T16:58:58.077+01:00",
-    "loc" : [ 118, 248 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1273",
-    "lastseen" : "2013-12-01T16:58:59.975+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1272",
-    "lastseen" : "2013-12-01T16:58:59.964+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1324",
-    "lastseen" : "2013-12-01T16:58:59.742+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1279",
-    "lastseen" : "2013-12-01T16:58:57.689+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1277",
-    "lastseen" : "2013-12-01T16:59:00.186+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1326",
-    "lastseen" : "2013-12-01T16:58:58.510+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1276",
-    "lastseen" : "2013-12-01T16:59:00.075+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1281",
-    "lastseen" : "2013-12-01T16:58:57.700+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1282",
-    "lastseen" : "2013-12-01T16:59:00.197+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1311",
-    "lastseen" : "2013-12-01T16:58:59.764+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1310",
-    "lastseen" : "2013-12-01T16:58:57.733+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1284",
-    "lastseen" : "2013-12-01T16:58:59.362+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1319",
-    "lastseen" : "2013-12-01T16:58:58.832+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1259",
-    "button" : false
-  }, {
-    "id" : "T1283",
+    "loc" : [ -1, -1 ],
+    "reader" : "R1234",
+    "button": false
+  } , {
+    "id" : "T5713",
+    "registered" : true,
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1317",
-    "lastseen" : "2013-12-01T16:59:00.141+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1286",
-    "lastseen" : "2013-12-01T16:58:59.531+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1318",
-    "lastseen" : "2013-12-01T16:59:00.086+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1285",
-    "lastseen" : "2013-12-01T16:58:58.765+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1288",
-    "lastseen" : "2013-12-01T16:58:57.456+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1316",
-    "lastseen" : "2013-12-01T16:58:56.956+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1287",
-    "lastseen" : "2013-12-01T16:59:00.163+01:00",
-    "loc" : [ 118, 248 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1313",
-    "lastseen" : "2013-12-01T16:58:58.343+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1289",
-    "lastseen" : "2013-12-01T16:58:58.111+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1314",
-    "lastseen" : "2013-12-01T16:58:59.908+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1259",
-    "button" : false
-  }, {
-    "id" : "T1292",
-    "lastseen" : "2013-12-01T16:58:56.801+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1254",
-    "lastseen" : "2013-12-01T16:59:00.019+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1293",
-    "lastseen" : "2013-12-01T16:58:57.578+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1290",
-    "lastseen" : "2013-12-01T16:58:58.532+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1291",
-    "lastseen" : "2013-12-01T16:58:59.257+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1257",
-    "lastseen" : "2013-12-01T16:58:59.875+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1250",
-    "lastseen" : "2013-12-01T16:58:58.699+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1119",
-    "lastseen" : "2013-12-01T16:58:58.521+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1252",
-    "lastseen" : "2013-12-01T16:58:59.986+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1259",
-    "lastseen" : "2013-12-01T16:58:58.066+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1299",
-    "lastseen" : "2013-12-01T16:58:57.411+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1298",
-    "lastseen" : "2013-12-01T16:58:58.799+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1296",
-    "lastseen" : "2013-12-01T16:58:57.189+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1295",
-    "lastseen" : "2013-12-01T16:58:59.686+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1294",
-    "lastseen" : "2013-12-01T16:59:00.108+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1267",
-    "lastseen" : "2013-12-01T16:58:57.667+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1309",
-    "lastseen" : "2013-12-01T16:58:58.488+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1308",
-    "lastseen" : "2013-12-01T16:59:00.030+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1268",
-    "lastseen" : "2013-12-01T16:58:59.597+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1265",
-    "lastseen" : "2013-12-01T16:58:57.900+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1307",
-    "lastseen" : "2013-12-01T16:59:00.064+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1263",
-    "lastseen" : "2013-12-01T16:58:58.210+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1264",
-    "lastseen" : "2013-12-01T16:58:57.478+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1261",
-    "lastseen" : "2013-12-01T16:58:59.708+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1226",
-    "lastseen" : "2013-12-01T16:58:58.910+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1262",
-    "lastseen" : "2013-12-01T16:58:57.988+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1301",
-    "lastseen" : "2013-12-01T16:59:00.041+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T1300",
-    "lastseen" : "2013-12-01T16:58:57.423+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
-  }, {
-    "id" : "T380",
-    "lastseen" : "2013-12-01T16:58:58.665+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1291",
-    "button" : false
-  }, {
-    "id" : "T1269",
-    "lastseen" : "2013-12-01T16:58:58.188+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1391",
-    "button" : false
-  }, {
-    "id" : "T1260",
-    "lastseen" : "2013-12-01T16:59:00.130+01:00",
-    "loc" : [ 130, 130 ],
-    "key" : 0,
-    "reader" : "R1300",
-    "button" : false
+    "loc" : [ 30, 30 ],
+    "reader" : "R1234",
+    "button": false
   } ],
   "reader" : [ {
     "id" : "R1291",
     "name" : "Relax",
-    "lastseen" : "2013-12-01T16:59:00.197+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 1, 266 ],
     "room" : 2,
     "floor" : 1,
     "group" : 1
-  }, {
+  },{
     "id" : "R1300",
     "name" : "Cooking",
-    "lastseen" : "2013-12-01T16:59:00.141+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 627, 1 ],
     "room" : 1,
     "floor" : 1,
@@ -476,7 +56,7 @@
   }, {
     "id" : "R1391",
     "name" : "Sleeper",
-    "lastseen" : "2013-12-01T16:59:00.163+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 587, 584 ],
     "room" : 4,
     "floor" : 1,
@@ -484,7 +64,7 @@
   }, {
     "id" : "R1259",
     "name" : "Spider",
-    "lastseen" : "2013-12-01T16:58:59.908+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 1, 1145 ],
     "room" : 3,
     "floor" : 1,
@@ -492,75 +72,75 @@
   } ],
   "spots" : [ {
     "id" : "T1116",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.842+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 30, 30 ]
   }, {
     "id" : "T1117",
     "name" : "Register2",
     "type" : "RegisterTag",
-    "lastseen" : "2013-12-01T16:58:57.312+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 118, 248 ]
   }, {
     "id" : "T1118",
-    "name" : "Tuerrahmen",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:59:00.119+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 40, 40 ]
   }, {
     "id" : "T1137",
-    "name" : "Vitrine",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.664+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 180, 180 ]
   }, {
     "id" : "T1138",
-    "name" : "Bar",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.897+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 190, 190 ]
   }, {
     "id" : "T1139",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.720+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 200, 200 ]
   }, {
     "id" : "T1133",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:59:00.174+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 140, 140 ]
   }, {
     "id" : "T1134",
-    "name" : "HiFi",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.830+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 150, 150 ]
   }, {
     "id" : "T1135",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.586+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 160, 160 ]
   }, {
     "id" : "T1136",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:59:00.097+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 170, 170 ]
   }, {
     "id" : "T1130",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:59:00.008+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 120, 120 ]
   }, {
     "id" : "T1131",
-    "name" : "Barschrank (links)",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.432+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 130, 130 ]
   }, {
     "id" : "T1278",
@@ -570,33 +150,33 @@
     "loc" : [ 118, 250 ]
   }, {
     "id" : "T389",
-    "name" : "Fridge",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:55.347+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 20, 20 ]
   }, {
     "id" : "T1128",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:56.812+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 100, 100 ]
   }, {
     "id" : "T1129",
-    "name" : "Spuele",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.743+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 110, 110 ]
   }, {
     "id" : "T1126",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.642+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 90, 90 ]
   }, {
     "id" : "T382",
-    "name" : "TV",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.786+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 10, 10 ]
   }, {
     "id" : "T1120",
@@ -606,21 +186,21 @@
     "loc" : [ 60, 626 ]
   }, {
     "id" : "T1121",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.266+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 50, 50 ]
   }, {
     "id" : "T1124",
-    "name" : "Herd",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.843+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 80, 80 ]
   }, {
     "id" : "T1142",
-    "name" : "Table",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.775+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 230, 230 ]
   }, {
     "id" : "T1125",
@@ -630,28 +210,28 @@
     "loc" : [ 1, 1 ]
   }, {
     "id" : "T1122",
-    "name" : "SchrankRechts",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:59:00.052+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 60, 60 ]
   }, {
     "id" : "T1140",
-    "name" : "Schilder",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.821+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 210, 210 ]
   }, {
     "id" : "T1123",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:59.953+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 70, 70 ]
   }, {
     "id" : "T1141",
-    "name" : "",
+    "name" : "Ok",
     "type" : "SpotTag",
-    "lastseen" : "2013-12-01T16:58:58.388+01:00",
+    "lastseen" : "0000-00-00 00:00:00",
     "loc" : [ 220, 220 ]
   } ],
-  "buildInMilliseconds" : 1
+  "buildInMilliseconds" : 0
 }

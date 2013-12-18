@@ -209,6 +209,9 @@ function processJSON(json) {
     // Update inactive spot table
     // Sort elements
     inactiveSpots.sort(sortElements);
+    
+    // Remove existing rows
+    inactiveSpotTableBody.selectAll("tr").remove();
        
     // Add/Update elements
 	inactiveSpotTableBody.selectAll("tr")
@@ -219,10 +222,10 @@ function processJSON(json) {
          .text(function(cell) { return cell; });
 	
 	// Remove old elements
-	inactiveSpotTableBody.selectAll("tr")
-	     .data(inactiveSpots)
-        .exit()
-         .remove();
+//	inactiveSpotTableBody.selectAll("tr")
+//	     .data(inactiveSpots)
+//        .exit()
+//         .remove();
     
     // Get through JSON tag objects and identify tags.
     // If a tag has been found before, update position.
@@ -234,11 +237,17 @@ function processJSON(json) {
 		element.id = tag.id;
 		
 		if (!tag.registered) {
+			// Show unregistered tags as black
 			element.color = "black";
 		} else if (tag.lastseen == null || tag.lastseen == '0000-00-00 00:00:00') {
+			// Show registered, but inactive tags as red
 			element.color = "red";
 		} else {
+			// Show registered, active tags as green
 			element.color = "green";
+			
+			// Activate track visualization
+			showTrack(tag.id);
 			
 			if (!tag.loc) {
 				tagX = 1;
@@ -294,21 +303,21 @@ function processJSON(json) {
     movingTags.sort(sortElements);
     
     // Remove existing rows
-    //movingTagTableBody.selectAll("tr").remove();
+    movingTagTableBody.selectAll("tr").remove();
     
     // Add/Update elements
 	movingTagTableBody.selectAll("tr")
 		 .data(movingTags)
 		.enter().append("tr").append("td")
-		 .html(function(element) { return "<span onclick=\"showTrack('" + element.id + "');\">" + element.id + "</span>"; })
-         //.text(function(element) { return element.id; })
+		 //.html(function(element) { return "<span onclick=\"showTrack('" + element.id + "');\">" + element.id + "</span>"; })
+         .text(function(element) { return element.id; })
          .style("color", function(element) { return element.color; });
 	
 	// Remove old elements
-	movingTagTableBody.selectAll("tr")
-	     .data(movingTags)
-        .exit()
-         .remove();
+//	movingTagTableBody.selectAll("tr")
+//	     .data(movingTags)
+//        .exit()
+//         .remove();
 	
 	// Create/Update legend
 	if (dots.length) {  

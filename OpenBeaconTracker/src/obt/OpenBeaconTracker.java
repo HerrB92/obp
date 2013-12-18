@@ -89,7 +89,7 @@ public class OpenBeaconTracker {
 		// Create JSON output service
 		// Data
 		outputJSONTagData = 
-				new OutputJSONTagData("/var/www/html/json/obtracker.json");
+				new OutputJSONTagData("/var/www/html/json/obtracker.json", run.getRunId());
 		// List of recently registered tags
 		outputJSONRegisteredTagKeys = 
 				new OutputJSONRegisteredTagKeys("/var/www/html/json/obtregistered.json");

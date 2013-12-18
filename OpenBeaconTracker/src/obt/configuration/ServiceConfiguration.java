@@ -67,6 +67,11 @@ public class ServiceConfiguration {
 	private int maxX = 0;
 	private int maxY = 0;
 	
+	// Unregistration X and Y values for a forced unregistration. Determined by
+	// the first loaded unregister tag position.
+	private int forcedUnRegisterX = Constants.NOT_DEFINED;
+	private int forcedUnRegisterY = Constants.NOT_DEFINED;
+	
 	/**
 	 * Private constructor (singleton)
 	 */
@@ -157,6 +162,11 @@ public class ServiceConfiguration {
 		for (Object object : unUnRegisterTags) {
 			unRegisterTag = (UnRegisterTag)object;
 			addSpot(unRegisterTag);
+			
+			if (getForcedUnRegisterX() == Constants.NOT_DEFINED) {
+				setForcedUnRegisterX(unRegisterTag.getX());
+				setForcedUnRegisterY(unRegisterTag.getY());
+			}
 		}
 		
 		// TagKeys
@@ -190,6 +200,13 @@ public class ServiceConfiguration {
 		
 		return settingType.getDefaultIntValue();
 	} // getIntValue
+	
+	/**
+	 * @return the tagAgedSeconds
+	 */
+	public int getTagAgedSeconds() {
+		return getIntValue(SettingType.TagAgedSeconds);
+	} // getTagAgedSeconds
 
 	/**
 	 * @return the tagButtonActiveSeconds
@@ -491,4 +508,32 @@ public class ServiceConfiguration {
 	private void setMaxY(int maxY) {
 		this.maxY = maxY;
 	} // setMaxY
+
+	/**
+	 * @return the forcedUnRegisterX
+	 */
+	public int getForcedUnRegisterX() {
+		return forcedUnRegisterX;
+	} // getForcedUnRegisterX
+
+	/**
+	 * @param forcedUnRegisterX the forcedUnRegisterX to set
+	 */
+	private void setForcedUnRegisterX(int forcedUnRegisterX) {
+		this.forcedUnRegisterX = forcedUnRegisterX;
+	} // setForcedUnRegisterX
+
+	/**
+	 * @return the forcedUnRegisterY
+	 */
+	public int getForcedUnRegisterY() {
+		return forcedUnRegisterY;
+	} // getForcedUnRegisterY
+
+	/**
+	 * @param forcedUnRegisterY the forcedUnRegisterY to set
+	 */
+	private void setForcedUnRegisterY(int forcedUnRegisterY) {
+		this.forcedUnRegisterY = forcedUnRegisterY;
+	} // setForcedUnRegisterY
 }

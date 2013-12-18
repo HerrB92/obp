@@ -25,6 +25,7 @@ public class Tag {
 	private PositionEstimator estimator;
 	
 	private int id;
+	private int trackId = 0;
 	private String key;
 	private DateTime created = DateTime.now();
 	private DateTime lastSeen = DateTime.now();
@@ -32,13 +33,6 @@ public class Tag {
 	private DateTime buttonPressedStart;
 	private String lastReaderKey = "";
 	private String lastSpotTagKey = "";
-		
-//	private int tagFlags;
-//	private int tagStrength;
-	//private int tagSequence;
-	
-//	private int sequence;
-//	private int timestamp;
 	
 //	private HashMap<String, TagReaderSighting> tagReaderSightings = new HashMap<String, TagReaderSighting>();
 	private HashMap<String, TagSpotTagSighting> spotTagSightings = new HashMap<String, TagSpotTagSighting>();
@@ -74,6 +68,23 @@ public class Tag {
 		this.id = id;
 		setKey(id);
 	} // setId
+	
+	/**
+	 * Returns the track id. The track id will be incremented
+	 * by each registration (per run starting at 0).
+	 * 
+	 * @return the track id
+	 */
+	public int getTrackId() {
+		return trackId;
+	} // getTrackId
+
+	/**
+	 *
+	 */
+	protected void incrementTrackId() {
+		trackId++;
+	} // incrementTrackId
 	
 	/**
 	 * @return the key
@@ -182,76 +193,6 @@ public class Tag {
 	public void setLastSpotTagKey(String key) {
 		this.lastSpotTagKey = key;
 	}
-
-//	/**
-//	 * @return the tagFlags
-//	 */
-//	public int getTagFlags() {
-//		return tagFlags;
-//	} // getTagFlags
-//
-//	/**
-//	 * @param tagFlags the tagFlags to set
-//	 */
-//	public void setTagFlags(int tagFlags) {
-//		this.tagFlags = tagFlags;
-//	} // setTagFlags
-//
-//	/**
-//	 * @return the tagStrength
-//	 */
-//	public int getTagStrength() {
-//		return tagStrength;
-//	} // getTagStrength
-//
-//	/**
-//	 * @param tagStrength the tagStrength to set
-//	 */
-//	public void setTagStrength(int tagStrength) {
-//		this.tagStrength = tagStrength;
-//	} // setTagStrength
-//
-////	/**
-////	 * @return the tagSequence
-////	 */
-////	public int getTagSequence() {
-////		return tagSequence;
-////	} // getTagSequence
-////
-////	/**
-////	 * @param tagSequence the tagSequence to set
-////	 */
-////	public void setTagSequence(int tagSequence) {
-////		this.tagSequence = tagSequence;
-////	}
-//
-//	/**
-//	 * @return the sequence
-//	 */
-//	public int getSequence() {
-//		return sequence;
-//	}
-//
-//	/**
-//	 * @param sequence the sequence to set
-//	 */
-//	public void setSequence(int sequence) {
-//		this.sequence = sequence;
-//	}
-//
-//	/**
-//	 * @return the timestamp
-//	 */
-//	public int getTimestamp() {
-//		return timestamp;
-//	}
-//
-//	/**
-//	 * @param timestamp the timestamp to set
-//	 */
-//	public void setTimestamp(int timestamp) {
-//		this.timestamp = timestamp;
-//	}
 	
 	public void addProximitySighting(ProximitySighting newSighting) {
 		String tagKey = "T" + newSighting.getTagId();
@@ -320,43 +261,6 @@ public class Tag {
 		return sightings;
 	} // getActiveSpotTagSightings
 	
-//	public void updateProximitySighting(ProximitySighting newSighting) {
-//		String tagKey = "T" + newSighting.getTagId();
-//		TagSpotTagSighting spotSighting;
-//		TagProximitySighting proximitySighting;
-//		
-//		if (configuration.isSpotTag(tagKey)) {
-//			
-//			
-//			System.out.println("RegisterTag!!!");
-//		} else 
-//		
-//		for (Entry<String, TagProximitySighting> entry: newSightings.entrySet()) {
-//			tagKey = entry.getKey();
-//			
-//			if (configuration.isValidSpot(tagKey)) {
-//				// Spot tag found, add to list and update position
-//				spotSighting = getSpotTagSighting(tagKey);
-//				
-//				if (spotSighting == null) {
-//					addSpotTagSighting(tagKey, entry.getValue().getMinStrength());
-//					requiresEstimationUpdate = true;
-//				} else if (spotSighting.setStrength(entry.getValue().getMinStrength())) {
-//					requiresEstimationUpdate = true;
-//				}
-//			} else {
-//				// Just a proximity sighting found, store/update (currently not used)
-//				proximitySighting = getProximitySighting(tagKey);
-//				if (proximitySighting == null) {
-//					addProximitySighting(entry.getValue());
-//				} else {
-//					proximitySighting.setStrength(entry.getValue().getMinStrength());
-//					proximitySighting.setCount(entry.getValue().getCount());
-//				}
-//			}
-//		}			
-//	} // updateProximitySighting
-	
 	public void setPositionEstimator(PositionEstimator estimator) {
 		this.estimator = estimator;
 	} // setPositionEstimator
@@ -384,7 +288,7 @@ public class Tag {
 	 */
 	public int getX() {
 		return x;
-	}
+	} // getX
 
 	/**
 	 * @param x the x to set
@@ -394,14 +298,14 @@ public class Tag {
 			this.x = x;
 			setMainDataChanged(true);
 		}
-	}
+	} // setX
 
 	/**
 	 * @return the y
 	 */
 	public int getY() {
 		return y;
-	}
+	} // getY
 
 	/**
 	 * @param y the y to set
@@ -411,7 +315,7 @@ public class Tag {
 			this.y = y;
 			setMainDataChanged(true);
 		}
-	}
+	} // setY
 	
 	/**
 	 * @return the method
@@ -444,12 +348,18 @@ public class Tag {
 	}
 
 	/**
-	 * @param registered Set to true to signal that the the tag is registered or
-	 *        false to signal that the flag is unregistered
+	 * @param spotTagX X coordinate of the register spot tag
+	 * @param spotTagY Y coordinate of the register spot tag
 	 */
-	public void register() {
+	public void register(int spotTagX, int spotTagY) {
 		registered = true;
 		index.registerTagKey(getKey());
+		
+		incrementTrackId();
+		setX(spotTagX);
+		setY(spotTagY);
+		setMethod(EstimationMethod.OneSpotTag);
+		needsEstimation = false;
 	} // register
 	
 	/**
@@ -472,20 +382,6 @@ public class Tag {
 	public boolean isRegistered() {
 		return registered;
 	}
-	
-//	/**
-//	 * @return the accuracy level
-//	 */
-//	public int getAccuracyLevel() {
-//		return accuracyLevel;
-//	}
-//
-//	/**
-//	 * @param level the accuracy level to set
-//	 */
-//	private void setAccuracyLevel(int level) {
-//		this.accuracyLevel = level;
-//	}
 	
 	/**
 	 * Signals, if x/y position or button pressed information has changed

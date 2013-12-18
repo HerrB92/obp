@@ -1,237 +1,209 @@
 {
-  "id" : 143,
+  "id" : 218,
   "api" : {
     "name" : "OBT",
     "ver" : "1.0"
   },
-  "time" : 1386272092666,
-  "maxX" : 627,
-  "maxY" : 1145,
-  "packets" : {
-    "rate" : 0,
-    "ignored" : 0,
-    "invalid_protocol" : 0,
-    "unknown_reader" : 0,
-    "crc_error" : 0,
-    "crc_ok" : 0
-  },
-  "tag" : [ {
-    "id" : "T5711",
-    "registered" : true,
-    "lastseen" : "08/15",
-    "loc" : [ 500, 1000 ],
-    "reader" : "R1234",
-    "button": false
-  } , {
-    "id" : "T5712",
-    "registered" : false,
-    "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ -1, -1 ],
-    "reader" : "R1234",
-    "button": false
-  } , {
-    "id" : "T5713",
-    "registered" : true,
-    "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 30, 30 ],
-    "reader" : "R1234",
-    "button": false
-  } ],
+  "time" : 1386771616764,
+  "maxX" : 1200,
+  "maxY" : 2570,
+  "runId" : 43,
+  "tag" : [ ],
   "reader" : [ {
     "id" : "R1291",
-    "name" : "Relax",
+    "name" : "Snack",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 1, 266 ],
-    "room" : 2,
+    "loc" : [ 213, 1465 ],
+    "room" : 1,
     "floor" : 1,
     "group" : 1
-  },{
+  }, {
     "id" : "R1300",
-    "name" : "Cooking",
+    "name" : "LineStart",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 627, 1 ],
+    "loc" : [ 1042, 1805 ],
     "room" : 1,
     "floor" : 1,
     "group" : 1
   }, {
     "id" : "R1391",
-    "name" : "Sleeper",
+    "name" : "Salad",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 587, 584 ],
-    "room" : 4,
+    "loc" : [ 223, 300 ],
+    "room" : 1,
     "floor" : 1,
     "group" : 1
   }, {
     "id" : "R1259",
-    "name" : "Spider",
+    "name" : "LineEnd",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 1, 1145 ],
-    "room" : 3,
+    "loc" : [ 1145, 300 ],
+    "room" : 1,
     "floor" : 1,
     "group" : 1
   } ],
   "spots" : [ {
     "id" : "T1116",
-    "name" : "Ok",
+    "name" : "Cash3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 30, 30 ]
+    "loc" : [ 735, 50 ]
   }, {
     "id" : "T1117",
     "name" : "Register2",
     "type" : "RegisterTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 118, 248 ]
+    "loc" : [ 840, 2570 ]
   }, {
     "id" : "T1118",
-    "name" : "Ok",
+    "name" : "Line1_2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 40, 40 ]
+    "loc" : [ 1135, 1416 ]
   }, {
     "id" : "T1137",
-    "name" : "Ok",
+    "name" : "Line2_3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 180, 180 ]
+    "loc" : [ 895, 1130 ]
   }, {
     "id" : "T1138",
-    "name" : "Ok",
+    "name" : "Snack1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 190, 190 ]
+    "loc" : [ 216, 1380 ]
   }, {
     "id" : "T1139",
-    "name" : "Ok",
+    "name" : "Noodl2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 200, 200 ]
+    "loc" : [ 455, 635 ]
   }, {
     "id" : "T1133",
-    "name" : "Ok",
+    "name" : "Line2_2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 140, 140 ]
+    "loc" : [ 885, 1300 ]
   }, {
     "id" : "T1134",
-    "name" : "Ok",
+    "name" : "Juice",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 150, 150 ]
+    "loc" : [ 375, 2120 ]
   }, {
     "id" : "T1135",
-    "name" : "Ok",
+    "name" : "Salad3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 160, 160 ]
+    "loc" : [ 418, 275 ]
   }, {
     "id" : "T1136",
-    "name" : "Ok",
+    "name" : "Noodl1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 170, 170 ]
+    "loc" : [ 365, 635 ]
   }, {
     "id" : "T1130",
-    "name" : "Ok",
+    "name" : "Line1_1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 120, 120 ]
+    "loc" : [ 895, 1465 ]
   }, {
     "id" : "T1131",
-    "name" : "Ok",
+    "name" : "Cash4",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 130, 130 ]
+    "loc" : [ 50, 50 ]
   }, {
     "id" : "T1278",
     "name" : "Register1",
     "type" : "RegisterTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 118, 250 ]
+    "loc" : [ 840, 2570 ]
   }, {
     "id" : "T389",
-    "name" : "Ok",
+    "name" : "Salad4",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 20, 20 ]
+    "loc" : [ 670, 275 ]
   }, {
     "id" : "T1128",
-    "name" : "Ok",
+    "name" : "Salad2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 100, 100 ]
+    "loc" : [ 675, 370 ]
   }, {
     "id" : "T1129",
-    "name" : "Ok",
+    "name" : "Snack2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 110, 110 ]
+    "loc" : [ 216, 1236 ]
   }, {
     "id" : "T1126",
-    "name" : "Ok",
+    "name" : "Desert1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 90, 90 ]
+    "loc" : [ 330, 60 ]
   }, {
     "id" : "T382",
-    "name" : "Ok",
+    "name" : "Cash2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 10, 10 ]
+    "loc" : [ 1020, 1 ]
   }, {
     "id" : "T1120",
-    "name" : "UnregisterFlur",
+    "name" : "UnRegister1",
     "type" : "UnRegisterTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 60, 626 ]
+    "loc" : [ 1200, 1 ]
   }, {
     "id" : "T1121",
-    "name" : "Ok",
+    "name" : "Cash1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 50, 50 ]
+    "loc" : [ 1130, 1 ]
   }, {
     "id" : "T1124",
-    "name" : "Ok",
+    "name" : "Salad1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 80, 80 ]
+    "loc" : [ 418, 370 ]
   }, {
     "id" : "T1142",
-    "name" : "Ok",
+    "name" : "Line1_3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 230, 230 ]
+    "loc" : [ 1135, 1250 ]
   }, {
     "id" : "T1125",
     "name" : "UnRegister2",
     "type" : "UnRegisterTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 1, 1 ]
+    "loc" : [ 1200, 1 ]
   }, {
     "id" : "T1122",
-    "name" : "Ok",
+    "name" : "Noodl3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 60, 60 ]
+    "loc" : [ 615, 635 ]
   }, {
     "id" : "T1140",
-    "name" : "Ok",
+    "name" : "Line1_1",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 210, 210 ]
+    "loc" : [ 1135, 1633 ]
   }, {
     "id" : "T1123",
-    "name" : "Ok",
+    "name" : "Desert2",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 70, 70 ]
+    "loc" : [ 465, 60 ]
   }, {
     "id" : "T1141",
-    "name" : "Ok",
+    "name" : "Snack3",
     "type" : "SpotTag",
     "lastseen" : "0000-00-00 00:00:00",
-    "loc" : [ 220, 220 ]
+    "loc" : [ 216, 800 ]
   } ],
-  "buildInMilliseconds" : 0
+  "buildInMilliseconds" : 1
 }

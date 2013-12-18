@@ -11,5 +11,6 @@ public enum TrackingAction {
 	Unknown,
 	Register,
 	Spot,
-	UnRegister
+	UnRegister,
+	UnRegisterForced
 }

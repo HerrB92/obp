@@ -17,7 +17,7 @@
 		<property name="hibernate.connection.pool_size">1</property>
 		
 		<!-- Echo all executed SQL to stdout -->
-		<property name="hibernate.show_sql">true</property>
+		<property name="hibernate.show_sql">false</property>
 
 		<!-- Enable Hibernate's automatic session context management -->
 		<property name="hibernate.current_session_context_class">thread</property>

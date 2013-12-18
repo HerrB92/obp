@@ -35,11 +35,27 @@ import com.fasterxml.jackson.core.JsonGenerator;
 public class OutputJSONTagData extends OutputJSON {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	private final DataIndex index = DataIndex.getInstance();
+	private long runId = 0;
 	
-	public OutputJSONTagData(String fileName) {
+	public OutputJSONTagData(String fileName, long runId) {
 		super(fileName);
+		setRunId(runId);
 	} // Constructor
-	
+		
+	/**
+	 * @return the runId
+	 */
+	public long getRunId() {
+		return runId;
+	} // getRunId
+
+	/**
+	 * @param runId the runId to set
+	 */
+	public void setRunId(long runId) {
+		this.runId = runId;
+	} // setRunId
+
 	/**
 	 * Updates the content of the given file (including path) with the
 	 * JSON encoded data of the service, tags, readers and proximity
@@ -58,6 +74,7 @@ public class OutputJSONTagData extends OutputJSON {
 		
 		generator.writeNumberField("maxX", configuration.getMaxX());
 		generator.writeNumberField("maxY", configuration.getMaxY());
+		generator.writeNumberField("runId", getRunId());
 		
 		// Elements of the original OpenBeacon JSON format,
 		// currently not provided or used.

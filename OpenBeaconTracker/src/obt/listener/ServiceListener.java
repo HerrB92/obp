@@ -123,7 +123,16 @@ public class ServiceListener implements Listener {
 	private void saveTrack(Tag tag, TrackingAction action) {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
 		session.beginTransaction();
-		session.save(new Tracking(getRunId(), tag.getKey(), action, tag.getX(), tag.getY(), tag.isButtonPressed(), tag.getMethod()));
+		session.save(new Tracking(
+							getRunId(),
+							tag.getKey(),
+							tag.getTrackId(),
+							action,
+							tag.getX(),
+							tag.getY(),
+							tag.isButtonPressed(),
+							tag.getMethod(),
+							tag.getLastSeen()));
 		session.getTransaction().commit();
 		
 		tag.resetMainDataChanged();
@@ -137,6 +146,7 @@ public class ServiceListener implements Listener {
 		saveRawData(tagSighting.getRawData());
 		
 		DateTime now = DateTime.now();
+		DateTime agedNow = now.minusSeconds(configuration.getTagAgedSeconds());
 		String readerKey = tagSighting.getReaderKey();
 		Tag tag;
 		
@@ -164,6 +174,8 @@ public class ServiceListener implements Listener {
 						otherTagKey = sighting.getTagKey();
 						
 						if (!configuration.isSpotTag(otherTagKey)) {
+							// A spot tag has recognized a moving tag
+							
 							tag = getDataIndex().getTagByKey(otherTagKey);
 							
 							if (tag == null) {
@@ -171,9 +183,15 @@ public class ServiceListener implements Listener {
 								tag = new Tag(tagSighting.getTagId(), getPositionEstimator());
 								getDataIndex().addTag(tag);
 							}
-							
-//								SoundUtils.setHz(500);
-//								new SoundUtils().start();
+														
+							if (tag.isRegistered() && tag.getLastSeen().isBefore(agedNow)) {
+								// Tag was not active for some time; it is likely,
+								// that the unregistration did not happen.
+								// Unregister the tag correctly.
+								
+								tag.unregister(configuration.getForcedUnRegisterX(), configuration.getForcedUnRegisterY());
+								saveTrack(tag, TrackingAction.UnRegisterForced);
+							}
 							
 							tag.setLastSeen(now);
 							
@@ -183,13 +201,13 @@ public class ServiceListener implements Listener {
 									saveTrack(tag, TrackingAction.UnRegister);
 								}
 							} else if (configuration.isRegisterTag(tagKey)) {
-								tag.register();
+								tag.register(spotTag.getX(), spotTag.getY());
 								saveTrack(tag, TrackingAction.Register);
 							}
 							
 							if (tag.isRegistered()) {
 								tag.addSpotTagSighting(spotTag, sighting.getStrength());
-							
+								
 								if (tag.needsEstimation()) {
 									tag.updatePositionEstimation();
 								
@@ -211,6 +229,16 @@ public class ServiceListener implements Listener {
 				}
 				
 				tag.setLastReaderKey(readerKey);
+				
+				if (tag.isRegistered() && tag.getLastSeen().isBefore(agedNow)) {
+					// Tag was not active for some time; it is likely,
+					// that the unregistration did not happen.
+					
+					// Unregister the tag correctly.
+					tag.unregister(configuration.getForcedUnRegisterX(), configuration.getForcedUnRegisterY());
+					saveTrack(tag, TrackingAction.UnRegisterForced);
+				}
+				
 				tag.setLastSeen(now);
 				
 				if (tagSighting.getProximitySightings() != null && 
@@ -222,9 +250,6 @@ public class ServiceListener implements Listener {
 						otherTagKey = sighting.getTagKey();
 						
 						if (configuration.isSpotTag(otherTagKey)) {
-//								SoundUtils.setHz(750);
-//								new SoundUtils().start();
-							
 							spotTag = configuration.getSpot(otherTagKey);
 							
 							if (tag.isRegistered()) {
@@ -233,7 +258,7 @@ public class ServiceListener implements Listener {
 									saveTrack(tag, TrackingAction.UnRegister);
 								}
 							} else if (configuration.isRegisterTag(otherTagKey)) {
-								tag.register();
+								tag.register(spotTag.getX(), spotTag.getY());
 								saveTrack(tag, TrackingAction.Register);
 							}
 							

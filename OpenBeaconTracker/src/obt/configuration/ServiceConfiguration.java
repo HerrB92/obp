@@ -23,7 +23,7 @@ import java.util.Set;
 
 import org.hibernate.Session;
 
-import obp.service.Constants;
+import obs.service.Constants;
 import obt.configuration.Setting.SettingType;
 import obt.persistence.DatabaseSessionFactory;
 import obt.spots.Reader;

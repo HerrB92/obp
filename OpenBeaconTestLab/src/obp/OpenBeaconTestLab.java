@@ -4,7 +4,7 @@
 package obp;
 
 import obp.listener.ServiceListener;
-import odp.service.listener.ListenerService;
+import obs.service.listener.ListenerService;
 
 /**
  * @author bbehrens

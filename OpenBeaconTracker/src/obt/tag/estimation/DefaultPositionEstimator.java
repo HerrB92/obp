@@ -5,7 +5,7 @@ package obt.tag.estimation;
 
 import java.util.ArrayList;
 
-import obp.service.Constants;
+import obs.service.Constants;
 import obt.configuration.ServiceConfiguration;
 import obt.spots.Spot;
 import obt.spots.SpotType;

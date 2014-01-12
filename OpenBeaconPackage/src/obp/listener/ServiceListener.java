@@ -15,9 +15,9 @@ import obp.tag.Tag;
 import obp.tag.TagProximitySighting;
 import obp.tag.estimation.DefaultPositionEstimator;
 import obp.tag.estimation.PositionEstimator;
-import odp.service.listener.Listener;
-import odp.service.sighting.ProximitySighting;
-import odp.service.sighting.TagSighting;
+import obs.service.listener.Listener;
+import obs.service.sighting.ProximitySighting;
+import obs.service.sighting.TagSighting;
 
 /**
  * @author bbehrens

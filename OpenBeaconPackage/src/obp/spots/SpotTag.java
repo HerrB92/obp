@@ -3,7 +3,7 @@
  */
 package obp.spots;
 
-import obp.service.Constants;
+import obs.service.Constants;
 
 /**
  * @author bbehrens

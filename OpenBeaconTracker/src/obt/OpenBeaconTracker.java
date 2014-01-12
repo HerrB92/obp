@@ -21,6 +21,7 @@ import org.hibernate.Session;
 
 import com.fasterxml.jackson.core.JsonGenerationException;
 
+import obs.service.listener.ListenerService;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.index.ObtRun;
@@ -29,7 +30,6 @@ import obt.index.output.OutputJSONTagData;
 import obt.index.output.OutputJSONUnRegisteredTagKeys;
 import obt.listener.ServiceListener;
 import obt.persistence.DatabaseSessionFactory;
-import odp.service.listener.ListenerService;
 
 /**
  * The OpenBeaconTracker class provides the main method for the 

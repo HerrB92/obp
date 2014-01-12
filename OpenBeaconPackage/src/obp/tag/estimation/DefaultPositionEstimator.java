@@ -6,13 +6,13 @@ package obp.tag.estimation;
 import java.util.ArrayList;
 
 import obp.ServiceConfiguration;
-import obp.service.Constants;
 import obp.spots.Reader;
 import obp.spots.SpotTag;
 import obp.spots.SpotType;
 import obp.tag.Tag;
 import obp.tag.TagReaderSighting;
 import obp.tag.TagSpotTagSighting;
+import obs.service.Constants;
 
 /**
  * @author bbehrens

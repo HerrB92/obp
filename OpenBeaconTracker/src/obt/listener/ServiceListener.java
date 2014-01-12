@@ -19,6 +19,9 @@ import java.util.ArrayList;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 
+import obs.service.listener.Listener;
+import obs.service.sighting.ProximitySighting;
+import obs.service.sighting.TagSighting;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.persistence.DatabaseSessionFactory;
@@ -29,9 +32,6 @@ import obt.tag.Tracking;
 import obt.tag.TrackingAction;
 import obt.tag.estimation.DefaultPositionEstimator;
 import obt.tag.estimation.PositionEstimator;
-import odp.service.listener.Listener;
-import odp.service.sighting.ProximitySighting;
-import odp.service.sighting.TagSighting;
 
 /**
  * 

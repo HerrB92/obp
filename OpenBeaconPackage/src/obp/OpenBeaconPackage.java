@@ -16,7 +16,7 @@ import obp.index.ObpRun;
 import obp.index.output.JSONOutputService;
 import obp.listener.ServiceListener;
 import obp.persistence.DatabaseSessionFactory;
-import odp.service.listener.ListenerService;
+import obs.service.listener.ListenerService;
 
 /**
  * @author bbehrens

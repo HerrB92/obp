@@ -12,15 +12,15 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package odp.service.listener;
+package obs.service.listener;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
-import obp.service.Constants;
-import odp.service.sighting.TagSighting;
+import obs.service.Constants;
+import obs.service.sighting.TagSighting;
 
 /**
  * 
@@ -97,8 +97,6 @@ public class ListenerService implements Runnable {
 								+ ioException.toString());
 			}
 		}
-//
-//		packet = new DatagramPacket(new byte[256], 256);
 	} // Constructor
 	
 	public void setDebug(boolean debug) {

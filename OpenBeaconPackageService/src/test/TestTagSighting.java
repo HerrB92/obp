@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 import java.net.DatagramPacket;
 import java.util.ArrayList;
 
-import odp.service.sighting.TagSighting;
+import obs.service.sighting.TagSighting;
 
 import org.junit.Before;
 import org.junit.Test;

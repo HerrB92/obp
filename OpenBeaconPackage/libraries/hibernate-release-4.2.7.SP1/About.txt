@@ -1,0 +1,4 @@
+Description: Hibernate ORM: Object/Relational Database Mapping
+Homepage:    http://hibernate.org/orm/
+JavaDoc:     http://hibernate.org/orm/documentation
+Get Started: http://docs.jboss.org/hibernate/orm/4.2/quickstart/en-US/html

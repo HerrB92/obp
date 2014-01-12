@@ -1,0 +1,4 @@
+Description: MySQL/MariaDB drop-in replacement JDBC connector
+Homepage:    http://dev.mysql.com/downloads/connector/j/
+JavaDoc:     http://dev.mysql.com/dev/refman/5.6/en/connector-j.html
+Get Started: http://dev.mysql.com/dev/refman/5.6/en/connector-j.html

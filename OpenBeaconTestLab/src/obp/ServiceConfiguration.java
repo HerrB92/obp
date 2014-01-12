@@ -18,9 +18,9 @@ import java.util.Map.Entry;
 import java.util.Properties;
 import java.util.Set;
 
-import obp.service.Constants;
 import obp.spots.Reader;
 import obp.spots.SpotTag;
+import obs.service.Constants;
 
 /**
  * Singleton

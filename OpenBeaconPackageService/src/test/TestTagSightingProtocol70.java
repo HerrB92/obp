@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import java.net.DatagramPacket;
 
-import odp.service.sighting.TagSighting;
+import obs.service.sighting.TagSighting;
 
 import org.junit.Before;
 import org.junit.Test;

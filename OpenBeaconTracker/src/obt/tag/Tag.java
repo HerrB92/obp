@@ -6,12 +6,12 @@ package obt.tag;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import obs.service.sighting.ProximitySighting;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.spots.Spot;
 import obt.tag.estimation.EstimationMethod;
 import obt.tag.estimation.PositionEstimator;
-import odp.service.sighting.ProximitySighting;
 
 import org.joda.time.DateTime;
 

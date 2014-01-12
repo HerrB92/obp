@@ -12,15 +12,15 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package odp.service.sighting;
+package obs.service.sighting;
 
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-import obp.service.Constants;
-import obp.service.tools.Tools;
+import obs.service.Constants;
+import obs.service.tools.Tools;
 
 /**
  * Class used to provide the data structure for tag sightings.

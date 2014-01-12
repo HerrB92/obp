@@ -12,9 +12,9 @@
  * with this program; if not, write to the Free Software Foundation, Inc.,
  * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package odp.service.sighting;
+package obs.service.sighting;
 
-import obp.service.Constants;
+import obs.service.Constants;
 
 /**
  * Class used to provide the data structure for proximity sightings 

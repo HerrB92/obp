@@ -8,9 +8,9 @@ import java.util.HashMap;
 import java.util.Map.Entry;
 
 import obp.ServiceConfiguration;
-import obp.service.Constants;
 import obp.tag.estimation.EstimationMethod;
 import obp.tag.estimation.PositionEstimator;
+import obs.service.Constants;
 
 import org.joda.time.DateTime;
 

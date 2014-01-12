@@ -18,7 +18,7 @@ import java.io.IOException;
 
 import org.joda.time.DateTime;
 
-import obp.service.Constants;
+import obs.service.Constants;
 import obt.configuration.ServiceConfiguration;
 import obt.index.DataIndex;
 import obt.spots.Reader;

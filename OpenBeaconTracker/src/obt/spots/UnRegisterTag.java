@@ -6,7 +6,7 @@ package obt.spots;
 import javax.persistence.Entity;
 import javax.persistence.Table;
 
-import obp.service.Constants;
+import obs.service.Constants;
 
 /**
  * @author bbehrens

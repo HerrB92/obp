@@ -106,6 +106,11 @@ public class Setting implements Serializable {
 	// Type of setting
 	private SettingType settingType;
 	
+	@Id
+	@Column(nullable = false)
+	// Run id: 0 for current configuration, otherwise used for replay
+	private Long runId;
+	
 	@Column
 	// String value
 	private String value;
@@ -142,6 +147,22 @@ public class Setting implements Serializable {
 	private void setSettingType(SettingType type) {
 		this.settingType = type;
 	}
+	
+	/**
+	 * @return Run id, 0 for current run
+	 */
+	@SuppressWarnings("unused")
+	private Long getRunId() {
+		return runId;
+	} // getRunId
+
+	/**
+	 * @param runId
+	 */
+	@SuppressWarnings("unused")
+	private void setRunId(Long runId) {
+		this.runId = runId;
+	} // setRunId
 	
 	/**
 	 * @return the value type

@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 
 import obs.service.Constants;
@@ -39,6 +40,10 @@ import obt.tag.TagKey;
  * 
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
+ */
+/**
+ * @author bbehrens
+ *
  */
 public class ServiceConfiguration {
 	// Instance
@@ -117,7 +122,7 @@ public class ServiceConfiguration {
 		session.beginTransaction();
 		
 		// Settings
-		List<?> settings = session.createQuery("from Setting").list();
+		List<?> settings = session.createQuery("from Setting where runId = 0").list();
 		
 		settingsMap.clear();
 		Setting setting;
@@ -127,7 +132,7 @@ public class ServiceConfiguration {
 		}
 		
 		// Readers
-		List<?> readers = session.createQuery("from Reader where active = true").list();
+		List<?> readers = session.createQuery("from Reader where runId = 0 and active = true").list();
 		
 		readerMap.clear();
 		Reader reader;
@@ -142,7 +147,7 @@ public class ServiceConfiguration {
 		// SpotTags
 		SpotTag spotTag;
 		
-		List<?> spots = session.createQuery("from SpotTag where active = true").list();
+		List<?> spots = session.createQuery("from SpotTag where runId = 0 and active = true").list();
 		for (Object object : spots) {
 			spotTag = (SpotTag)object;
 			addSpot(spotTag);
@@ -150,7 +155,7 @@ public class ServiceConfiguration {
 		
 		// RegisterTags
 		RegisterTag registerTag;
-		List<?> registerTags = session.createQuery("from RegisterTag where active = true").list();
+		List<?> registerTags = session.createQuery("from RegisterTag where runId = 0 and active = true").list();
 		for (Object object : registerTags) {
 			registerTag = (RegisterTag)object;
 			addSpot(registerTag);
@@ -158,7 +163,7 @@ public class ServiceConfiguration {
 		
 		// UnRegisterTags
 		UnRegisterTag unRegisterTag;
-		List<?> unUnRegisterTags = session.createQuery("from UnRegisterTag where active = true").list();
+		List<?> unUnRegisterTags = session.createQuery("from UnRegisterTag where runId = 0 and active = true").list();
 		for (Object object : unUnRegisterTags) {
 			unRegisterTag = (UnRegisterTag)object;
 			addSpot(unRegisterTag);
@@ -170,7 +175,7 @@ public class ServiceConfiguration {
 		}
 		
 		// TagKeys
-		List<?> tagKeys = session.createQuery("from TagKey where active = true").list();
+		List<?> tagKeys = session.createQuery("from TagKey where runId = 0 and active = true").list();
 		
 		tagKeyList.clear();
 		TagKey tagKey;
@@ -188,6 +193,86 @@ public class ServiceConfiguration {
 		
 		configurationLoaded = true;
 	} // loadConfiguration
+	
+	/**
+	 * Method stores current configuration within the same tables
+	 * using the given runId
+	 */
+	public void storeReplayInformation(Long runId) {
+		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
+		session.beginTransaction();
+		
+		String sql = "";
+		
+		// Settings
+		sql = 
+			"INSERT INTO Settings (runId, settingType, value)" +  
+			"SELECT :runId, settingType, value " +
+			"  FROM Settings " +
+			" WHERE runId = 0 ";
+		 
+		SQLQuery query;
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+		
+		// Readers
+		sql = 
+			"INSERT INTO Readers (runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active)" +  
+			"SELECT :runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active " +
+			"  FROM Readers " +
+			" WHERE runId = 0 AND active = 1";
+		 
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+		
+		// SpotTags
+		sql = 
+			"INSERT INTO SpotTags (runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active)" +  
+			"SELECT :runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active " +
+			"  FROM SpotTags " +
+			" WHERE runId = 0 AND active = 1";
+		 
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+		
+		// RegisterTags
+		sql = 
+			"INSERT INTO RegisterTags (runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active)" +  
+			"SELECT :runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active " +
+			"  FROM RegisterTags " +
+			" WHERE runId = 0 AND active = 1";
+		 
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+		
+		// UnRegisterTags
+		sql = 
+			"INSERT INTO UnRegisterTags (runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active)" +  
+			"SELECT :runId, id, floor, SpotGroup, lastSeen, name, room, x, y, active " +
+			"  FROM UnRegisterTags " +
+			" WHERE runId = 0 AND active = 1";
+		 
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+		
+		// TagKeys
+		sql = 
+			"INSERT INTO TagKeys (runId, name, active, keyPart1, keyPart2, keyPart3, keyPart4)" +  
+			"SELECT :runId, name, active, keyPart1, keyPart2, keyPart3, keyPart4 " +
+			"  FROM TagKeys " +
+			" WHERE runId = 0 AND active = 1";
+		 
+		query = session.createSQLQuery(sql);
+		query.setParameter("runId", runId);
+		query.executeUpdate();
+				
+		session.getTransaction().commit();
+	} // storeReplayInformation
 		
 	/**
 	 * @param settingType

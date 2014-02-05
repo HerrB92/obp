@@ -25,6 +25,10 @@ public abstract class Spot implements Serializable {
 	@Column(nullable = false)
 	private int id;
 	
+	@Id
+	@Column(nullable = false)
+	private Long runId;
+	
 	@Transient
 	private String key;
 	
@@ -85,6 +89,22 @@ public abstract class Spot implements Serializable {
 	public void setId(int id) {
 		this.id = id;
 	} // setId
+	
+	/**
+	 * @return Run id, 0 for current run
+	 */
+	@SuppressWarnings("unused")
+	private Long getRunId() {
+		return runId;
+	} // getRunId
+
+	/**
+	 * @param runId
+	 */
+	@SuppressWarnings("unused")
+	private void setRunId(Long runId) {
+		this.runId = runId;
+	} // setRunId
 	
 	/**
 	 * @return the key

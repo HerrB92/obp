@@ -24,6 +24,10 @@ public class TagKey implements Serializable {
 	@Column(nullable = false)
 	private String name;
 	
+	@Id
+	@Column(nullable = false)
+	private Long runId;
+	
 	@Column(nullable = false)
 	private boolean active;
 	
@@ -68,6 +72,22 @@ public class TagKey implements Serializable {
 	public void setName(String name) {
 		this.name = name;
 	} // setName
+	
+	/**
+	 * @return Run id, 0 for current run
+	 */
+	@SuppressWarnings("unused")
+	private Long getRunId() {
+		return runId;
+	} // getRunId
+
+	/**
+	 * @param runId
+	 */
+	@SuppressWarnings("unused")
+	private void setRunId(Long runId) {
+		this.runId = runId;
+	} // setRunId
 	
 	/**
 	 * @return if spot is active (in general)

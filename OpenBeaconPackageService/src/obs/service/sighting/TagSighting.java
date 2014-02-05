@@ -65,7 +65,7 @@ public class TagSighting {
 	// Envelope sequence number
 	private int sequence = Constants.NOT_DEFINED;
 
-	// Envelope timestamp
+	// Envelope time stamp
 	private int timestamp = Constants.NOT_DEFINED;
 
 	// Data

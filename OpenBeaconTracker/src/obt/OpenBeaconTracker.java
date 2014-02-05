@@ -68,16 +68,21 @@ public class OpenBeaconTracker {
 	 * @throws InterruptedException
 	 */
 	public static void main(String[] args) throws InterruptedException {
-		// Load configuration
-		ServiceConfiguration configuration = ServiceConfiguration.getInstance();
-		DataIndex index = DataIndex.getInstance();
-		
 		ObtRun run = new ObtRun();
 		
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
 		session.beginTransaction();
 		session.save(run);
 		session.getTransaction().commit();
+		
+		// Load configuration
+		ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+		
+		// Preserve current settings for a later replay
+		configuration.storeReplayInformation(run.getRunId());
+		
+		// Prepare global data index object
+		DataIndex index = DataIndex.getInstance();
 		
 		// Create listener service and register service
 		// listener which processes the tag sighting data.

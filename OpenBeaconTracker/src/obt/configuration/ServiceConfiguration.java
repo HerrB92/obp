@@ -196,7 +196,11 @@ public class ServiceConfiguration {
 	
 	/**
 	 * Method stores current configuration within the same tables
-	 * using the given runId
+	 * using the given runId.
+	 * 
+	 * FIXME: The code of this method should be improved using
+	 * Hibernate object logic (no plain SQL - which is not updated, 
+	 * if class definition changes).
 	 */
 	public void storeReplayInformation(Long runId) {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();

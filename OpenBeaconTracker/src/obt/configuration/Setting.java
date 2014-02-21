@@ -51,7 +51,7 @@ public class Setting implements Serializable {
 	 * @version 1.0
 	 */
 	public enum SettingType {
-		TagAgedSeconds (SettingValueType.IntValue, "5", 5),
+		TagAgedSeconds (SettingValueType.IntValue, "30", 30),
 		TagButtonActiveSeconds (SettingValueType.IntValue, "5", 5),
 		TagReaderSightingActiveSeconds (SettingValueType.IntValue, "5", 5),
 		TagSpotTagSightingActiveSeconds (SettingValueType.IntValue, "2", 2),

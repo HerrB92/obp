@@ -1,0 +1,16 @@
+<?xml version="1.0"?> 
+<faqs xmlns="http://maven.apache.org/FML/1.0.1"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/FML/1.0.1 http://maven.apache.org/xsd/fml-1.0.1.xsd"
+  title="Frequently Asked Questions">
+ 
+  <part id="background"> 
+    
+    <faq id="dateTimeOffsetting">
+      <question>What is the Date and Time offsetting problem</question> 
+      <answer>Details are available at the <a href="http://blog.jadira.co.uk/blog/2010/5/1/javasqldate-types-and-the-offsetting-problem.html">Jadira Blog</a></answer>
+    </faq>
+   
+  </part> 
+  
+</faqs> 

@@ -1,0 +1,6 @@
+<?xml version='1.0' encoding='UTF-8'?>
+<dataset>
+  <dayOfWeekAsString ID="0" DAYOFWEEK="MONDAY" NAME="test_0"/>
+  <dayOfWeekAsString ID="1" DAYOFWEEK="TUESDAY" NAME="test_1"/>
+  <dayOfWeekAsString ID="2" DAYOFWEEK="SUNDAY" NAME="test_2"/>
+</dataset>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="ISO-8859-1"?>
+<!--
+		
+  Copyright 2010, 2011 Christopher Pheby
+		
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+		
+      http://www.apache.org/licenses/LICENSE-2.0
+		
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+		
+ -->
+<document xmlns="http://maven.apache.org/changes/1.0.0"
+          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+          xsi:schemaLocation="http://maven.apache.org/changes/1.0.0 http://maven.apache.org/xsd/changes-1.0.0.xsd">
+		
+	<properties>
+		<title>Usertype - Changes</title>
+		<author email="chrispheby@yahoo.co.uk">Chris Pheby</author>
+	</properties>
+		
+	<body>
+
+		<!-- types are add, fix, remove, update -->
+		<release version="3.1.0.CR8" date="24-06-2013" description="Object Deep Cloning">
+			<action dev="Chris Pheby" issue="JDF-59" type="add">Initial implementation of Jadira Cloning library</action>
+		</release>
+
+		<release version="3.1.0.CR7" date="07-06-2013" description="Fixes and Updates">
+			<action dev="Chris Pheby" issue="JDF-53" type="add">Add implementation of the IntervalBisection algoithm</action>
+			<action dev="Chris Pheby" issue="JDF-57" type="add">Add an FMPP Maven Plugin</action>
+			<action dev="Chris Pheby" issue="JDF-58" type="update">Organise tests into suite to accelerate test execution</action>
+			<action dev="Chris Pheby" issue="JDF-55" type="fix">Apply Sonar Ruleset Compliance</action>
+			<action dev="Chris Pheby" issue="JDF-56" type="fix">Better warning for non-static methods with heuristic types</action>
+		</release>
+
+		<release version="3.1.0.CR6" date="12-05-2013" description="Fixes and Updates">
+			<action dev="Chris Pheby" issue="JDF-50" type="update">Remove Maven Eclipse and Idea Plugins</action>
+			<action dev="Chris Pheby" issue="JDF-51" type="update">Switch to Github for Source Code Hosting</action>
+			<action dev="Chris Pheby" issue="JDF-52" type="update">Update to Hibernate 4.2.x</action>
+		</release>
+
+		<release version="3.1.0.CR5" date="03-05-2013" description="Support databaseZone with multicolumn types">
+			<action dev="Chris Pheby" issue="JDF-49" type="update">DatabaseZone parameter can be applied to multicolumn types</action>
+		</release>
+		
+		<release version="3.1.0.CR4" date="29-04-2013" description="New Approach for the Date and Time Mapping">
+			<action dev="Chris Pheby" issue="JDF-47" type="fix">Update Joda Mapping for Date and Time types</action>
+			<action dev="Chris Pheby" issue="JDF-48" type="fix">Resolved entities with multiple LocalDateTime fields are retrieved with incorrect values</action>
+		</release>
+		
+		<release version="3.1.0.CR3" date="28-04-2013" description="New Approach for the Timestamp Mapping &amp; ThreeTenBP 0.8.1">
+			<action dev="Chris Pheby" issue="JDF-44" type="update">Update to ThreeTen Backport 0.8.1</action>
+			<action dev="Chris Pheby" issue="JDF-45" type="fix">Update Joda Mapping to use direct millisecond value</action>
+			<action dev="Chris Pheby" issue="JDF-46" type="add">Add PersistentMinutes mapping for Joda Time</action>
+		</release>
+
+		<release version="3.1.0.CR2" date="24-03-2013" description="Support Joda Time 2.2 and incremental bugfixes">
+			<action dev="Chris Pheby" issue="JDF-42" type="add">Adding Oracle Profile to Verify Timezone Handling on Oracle</action>
+			<action dev="Chris Pheby" issue="JDF-35" type="update">Update Bindings to Use Method Handle. Also introduces a dependency on Java 7 or later (for bindings module)</action>
+			<action dev="Chris Pheby" issue="JDF-38" type="update">Update to Joda Money 0.8 and Joda Time 2.2</action>
+			<action dev="Chris Pheby" issue="JDF-33" type="fix">Correct service loader configuration for Bindings</action>
+			<action dev="Chris Pheby" issue="JDF-34" type="fix">Retrieving classes in package should not return inner classes</action>			
+			<action dev="Chris Pheby" issue="JDF-36" type="fix">PersistentEnum does not convert constants in HQL Queries. Resolution proposed by Adriano Machado</action>
+			<action dev="Chris Pheby" issue="JDF-37" type="fix">PersistentEnum causes ClassCastException if org.hibernate loglevel is set to DEBUG. Resolution proposed by Adriano Machado</action>
+			<action dev="Chris Pheby" issue="JDF-39" type="fix">Work around JDK Compilation Guard</action>
+			<action dev="Chris Pheby" issue="JDF-40" type="fix">Fix error in JpaBaseRepository</action>
+			<action dev="Chris Pheby" issue="JDF-41" type="fix">Printing not supported exception thrown in StringColumnLocalTimeMapper with Joda Time 2.2. Reported by Marko Lavikainen</action>			
+		</release>
+				
+		<release version="3.1.0.CR1" date="11-02-2013" description="Support for Threeten Backport and Classpath Introspection">
+			<action dev="Chris Pheby" issue="JDF-25" type="add">usertype.extended and Threenten project synchronization</action>
+			<action dev="Chris Pheby" issue="JDF-32" type="add">Add Classpath Introspection capability</action>
+			<action dev="Chris Pheby" issue="JDF-31" type="add">Create Dependency Management Pom.xml</action>
+			<action dev="Chris Pheby" issue="JDF-27" type="update">Zone is now configurable for Joda's PersistentInstant</action>
+			<action dev="Chris Pheby" issue="JDF-28" type="fix">For Joda's PersistentPeriodAsString, PeriodType is now persisted for Periods that are have a non-standard (i.e. not standard()) type. Reported by Phil at Inversebit</action>
+			<action dev="Chris Pheby" issue="JDF-29" type="fix">Correct Services Entry for Bindings</action>
+			<action dev="Chris Pheby" issue="JDF-30" type="update">Remove use of Spring API deprecated in 3.1+</action>
+		</release>
+		
+		<release version="3.0.0.GA" date="21-10-2012" description="New Types, (including for LibPhonenumber and Joda Money), Autoregistration, Hibernate 4, and Bugfixes">
+			<action dev="Chris Pheby" issue="JDF-22" type="fix">Resolve problem using Usertype with Hibernate Tools. Reported by Chun Chong Liao and Stéphane Bouteille</action>
+			<action dev="Chris Pheby" issue="JDF-23" type="update">Bindings module now requires Java 6</action>
+			<action dev="Chris Pheby" issue="JDF-7" type="update">Refactored support for legacy JDK types</action>
+			<action dev="Chris Pheby" issue="JDF-19" type="fix">Work around ClassNotFound issue on JBoss</action>
+			<action dev="Chris Pheby" issue="JDF-20" type="add">Added JPA Repository implementations</action>
+			<action dev="Chris Pheby" issue="JDF-4" type="fix">Fixed handling of local types when stored offset from GMT</action>
+			<action dev="Chris Pheby" issue="JDF-6" type="add">Adding support for persistence with libphonenumber and related value type</action>
+			<action dev="Chris Pheby" issue="JDF-26" type="fix">Fixing PersistentLocalDate behaviour, based on suggestion from Eric Dalquist</action>
+			<action dev="Chris Pheby" type="fix">Fix for ThreadLocal Resource leak in AbstractUserTypeHibernateIntegrator, thanks to Thilo-Alexander Ginkel</action>
+			<action dev="Chris Pheby" type="add">Added generated ISOCurrencyCodes enumeration and related interface</action>
+			<action dev="Chris Pheby" type="add">Added auto registration of Joda PersistentLocalDateTime usertype</action>
+			<action dev="Chris Pheby" type="fix">Fix for failure to execute in recent JDK6 and JDK7 builds. Note that under JDK6 you are recommended to use fixed JVM Timezones due to an issue with this JDK that cannot be resolved</action>
+			<action dev="Chris Pheby" type="fix">Added hashcode, equals and getters to the Offset type.</action>
+			<action dev="Chris Pheby" type="fix">Migrating tracker to Jira.</action>
+			<action dev="Chris Pheby" type="fix">Fix behaviour for Joda LocalDate with some historical (and potentially future) dates where timezone changes occurred. Issue and resolution proposed by Paul Middelkoop</action>
+			<action dev="Chris Pheby" type="fix">Fix behaviour where a manually set default Joda DateTimeZone is ignored. See http://jira.grails.org/browse/GPJODATIME-25</action>
+			<action dev="Chris Pheby" type="fix">Fix error where the default currency code test is wrong, requiring 'seed' to be defined unnecessarily. Issue reported by Marty Pitt</action>
+			<action dev="Chris Pheby" type="fix">Address use of components in criteria queries. Reported by Aaron Harshbarger</action>
+			<action dev="Chris Pheby" type="fix">Add convenience constructors to mappers so they can be used more easily outside of the user types.</action>
+			<action dev="Chris Pheby" type="fix">Workaround issue where JDK uses the VM Timezone for constructing Java SQL Types. Caused issue reported by Jörg Eichhorn</action>
+			<action dev="Chris Pheby" type="fix">Apply zoning to PersistentLocalDate and PersistentYearMonthDay.</action>
+			<action dev="Chris Pheby" type="fix">Store offset for non-fixed zones to better support DST rollovers.</action>
+			<action dev="Chris Pheby" type="update">Renamed module from usertype.jodatime to usertype.core</action>
+			<action dev="Chris Pheby" type="update">Renamed module from usertype.jsr310 to usertype.extended</action>
+			<action dev="Chris Pheby" type="update">Global registration of configuration parameters</action>
+			<action dev="Chris Pheby" type="update">Auto registration of user types. Based on suggestion by Dominic domi1980@gmail.com</action>
+			<action dev="Chris Pheby" type="update">Added support for Joda Time 2's MonthDay type</action>
+			<action dev="Chris Pheby" type="update">Added support for Joda Time 2's YearMonth type</action>
+			<action dev="Chris Pheby" type="update">Added support for Joda Money 0.6</action>
+			<action dev="Chris Pheby" type="update">Renamed the Legacy JDK Temporal Usertype classes</action>
+			<action dev="Chris Pheby" type="update">Updated to Hibernate 4.0.1 Final</action>
+		</release>
+		
+		<release version="2.0.1" date="19-03-2012" description="Fix for LocalDate defect">
+			<action dev="Chris Pheby" type="fix">Fix behaviour for Joda LocalDate with some historical (and potentially future) dates where timezone changes occurred. Issue and resolution proposed by Paul Middelkoop</action>
+		</release>
+		
+		<release version="2.0" date="07-07-2011" description="Support for Hibernate 4 Beta 2">
+			<action dev="Chris Pheby" type="update">Initial release supporting Hibernate 4. Thanks for initial patch from Matt Drees.</action>
+		</release>
+
+		<release version="1.9.1" date="18-03-2012" description="Fix for LocalDate defect">
+			<action dev="Chris Pheby" type="fix">Fix behaviour for Joda LocalDate with some historical (and potentially future) dates where timezone changes occurred. Issue and resolution proposed by Paul Middelkoop</action>
+		</release>
+		
+		<release version="1.9" date="01-07-2011" description="Support for @Version, querying against properties for multicolumn types and Hibernate in Maven Central">
+			<action dev="Chris Pheby" type="fix">Improve robustness of mappings of Time types to Timestamps</action>
+			<action dev="Chris Pheby" type="add">Support @Version functionality</action>
+			<action dev="Chris Pheby" type="add">Allow usertype properties to be dereferenced in queries</action>
+			<action dev="Chris Pheby" type="add">Usertype classes are now serializable</action>
+			<action dev="Chris Pheby" type="fix">Fix compatibility with the Hibernate 3.6 jar in Maven central</action>
+			<action dev="Chris Pheby" type="update">For JSR-310 restored the Joda Time roundtrip tests now Joda Time Contrib supports Hibernate 3.6</action>
+		</release>
+		
+		<release version="1.8" date="02-12-2010" description="Custom Handling of Database and JVM timezones">
+			<action dev="Chris Pheby" type="add">For DateTime and Instant types stored as Timestamp, the database timezone can be driven by parameters on the usertype(s)</action>
+			<action dev="Chris Pheby" type="add">For DateTime stored as Timestamp allow the JVM (presentation) zone can be customised from parameters on the usertype</action>
+			<action dev="Chris Pheby" type="fix">Default presentation (JVM) zone for DateTime is now the JVM zone</action>
+			<action dev="Chris Pheby" type="update">Update to JSR 310 0.6.3</action>
+			<action dev="Chris Pheby" type="add">Adding initial implementation of new offsetting types for JSR 310</action>
+			<action dev="Chris Pheby" type="update">Update to Joda Time 2.0</action>
+		</release>
+		
+		<release version="1.7" date="20-11-2010" description="Bugfix Release">
+			<action dev="Chris Pheby" type="fix">Resolve issue persisting Joda LocalDateTime to String format</action>
+			<action dev="Chris Pheby" issue="3112888" type="fix">Resolve issue where Joda PersistentDateTimeWithZone cannot be restored from the database reported by Jeffrey Schneller</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue saving Joda PersistentDateTimeAsString</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue saving Joda PersistentDateTimeWithZone</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue saving Joda PersistentDateTimeZoneAsString</action>
+			<action dev="Chris Pheby" type="fix">Bugfixes for Joda PersistentInterval</action>
+		</release>
+		
+		<release version="1.6" date="13-11-2010" description="Maintenance Release">
+			<action dev="Chris Pheby" type="update">Build now performed using Maven 3</action>
+			<action dev="Chris Pheby" type="update">Updated JSR 310 support to compile against JSR 310 0.6.2</action>
+			<action dev="Chris Pheby" type="update">JSR 310 support now tested against Hibernate 3.6.0.Final</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue where DateMidnight cannot be restored from the database reported by Nils Hartmann</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue where only the first column of a multi-column null value was being stored as null</action>
+			<action dev="Chris Pheby" type="fix">Resolve issue with exception in disassembly when value is null. Issue reported by John Krasnay and Steffen Gemein</action>
+		</release>
+		
+		<release version="1.5" date="07-10-2010" description="Bugfix">
+			<action dev="Chris Pheby" type="fix">Fix a NullPointerException when using types in HQL suggested by Alison Winters</action>
+		</release>
+		
+		<release version="1.4" date="04-10-2010" description="Hibernate 3.6 compatibility">
+			<action dev="Chris Pheby" type="update">Link Joda Time 1.6.2</action>
+			<action dev="Chris Pheby" type="update">Tracking Hibernate 3.6.0 releases</action>
+			<action dev="Chris Pheby" type="update">Link SLF4J 1.6.1</action>
+			<action dev="Chris Pheby" type="update">Updated Maven plugin dependencies</action>
+		</release>
+		
+		<release version="1.3.1" date="13-09-2010" description="UTC DateTime Behaviour Tweak">
+			<action dev="Chris Pheby" type="update">PersistentDateTime now always represents the DateTime in UTC zone (as stored) when reading back from the Database.</action>
+		</release>
+		
+		<release version="1.3" date="06-09-2010" description="Fix Java 5 Support">
+			<action dev="Chris Pheby" type="fix">Fix compilation on Java 5 for Joda Time support. NB. JSR 310 requires Java 6. Reported by Javed Mandary</action>
+			<action dev="Chris Pheby" type="add">Added PersistentDateTimeWithZone to replace previous PersistentDateTime. New PersistentDateTime class persists to a single column without zone.</action>
+		</release>
+		
+		<release version="1.2" date="01-06-2010" description="Central Sync Up">
+			<action dev="Chris Pheby" type="update">Modularise build so Joda Time support can be synchronized to central</action>
+			<action dev="Chris Pheby" type="update">Update JSR 310 support to Hibernate 3.5.2</action>
+			<action dev="Chris Pheby" type="update">Uses New JBoss Nexus Repository</action>
+		</release>
+		
+		<release version="1.1" date="30-04-2010" description="New Types">
+			<action dev="Chris Pheby" type="add">Added support for Instant types and DurationAsString</action>
+			<action dev="Chris Pheby" type="update">Refactored package names and added unit tests</action>
+			<action dev="Chris Pheby" type="add">Added user types for Joda Time</action>
+		</release>
+		
+		<release version="1.0" date="22-04-2010" description="Initial Release">
+			<action dev="Chris Pheby" type="add">New usertypes for JSR 310</action>
+		</release>
+	</body>
+		
+</document>

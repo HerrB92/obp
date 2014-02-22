@@ -49,7 +49,7 @@ import obt.persistence.DatabaseSessionFactory;
  * and the timer object which refreshes the JSON file once
  * a second.
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class OpenBeaconTracker {	
@@ -62,6 +62,9 @@ public class OpenBeaconTracker {
 	// data in a certain format as JSON into files, accessible
 	// by the web client.
 	private static Timer timer;
+	
+	// Main listener service object, propagated within the main method.
+	private static ListenerService service;
 	
 	/**
 	 * @param args
@@ -86,8 +89,8 @@ public class OpenBeaconTracker {
 		
 		// Create listener service and register service
 		// listener which processes the tag sighting data.
-		ListenerService service = new ListenerService("10.254.0.2", 2342, 1,
-				configuration.getTagKeyList().get(0), false);
+		service = new ListenerService(
+				"10.254.0.2", 2342, 1, configuration.getTagKeyList().get(0));
 		service.setMessageListener(new ServiceListener(index, run.getRunId()));
 		service.start();
 		

@@ -19,18 +19,24 @@ import java.net.InetAddress;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import obs.service.Constants;
 import obs.service.tools.Tools;
 
 /**
  * Class used to provide the data structure for tag sightings.
  * 
- * Code based on the work of 2007 Alessandro Marianantoni <alex@alexrieti.com>
+ * Code based on the work of 2007
+ * Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TagSighting {
+	static final Logger logger = LogManager.getLogger(TagSighting.class.getName());
+	
 	// Packet
 	// IP address of the sending reader
 	private InetAddress sendingReader;
@@ -125,12 +131,8 @@ public class TagSighting {
 	 * @param encryptionKey
 	 *            Encryption key used to decrypt the tag data (array of four
 	 *            long values)
-	 * @param debug
-	 *            Deprecated: Set to true to output the tag sighting data after
-	 *            processing to the console. FIXME: Use log4j
 	 */
-	public TagSighting(DatagramPacket packet, long[] encryptionKey,
-			boolean debug) {
+	public TagSighting(DatagramPacket packet, long[] encryptionKey) {
 		ByteBuffer buffer = ByteBuffer.wrap(packet.getData());
 
 		sendingReader = packet.getAddress();
@@ -234,9 +236,7 @@ public class TagSighting {
 		// calculated tag CRC are equal (valid)
 		validTagCRC = decryptTagData(tagData, encryptionKey);
 
-		if (debug) {
-			System.out.println("Sighting: " + this.toString());
-		}
+		logger.debug("Sighting: " + this.toString());
 	} // Constructor
 
 	/**
@@ -315,9 +315,7 @@ public class TagSighting {
 
 					setValidTagData(true);
 				} else {
-					// FIXME: Use log4j
-					System.out.println("Unknown tag protocol 2: "
-							+ tempProtocol);
+					logger.error("Unknown tag protocol 2: %i", tempProtocol);
 				}
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_EXT:
@@ -542,21 +540,22 @@ public class TagSighting {
 
 				int proximityData;
 				for (int j = 0; j < Constants.PROX_TAG_MAX_COUNT; j++) {
-					proximityData = ((0xff & tagData[4 + (j * 2)]) << 8)
+					proximityData = 
+							((0xff & tagData[4 + (j * 2)]) << 8)
 							+ (0xff & tagData[5 + (j * 2)]);
 
 					if (proximityData > 0) {
 						proximitySightings
-								.add(new ProximitySighting(
-										// Other tag id
-										proximityData
-												& Constants.PROX_TAG_ID_MASK,
-										// Count
-										(proximityData >> Constants.PROX_TAG_ID_BITS)
-												& Constants.PROX_TAG_COUNT_MASK,
-										// Strength
-										(proximityData >> (Constants.PROX_TAG_ID_BITS + Constants.PROX_TAG_COUNT_BITS))
-												& Constants.PROX_TAG_STRENGTH_MASK));
+							.add(new ProximitySighting(
+								// Other tag id
+								proximityData
+									& Constants.PROX_TAG_ID_MASK,
+								// Count
+								(proximityData >> Constants.PROX_TAG_ID_BITS)
+									& Constants.PROX_TAG_COUNT_MASK,
+								// Strength
+								(proximityData >> (Constants.PROX_TAG_ID_BITS + Constants.PROX_TAG_COUNT_BITS))
+									& Constants.PROX_TAG_STRENGTH_MASK));
 					}
 				}
 
@@ -624,10 +623,8 @@ public class TagSighting {
 				setValidTagData(true);
 				break;
 			default:
-				// FIXME: Change to log4j
-				// System.out.println("\t\tunknown packet protocol[%03i] [key=%i] [reader=0x%08X] ",
-				// getTagProtocol(), key_id, reader_id);
-				// hex_dump (&env, 0, sizeof (env));
+				logger.error("Unknown packet protocol %i, reader: %i",
+						getTagProtocol(), readerId);
 
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC = 0xff & tagData[15];

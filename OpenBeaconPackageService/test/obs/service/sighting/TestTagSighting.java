@@ -1,7 +1,18 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
-package test;
+package obs.service.sighting;
 
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
@@ -17,9 +28,12 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author bbehrens
- *
- */
+ * Test class for the test of the service class reading previously
+ * recorded tag data.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
+ **/
 public class TestTagSighting {
 	
 	private static final long[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
@@ -73,7 +87,7 @@ public class TestTagSighting {
 		// Should not throw an exception
 		
 		for (byte[] packetData: data) {
-			new TagSighting(new DatagramPacket(packetData, 32), key, true);
+			new TagSighting(new DatagramPacket(packetData, 32), key);
 		}
 	} // testTagSighting
 }

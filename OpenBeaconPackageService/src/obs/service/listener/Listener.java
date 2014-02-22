@@ -17,11 +17,14 @@ package obs.service.listener;
 import obs.service.sighting.TagSighting;
 
 /**
+ * Interface used to abstract related listener classes. The
+ * method messageReceived(TagSighting tagSighting) is called,
+ * if a valid data package has been received.
  * 
  * Code based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public interface Listener {

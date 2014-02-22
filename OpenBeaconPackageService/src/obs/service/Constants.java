@@ -15,8 +15,12 @@
 package obs.service;
 
 /**
- * @author bbehrens
- *
+ * Class providing constants applying for the OpenBeaconService and derived 
+ * packages. The constants have to be reviewed, if OpenBeacon releases newer
+ * firmwares, readers or tags.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class Constants {
 	public static final int ENVELOPE_SIZE_BYTE = 32;

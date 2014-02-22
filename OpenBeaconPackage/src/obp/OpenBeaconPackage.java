@@ -46,7 +46,7 @@ public class OpenBeaconPackage {
 		System.out.println(run.getRunId());
 
 		ListenerService service = new ListenerService("10.254.0.2", 2342, 1,
-				configuration.getTagDataKey(), false);
+				configuration.getTagDataKey());
 		service.setMessageListener(new ServiceListener(index));
 		service.start();
 

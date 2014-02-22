@@ -22,7 +22,7 @@ public class OpenBeaconTestLab {
 				"10.254.0.2",
 				2342,
 				1,
-				configuration.getTagDataKey(), false);
+				configuration.getTagDataKey());
 		service.setMessageListener(new ServiceListener());
 		service.start();		
 	} // main

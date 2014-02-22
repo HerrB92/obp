@@ -14,15 +14,15 @@
  */
 package obs.service.tools;
 
-
 /**
  * Code based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
+ * Allesandro wrote:
  * "Tools for decryption based on a java implementation of 
  * Ma Bingyao optimized for 16 byte data"
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class Tools {
@@ -87,6 +87,8 @@ public class Tools {
     } // decrypt
 
     /**
+     * Convert byte array to integer array, converting two bytes into one integer.
+     * 
      * @param data
      * @param includeLength
      * @return
@@ -112,7 +114,7 @@ public class Tools {
     } // toIntArray
 
     /**
-     * Convert int array[] to byte array.
+     * Convert integer array to byte array.
      * 
      * @param data
      * @param includeLength
@@ -129,8 +131,10 @@ public class Tools {
     } // toByteArray
     
     /**
-     * @param input
-     * @return
+     * Change array order from Big-endian to Little-endian and vice versa.
+     * 
+     * @param input Byte array to be flipped.
+     * @return Flipped byte array
      */
     public static byte[] flipArray(byte[] input) {
 		int INT_SIZE = 4;

@@ -19,36 +19,81 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import obs.service.Constants;
 import obs.service.sighting.TagSighting;
 
 /**
+ * Main threaded listener service class used to receive the data
+ * packages sent by the reader(s) and received by listening on
+ * the specified host/IP and port.
+ * 
+ * If a valid data package is received the messageReceived method of
+ * the specified messageListener object is called, providing a 
+ * tagSighting object with all available data.
+ * 
+ * Note, that for each property of the tagSighting object it has to be
+ * checked, if a value is provided, before it is processed (as the 
+ * data packages provide different sets of information; depending on
+ * the used protocol type).
+ * 
+ * Note, that this version can handle only one encryption key.
  * 
  * Code based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class ListenerService implements Runnable {
+	static final Logger logger = LogManager.getLogger(ListenerService.class.getName());
+	
+	// Thread variable
+	private Thread thread;
+	
+	// Server object
 	private InetAddress server;
+	
+	// Socket the listener is bound to
 	private DatagramSocket socket;
+	
+	// Data container for received data packages
 	private DatagramPacket packet = new DatagramPacket(new byte[256], 256);
 	
-	private Thread thread;
+	// Listener service
 	private Listener listener;
 	
-	private boolean debug = false;
+	// Variable signaling, if the service is running
 	private boolean running = false;
+	
+	// Key used to decrypt the data within the data package
 	private long[] encryptionKey;
+	
+	// Prepare a tagSighting variable, filled for each
+	// received data package
 	private TagSighting tagSighting;
 	
+	// Number of received data packages with invalid
+	// CRC values (invalid data packages)
 	private long lostCRC = 0;
 	
-	public ListenerService(String host, int port, int timeout, long[] key, boolean debug)
+	/**
+	 * Constructor
+	 * 
+	 * Note, that this version can handle only one encryption key.
+	 * 
+	 * @param host		Host name or - recommended - the host IP address (default: 10.254.0.1)
+	 * @param port		Port (default: 2342)
+	 * @param timeout	Timeout in seconds the listener waits for a data package
+	 * @param key		Encryption key of the tag data
+	 * 
+	 * @throws InterruptedException
+	 */
+	public ListenerService(String host, int port, int timeout, long[] key)
 		throws InterruptedException {
 		
-		setDebug(debug);
 		setEncryptionKey(key);
 		
 		int attempts = 0;
@@ -60,54 +105,43 @@ public class ListenerService implements Runnable {
 				socket = new DatagramSocket(port, server);
 				bound = socket.isBound();
 			} catch (IOException ioException) {
-				System.err.println("ListenerService: " + (attempts + 1)
-						+ " attempt to connect to: " + host + " IOexc:"
-						+ ioException.toString());
+				logger.error("ListenerService: %i attempt to connect to %s:",
+							 attempts + 1, host, ioException);
 				attempts++;
 				Thread.sleep(5000);
 			}
 		}
 		
 		if (!bound) {
-			System.out.println("ListenerService: Unable to connect, exit.");
+			logger.error("ListenerService: Unable to connect, exit.");
 			Runtime.getRuntime().exit(1);
 		} else {
-			System.out.println("Socket bound");
+			logger.debug("Socket bound");
 		}
 
 		try {
 			socket.setSoTimeout(timeout * 1000);
 			socket.setReceiveBufferSize(1);
 		} catch (IOException ioException) {
-			System.err.println("Error Setup Socket ListenerService: "
-					+ ioException.toString());
+			logger.error("Error Setup Socket ListenerService", ioException);
 		}
 		
 		thread = new Thread(this);
 
-		if (debug) {
-			try {
-				System.out.println("Local IP: "
-						+ socket.getLocalAddress().getHostAddress() + ":"
-						+ socket.getLocalPort() + "  receive buffer size: "
-						+ socket.getReceiveBufferSize() + "  timeout: "
-						+ socket.getSoTimeout());
-			} catch (IOException ioException) {
-				System.err.println("Error printing info ListenerService: "
-								+ ioException.toString());
-			}
+		try {
+			logger.debug("Local IP: %s:%i, buffer size: %i, timeout: %i",
+					socket.getLocalAddress().getHostAddress().toString(),
+					socket.getLocalPort(),
+					socket.getReceiveBufferSize(),
+					socket.getSoTimeout());
+		} catch (IOException ioException) {
+			logger.debug("Error printing ListenerService information", ioException);
 		}
 	} // Constructor
 	
-	public void setDebug(boolean debug) {
-		this.debug = debug;
-	} // setDebug
-	
-	public boolean isDebug() {
-		return debug;
-	} // isDebug
-	
 	/**
+	 * Sets the encryption key.
+	 * 
 	 * @param encryptionKey the encryptionKey to set
 	 */
 	private void setEncryptionKey(long[] encryptionKey) {
@@ -121,38 +155,71 @@ public class ListenerService implements Runnable {
 		return encryptionKey;
 	}
 	
+	/**
+	 * Sets the message listener object, called for each valid data package.
+	 * 
+	 * @param listener
+	 */
 	public void setMessageListener(Listener listener) {
 		this.listener = listener;
 	} // setMessageListener
 	
+	/**
+	 * @return The specified message listener object
+	 */
 	private Listener getMessageListener() {
 		return listener;
 	} // getMessageListener
 
 	/**
-	 * @return the lostCRC
+	 * @return The number of packages with invalid CRC value (invalid packages)
 	 */
 	public long getLostCRC() {
 		return lostCRC;
 	} // getLostCRC
 	
+	/**
+	 * Update running property.
+	 * 
+	 * @param running
+	 */
 	private void setRunning(boolean running) {
 		this.running = running;
 	} // setRunning
 
+	/**
+	 * @return True, if the service is running, false otherwise.
+	 */
 	public boolean isRunning() {
 		return running;
 	} // isRunning
 
+	/**
+	 * Start service.
+	 */
 	public void start() {
 		if (getMessageListener() == null) {
-			throw new IllegalStateException("ListenerService: No message listener specified");
+			logger.throwing(new IllegalStateException("ListenerService: No message listener specified"));
 		}
 		
 		setRunning(true);
 		thread.start();
 	} // start
 	
+	/**
+	 * Stop service.
+	 */
+	public void stop() {
+		if (isRunning()) {
+			setRunning(false);
+		}
+	} // stop
+		
+	/**
+	 * Thread run method.
+	 * 
+	 * @see java.lang.Runnable#run()
+	 */
 	@Override
 	public void run() {
 		while (isRunning()) {
@@ -160,20 +227,20 @@ public class ListenerService implements Runnable {
 				socket.receive(packet);
 				
 				if (packet.getLength() == Constants.ENVELOPE_SIZE_BYTE) {
-					tagSighting = new TagSighting(packet, encryptionKey, debug);
+					tagSighting = new TagSighting(packet, encryptionKey);
 										
 					if (tagSighting.isValid()) {
 						getMessageListener().messageReceived(tagSighting);
 					} else {
 						lostCRC++;
-						System.out.println("Packet lost CRC:" + tagSighting.getTagCRC());
+						logger.debug("Invalid CRC packages: %i", tagSighting.getTagCRC());
 					}
 				}
 			} catch (IOException ioException) {
 				// there is probably a better way..
 				if (ioException.toString().equalsIgnoreCase(
 						"java.net.SocketTimeoutException: Receive timed out")) {
-					System.out.println("No Tag Sightings");
+					logger.info("No tag sightings");
 				}
 			}
 		}

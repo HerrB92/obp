@@ -17,9 +17,9 @@ package obs.service.sighting;
 import obs.service.Constants;
 
 /**
- * Class used to provide the data structure for proximity sightings 
+ * Class used to provide the data structure for proximity sightings.
  * 
- * @author BjÃ¶rn Behrens
+ * @author Björn Behrens (uol@btech.de)
  * @version 1.0
  */
 public class ProximitySighting {

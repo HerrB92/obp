@@ -33,7 +33,7 @@ import javax.sound.sampled.*;
  * stackoverflow.com, 14.07.2011, 21:17 [Online]
  * Available at: http://stackoverflow.com/a/6700039 (Accessed: 12.10.2013)
  * 
- * @author BjÃ¶rn Behrens <uol@btech.de>
+ * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class SoundUtils extends Thread {
@@ -66,38 +66,39 @@ public class SoundUtils extends Thread {
 	} // run
 	
 	/**
-	 * @return the hz
+	 * @return The frequency
 	 */
 	private static int getHz() {
 		return hz;
 	} // getHz
 
 	/**
-	 * @param hz
-	 *            the hz to set
+	 * @param hz The frequency in Hz to set
 	 */
 	public static void setHz(int hz) {
 		SoundUtils.hz = hz;
 	} // setHZ
 
 	/**
-	 * @return the duration in milliseconds
+	 * @return The duration in milliseconds
 	 */
 	private static int getDurationMilliseconds() {
 		return milliseconds;
 	} // getDurationMilliseconds
 
 	/**
-	 * @param milliseconds
-	 *            the duration milliseconds to set
+	 * @param milliseconds The sound duration in milliseconds
 	 */
 	public static void setDurationMilliseconds(int milliseconds) {
 		SoundUtils.milliseconds = milliseconds;
 	} // setDurationMilliseconds
 
 	/**
-	 * @param hz
-	 * @param msecs
+	 * Play a beep at the specified frequency for the given
+	 * duration without throwing a LineUnavailableException.
+	 * 
+	 * @param hz	Frequency in Hz
+	 * @param msecs	Duration in milliseconds
 	 */
 	public static void beep(int hz, int msecs) {
 		try {
@@ -108,8 +109,11 @@ public class SoundUtils extends Thread {
 	} // beep
 
 	/**
-	 * @param hz
-	 * @param msecs
+	 * Play a beep at the specified frequency for the given
+	 * duration.
+	 * 
+	 * @param hz	Frequency in Hz
+	 * @param msecs	Duration in milliseconds
 	 * @throws LineUnavailableException
 	 */
 	public static void tone(int hz, int msecs)
@@ -118,9 +122,12 @@ public class SoundUtils extends Thread {
 	} // tone
 
 	/**
-	 * @param hz
-	 * @param msecs
-	 * @param volume
+	 * Play a beep at the specified frequency for the given
+	 * duration with the specified volume.
+	 * 
+	 * @param hz		Frequency in Hz
+	 * @param msecs		Duration in milliseconds
+	 * @param volume	Volume
 	 * @throws LineUnavailableException
 	 */
 	public static void tone(int hz, int msecs, double volume)
@@ -129,11 +136,12 @@ public class SoundUtils extends Thread {
 		playing = true;
 		
 		byte[] buffer = new byte[1];
-		AudioFormat audioFormat = new AudioFormat(SAMPLE_RATE, // sampleRate
-				8, // sampleSizeInBits
-				1, // channels
-				true, // signed
-				false); // bigEndian
+		AudioFormat audioFormat = 
+			new AudioFormat(SAMPLE_RATE,	// Sample rate
+				8, 							// Sample size in bits
+				1, 							// Channels
+				true, 						// Signed
+				false); 					// Big endian
 		
 		SourceDataLine dataLine = AudioSystem.getSourceDataLine(audioFormat);
 		dataLine.open(audioFormat);

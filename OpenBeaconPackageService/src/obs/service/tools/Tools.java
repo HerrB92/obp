@@ -32,7 +32,7 @@ public class Tools {
      * 
      * @param data
      * @param key
-     * @return
+     * @return Decrypted byte data array
      */
     public static byte[] decrypt(byte[] data, long[] key) {
         if (data.length == 0) {
@@ -45,25 +45,26 @@ public class Tools {
     /**
      * Decrypt data using provided encryption key (array of four long values).
      * 
-     * @param v
-     * @param k
-     * @return
+     * @param data
+     * @param key
+     * @return Decrypted integer data array
      */
-    public static int[] decrypt(int[] v, long[] k) {
-        int n = v.length - 1;
+    public static int[] decrypt(int[] data, long[] key) {
+        int n = data.length - 1;
 
         if (n < 1) {
-            return v;
+            return data;
         }
         
-        if (k.length < 4) {
-            long[] key = new long[4];
+        if (key.length < 4) {
+            long[] tmpKey = new long[4];
 
-            System.arraycopy(k, 0, key, 0, k.length);
-            k = key;
+            System.arraycopy(key, 0, tmpKey, 0, key.length);
+            key = tmpKey;
         }
-        int z = v[n];
-        int y = v[0];
+        
+        int z = data[n];
+        int y = data[0];
         int e;
         int p;
         int q = 6 + 52 / (n + 1);
@@ -73,18 +74,79 @@ public class Tools {
         while (sum != 0) {
             e = sum >>> 2 & 3;
             for (p = n; p > 0; p--) {
-                z = v[p - 1];
-                y = v[p] -= (z >>> 5 ^ y << 2) + (y >>> 3 ^ z << 4)
-                        ^ (sum ^ y) + (k[p & 3 ^ e] ^ z);
+                z = data[p - 1];
+                y = data[p] -= (z >>> 5 ^ y << 2) + (y >>> 3 ^ z << 4)
+                        		^ (sum ^ y) + (key[p & 3 ^ e] ^ z);
             }
-            z = v[n];
-            y = v[0] -= (z >>> 5 ^ y << 2) + (y >>> 3 ^ z << 4)
-                    ^ (sum ^ y) + (k[p & 3 ^ e] ^ z);
+            z = data[n];
+            y = data[0] -= (z >>> 5 ^ y << 2) + (y >>> 3 ^ z << 4)
+                    		^ (sum ^ y) + (key[p & 3 ^ e] ^ z);
             sum = sum - delta;
         }
         
-        return v;
+        return data;
     } // decrypt
+    
+    /**
+     * Encrypt data using provided encryption key (array of four long values).
+     * 
+     * @param data
+     * @param key
+     * @return Encrypted byte data array
+     */
+    public static byte[] encrypt(byte[] data, long[] key) {
+        if (data.length == 0) {
+            return data;
+        }
+        
+        return toByteArray(encrypt(toIntArray(data, false), key), true);
+    } // encrypt
+    
+    /**
+     * Encrypt data using provided encryption key (array of four long values).
+     * 
+     * @param data
+     * @param key
+     * @return Encrypted data array
+     */
+    public static int[] encrypt(int[] data, long[] key) {
+    	int n = data.length - 1;
+
+        if (n < 1) {
+            return data;
+        }
+        
+        if (key.length < 4) {
+            long[] tmpKey = new long[4];
+
+            System.arraycopy(key, 0, tmpKey, 0, key.length);
+            key = tmpKey;
+        }
+        
+        int delta = 0x9E3779B9;
+        int z = data[n];
+        int y = data[0];
+        int e;
+        int p;
+        //int q = 6 + 52 / (n + 1);
+        //int sum = q * delta;
+        int sum = 0;
+        int keyLength = key.length;
+        int q = 6 + 52 / keyLength;
+        
+        for (int i = q; i > 0 ; i--) {
+        	sum += delta;
+        	e = sum >>> 2 & 3;
+                
+            for (p = 0; p < keyLength; p++) {
+            	y = data[(p + 1) & (keyLength - 1)];
+            	z = data[p] += (z >>> 5 ^ y << 2) + (y >>> 3 ^ z << 4)
+                        		^ (sum ^ y) + (key[p & 3 ^ e] ^ z);
+            } 
+        }
+        
+        return data;
+    } // encrypt
 
     /**
      * Convert byte array to integer array, converting two bytes into one integer.
@@ -139,13 +201,63 @@ public class Tools {
     public static byte[] flipArray(byte[] input) {
 		int INT_SIZE = 4;
 		int i, j;
-		byte flipped_array[] = new byte[input.length];
+		byte flippedArray[] = new byte[input.length];
 
 		for (i = 0; i < input.length / INT_SIZE; i++) {
 			for (j = 0; j < INT_SIZE; j++) {
-				flipped_array[(i + 1) * INT_SIZE - j - 1] = input[i * INT_SIZE + j];
+				flippedArray[(i + 1) * INT_SIZE - j - 1] = input[i * INT_SIZE + j];
 			}
 		}
-		return flipped_array;
+		return flippedArray;
 	} // flipArray
+    
+    /**
+	 * Calculate CRC value from the provided byte data array.
+	 * 
+	 * FIXME: Enhance parameter information
+	 * 
+	 * @param data
+	 * @param start
+	 * @param size
+	 * @return CRC value
+	 */
+	public static int calculateCRC(byte[] data, int start, int size) {
+		int crc = 0xFFFF;
+		int p = start;
+
+		while (size-- > 0) {
+			crc = ((crc >> 8) | (crc << 8)) & 0xFFFF;
+			crc ^= 0xFF & data[p++];
+			crc ^= ((0xff & crc) >> 4) & 0xFFFF;
+			crc ^= (crc << 12) & 0xFFFF;
+			crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
+		}
+
+		return crc;
+	} // calculateCRC
+    
+//    /**
+//     * Calculate CRC value, usually used for testing the network
+//     * package processing.
+//     * 
+//     * Size_1B Proto_1B Flags_1B Strength_1B Seq_4B tagID_4B reserved_2B crc_2B
+//     * 
+//     * @param buf	Data, of - for example - 16 bytes
+//     * @return CRC values calculated from the data
+//     */
+//    public static long computeCRC(byte[] buf) {
+//		int size = 14;
+//		long crc = 0xFFFF;
+//		int p = 0;
+//		while (size-- > 0) {
+//			crc = 0xFFFF & ((crc >> 8) | (crc << 8));
+//			crc ^= 0xFF & buf[p++];
+//			crc ^= ((0xff & crc) >> 4) & 0xFFFF;
+//			crc ^= (crc << 12) & 0xFFFF;
+//			crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
+//		}
+//		crc = (0xFFFF & crc);
+//		
+//		return crc;
+//	} // computeCRC
 }

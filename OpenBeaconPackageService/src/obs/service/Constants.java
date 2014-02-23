@@ -26,6 +26,8 @@ public class Constants {
 	public static final int ENVELOPE_SIZE_BYTE = 32;
 	public static final int ENVELOPE_HEADER_SIZE_BYTE = 16;
 	
+	public static final int ENVELOPE_PROTOCOL_BEACONLOG_SIGHTING = 1; // BEACONLOG_SIGHTING
+	
 	public static final int RFBPROTO_BEACONTRACKER_OLD = 16;
 	public static final int RFBPROTO_READER_ANNOUNCE = 22;
 	public static final int RFBPROTO_BEACONTRACKER_OLD2 = 23;

@@ -59,11 +59,13 @@ public class TestTagSightingProtocol70 {
 		assertEquals(1, tagSighting.getProtocol());
 		assertEquals(1, tagSighting.getInterface());
 		assertEquals(1391, tagSighting.getReaderId());
+		assertEquals("R1391", tagSighting.getReaderKey());
 		assertEquals(32, tagSighting.getSize());
 		assertEquals(14096, tagSighting.getSequence());
 		assertEquals(1294520, tagSighting.getTimestamp());
 		assertTrue(tagSighting.hasValidTagData());
 		assertEquals(1119, tagSighting.getTagId());
+		assertEquals("T1119", tagSighting.getTagKey());
 		assertFalse(tagSighting.isTagButtonPressed());
 		assertEquals(70, tagSighting.getTagProtocol());
 		assertEquals(1, tagSighting.getFlags());
@@ -75,5 +77,16 @@ public class TestTagSightingProtocol70 {
 		assertEquals(0, tagSighting.getProximitySightings().size());
 		assertEquals(12, tagSighting.getTagCRC());
 		assertTrue(tagSighting.hasValidTagCRC());
-	}
+		assertTrue(tagSighting.isValid());
+		
+		for (int i = 0; i < packetData.length; i++) {
+			assertEquals(packetData[i], tagSighting.getRawData()[i]);
+		}
+		
+		assertFalse(tagSighting.getTagData() == null);
+		assertEquals(16, tagSighting.getTagData().length);
+		
+		assertEquals("219,67,1,1,5,111,0,32,0,0,55,16,0,19,192,184,227,133,26,225,211,59,98,129,163,156,106,53,38,246,56,97",
+					tagSighting.toString(true));
+	} // testData
 }

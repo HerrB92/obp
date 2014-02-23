@@ -29,12 +29,19 @@ public class ProximitySighting {
 	// String of T + tagId, may be used for hash maps
 	private String tagKey;
 	
-	// FIXME: Number of sightings (of this particular id?)
+	// Number of sightings (FIXME: Check with OpenBeacon: Of this particular id?)
 	private int count = Constants.NOT_DEFINED;
 	
 	// Signal strength on proximity
 	private int strength = Constants.NOT_DEFINED;
 	
+	/**
+	 * Constructor
+	 * 
+	 * @param tagId		Tag id
+	 * @param count		Number of sightings?
+	 * @param strength	Signal strength of the proximity sighting
+	 */
 	public ProximitySighting(int tagId, int count, int strength) {
 		setTagId(tagId);
 		setCount(count);

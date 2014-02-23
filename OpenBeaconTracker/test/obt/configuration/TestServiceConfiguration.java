@@ -13,7 +13,7 @@ import org.junit.Test;
 /**
  * Test class for service configuration
  * 
- * @author BjÃ¶rn Behrens
+ * @author Björn Behrens
  */
 public class TestServiceConfiguration {
 	private ServiceConfiguration configuration;

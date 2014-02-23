@@ -236,7 +236,7 @@ public class TagSighting {
 		// calculated tag CRC are equal (valid)
 		validTagCRC = decryptTagData(tagData, encryptionKey);
 
-		logger.debug("Sighting: " + this.toString());
+		logger.debug(this.toString());
 	} // Constructor
 
 	/**
@@ -311,11 +311,11 @@ public class TagSighting {
 					// Reserved: Byte 12 & 13
 
 					tagCRC = (0xff & tagData[14]) << 8;
-					tagCRC = 0xff & tagData[15];
+					tagCRC += 0xff & tagData[15];
 
 					setValidTagData(true);
 				} else {
-					logger.error("Unknown tag protocol 2: %i", tempProtocol);
+					logger.error("Unknown tag protocol 2: %d", tempProtocol);
 				}
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_EXT:
@@ -362,7 +362,7 @@ public class TagSighting {
 				tagSequence += 0xff & tagData[13];
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				setValidTagData(true);
 				break;
@@ -412,7 +412,7 @@ public class TagSighting {
 				tagSequence += 0xff & tagData[13];
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				setValidTagData(true);
 				break;
@@ -463,7 +463,7 @@ public class TagSighting {
 				tagSequence += 0xff & tagData[13];
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				setValidTagData(true);
 				break;
@@ -504,7 +504,7 @@ public class TagSighting {
 				tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				setValidTagData(true);
 				break;
@@ -563,7 +563,7 @@ public class TagSighting {
 				tagSequence += 0xff & tagData[13];
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				// Fixed value (as in the original OpenBeacon C++ code)
 				// This is always energy level 3, as only on level 3
@@ -589,7 +589,7 @@ public class TagSighting {
 				// Byte 10-13: u_int32_t ip
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				// setValidTagData(true) intentionally not set
 				break;
@@ -618,22 +618,22 @@ public class TagSighting {
 				tagFlags = 0;
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				setValidTagData(true);
 				break;
 			default:
-				logger.error("Unknown packet protocol %i, reader: %i",
-						getTagProtocol(), readerId);
+				logger.error(String.format("Unknown tag data protocol %d, reader: %d",
+						getTagProtocol(), readerId));
 
 				tagCRC = (0xff & tagData[14]) << 8;
-				tagCRC = 0xff & tagData[15];
+				tagCRC += 0xff & tagData[15];
 
 				// setValidTagData(true) intentionally not set
 			}
 		}
 
-		return (tagCRC == (calculateCRC(tagData, 0, 14) & 0xFF));
+		return (tagCRC == (Tools.calculateCRC(tagData, 0, 14) & 0xFF));
 	} // decryptTagData
 
 	private void setTagKey(int tagId) {
@@ -785,30 +785,30 @@ public class TagSighting {
 		return (hasValidEnvelopeCRC() && hasValidTagCRC() && hasValidTagData());
 	} // isValid
 
-	/**
-	 * Calculate CRC value from the provided byte data array.
-	 * 
-	 * FIXME: Enhance parameter information
-	 * 
-	 * @param data
-	 * @param start
-	 * @param size
-	 * @return CRC value
-	 */
-	private int calculateCRC(byte[] data, int start, int size) {
-		int crc = 0xFFFF;
-		int p = start;
-
-		while (size-- > 0) {
-			crc = ((crc >> 8) | (crc << 8)) & 0xFFFF;
-			crc ^= 0xFF & data[p++];
-			crc ^= ((0xff & crc) >> 4) & 0xFFFF;
-			crc ^= (crc << 12) & 0xFFFF;
-			crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
-		}
-
-		return crc;
-	} // calculateCRC
+//	/**
+//	 * Calculate CRC value from the provided byte data array.
+//	 * 
+//	 * FIXME: Enhance parameter information
+//	 * 
+//	 * @param data
+//	 * @param start
+//	 * @param size
+//	 * @return CRC value
+//	 */
+//	private int calculateCRC(byte[] data, int start, int size) {
+//		int crc = 0xFFFF;
+//		int p = start;
+//
+//		while (size-- > 0) {
+//			crc = ((crc >> 8) | (crc << 8)) & 0xFFFF;
+//			crc ^= 0xFF & data[p++];
+//			crc ^= ((0xff & crc) >> 4) & 0xFFFF;
+//			crc ^= (crc << 12) & 0xFFFF;
+//			crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
+//		}
+//
+//		return crc;
+//	} // calculateCRC
 
 	/**
 	 * Calculate CRC value from the provided byte data array as long value.
@@ -821,7 +821,7 @@ public class TagSighting {
 	 * @return CRC value
 	 */
 	private int calculateLongCRC(byte[] data, int start, int size) {
-		return (calculateCRC(data, start, size) ^ 0xFFFF);
+		return (Tools.calculateCRC(data, start, size) ^ 0xFFFF);
 	} // calculateLongCRC
 
 	/**

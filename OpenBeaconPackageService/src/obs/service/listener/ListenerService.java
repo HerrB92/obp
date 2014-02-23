@@ -105,15 +105,17 @@ public class ListenerService implements Runnable {
 				socket = new DatagramSocket(port, server);
 				bound = socket.isBound();
 			} catch (IOException ioException) {
-				logger.error("ListenerService: %i attempt to connect to %s:",
-							 attempts + 1, host, ioException);
+				logger.error(
+						String.format("%d attempt to connect to %s:",
+									  attempts + 1, host),
+						ioException);
 				attempts++;
 				Thread.sleep(5000);
 			}
 		}
 		
 		if (!bound) {
-			logger.error("ListenerService: Unable to connect, exit.");
+			logger.error("Unable to connect, exit.");
 			Runtime.getRuntime().exit(1);
 		} else {
 			logger.debug("Socket bound");
@@ -123,19 +125,19 @@ public class ListenerService implements Runnable {
 			socket.setSoTimeout(timeout * 1000);
 			socket.setReceiveBufferSize(1);
 		} catch (IOException ioException) {
-			logger.error("Error Setup Socket ListenerService", ioException);
+			logger.error("Error socket setup", ioException);
 		}
 		
 		thread = new Thread(this);
 
 		try {
-			logger.debug("Local IP: %s:%i, buffer size: %i, timeout: %i",
+			logger.debug("Local IP: %s:%d, buffer size: %d, timeout: %d",
 					socket.getLocalAddress().getHostAddress().toString(),
 					socket.getLocalPort(),
 					socket.getReceiveBufferSize(),
 					socket.getSoTimeout());
 		} catch (IOException ioException) {
-			logger.debug("Error printing ListenerService information", ioException);
+			logger.debug("Error printing service information", ioException);
 		}
 	} // Constructor
 	
@@ -199,7 +201,7 @@ public class ListenerService implements Runnable {
 	 */
 	public void start() {
 		if (getMessageListener() == null) {
-			logger.throwing(new IllegalStateException("ListenerService: No message listener specified"));
+			logger.throwing(new IllegalStateException("No message listener specified"));
 		}
 		
 		setRunning(true);
@@ -233,7 +235,7 @@ public class ListenerService implements Runnable {
 						getMessageListener().messageReceived(tagSighting);
 					} else {
 						lostCRC++;
-						logger.debug("Invalid CRC packages: %i", tagSighting.getTagCRC());
+						logger.debug("Invalid CRC packages: %d", tagSighting.getTagCRC());
 					}
 				}
 			} catch (IOException ioException) {

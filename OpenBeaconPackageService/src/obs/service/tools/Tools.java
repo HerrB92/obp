@@ -246,30 +246,4 @@ public class Tools {
 
 		return crc;
 	} // calculateCRC
-
-	// /**
-	// * Calculate CRC value, usually used for testing the network
-	// * package processing.
-	// *
-	// * Size_1B Proto_1B Flags_1B Strength_1B Seq_4B tagID_4B reserved_2B
-	// crc_2B
-	// *
-	// * @param buf Data, of - for example - 16 bytes
-	// * @return CRC values calculated from the data
-	// */
-	// public static long computeCRC(byte[] buf) {
-	// int size = 14;
-	// long crc = 0xFFFF;
-	// int p = 0;
-	// while (size-- > 0) {
-	// crc = 0xFFFF & ((crc >> 8) | (crc << 8));
-	// crc ^= 0xFF & buf[p++];
-	// crc ^= ((0xff & crc) >> 4) & 0xFFFF;
-	// crc ^= (crc << 12) & 0xFFFF;
-	// crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
-	// }
-	// crc = (0xFFFF & crc);
-	//
-	// return crc;
-	// } // computeCRC
 }

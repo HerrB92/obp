@@ -14,96 +14,37 @@
  */
 package obs.service.sighting;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.net.DatagramPacket;
-import java.util.ArrayList;
 
 import obs.service.Constants;
 import obs.service.sighting.TagSighting;
 import obs.service.tools.Tools;
 
-import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test class for the test of the service class reading previously
- * recorded tag data.
+ * Test class for testing tag data encoded using protocol 22 (RFBPROTO_READER_ANNOUNCE).
+ * 
+ * FIXME: This protocol is not defined/described completely (see original OpenBeacon 
+ * tracker main class). Some test tag data is set, but will not be processed from the
+ * TagSighting class.
+ * 
+ * FIXME: This test only tests the protocol itself, based on the original code from 
+ * OpenBeacon. Validate the test with actual data from a tag using this protocol!
  * 
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  **/
-public class TestTagSighting {
-	
+public class TestTagSightingProtocol22 {
 	private static final long[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
-	private ArrayList<byte[]> data = new ArrayList<byte[]>();
 	
-	@Before
-	public void setUp() throws Exception {
-		BufferedReader reader = null;
-		byte[] bytes;
-		
-		try {
-			InputStream inputStream = getClass().getResourceAsStream("Tag_1119_SampleData.log");
-		    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
-			reader = new BufferedReader(inputStreamReader);
-			
-			//reader = new BufferedReader(new FileReader("Tag_1119_SampleData.log"));
-		    String line = null;
-	
-		    while ((line = reader.readLine()) != null) {
-		    	try {
-		    		String lineByteArray[] = line.split(",");
-		    		
-		    		bytes = new byte[lineByteArray.length];
-		    		for (int i = 0; i < lineByteArray.length; i++) {
-		    			bytes[i] = (byte)Integer.parseInt(lineByteArray[i]);
-		    		}
-		    		
-		    		data.add(bytes);
-		    	} catch (Exception e) {
-		    	    e.printStackTrace();
-		    	}
-		    }
-		} catch (FileNotFoundException e) {
-		    e.printStackTrace();
-		} catch (IOException e) {
-		    e.printStackTrace();
-		} finally {
-		    try {
-		        if (reader != null) {
-		            reader.close();
-		        }
-		    } catch (IOException e) {}
-		}
-	} // setUp
-
 	/**
 	 * Test method for {@link odp.service.sighting.tagsighting.TagSighting#TagSighting(java.net.DatagramPacket, int[])}.
 	 */
 	@Test
-	public final void testTagSighting() {		
-		// Should not throw an exception
-		
-		for (byte[] packetData: data) {
-			new TagSighting(new DatagramPacket(packetData, 32), key);
-		}
-	} // testTagSighting
-	
-	/**
-	 * Test method for {@link odp.service.sighting.tagsighting.TagSighting#TagSighting(java.net.DatagramPacket, int[])},
-	 * invalid tag protocol.
-	 */
-	@Test
-	public final void testTagSightingInvalidTagProtocol() {
+	public final void testTagSighting() {
 		int tagCRCValue = 0;
 		int envelopeCRCValue = 0;
 		
@@ -129,7 +70,7 @@ public class TestTagSighting {
 		// Create payload
 		byte[] payload = new byte[16];
 		
-		payload[0] = (byte)0xfe;							// Tag protocol, does not exist
+		payload[0] = (byte)Constants.RFBPROTO_READER_ANNOUNCE;	// Tag protocol
 		payload[1] = (byte)0x04;							// Tag id (1)
 		payload[2] = (byte)0x73;							// Tag id (2)
 		payload[3] = (byte)Constants.RFBFLAGS_SENSOR;		// Flags, button pressed
@@ -176,12 +117,12 @@ public class TestTagSighting {
 		assertEquals(432, tagSighting.getSequence());
 		assertEquals(1126039, tagSighting.getTimestamp());
 		assertFalse(tagSighting.hasValidTagData());
-		assertEquals(-1, tagSighting.getTagId());
-		assertNull(tagSighting.getTagKey());
+		assertEquals(1139, tagSighting.getTagId());
+		assertEquals("T1139", tagSighting.getTagKey());
 		assertNull(tagSighting.isTagButtonPressed());
-		assertEquals(254, tagSighting.getTagProtocol());
-		assertEquals(-1, tagSighting.getFlags());
-		assertEquals(-1, tagSighting.getStrength());
+		assertEquals(22, tagSighting.getTagProtocol());
+		assertEquals(2, tagSighting.getFlags());
+		assertEquals(2, tagSighting.getStrength());
 		assertNull(tagSighting.getProximitySightings());
 		assertEquals(-1, tagSighting.getTagTime());
 		assertEquals(-1, tagSighting.getTagBattery());
@@ -201,7 +142,7 @@ public class TestTagSighting {
 		assertFalse(tagSighting.getTagData() == null);
 		assertEquals(16, tagSighting.getTagData().length);
 		
-		assertEquals("50,241,1,1,4,244,0,32,0,0,1,176,0,17,46,151,109,239,236,25,184,168,166,246,205,72,140,44,53,90,133,217",
-					tagSighting.toString(true));		
-	} // testTagSightingInvalidProtocol
+		assertEquals("227,91,1,1,4,244,0,32,0,0,1,176,0,17,46,151,228,81,183,27,201,13,102,253,7,33,253,220,55,217,248,253",
+					tagSighting.toString(true));
+	} // testTagSighting
 }

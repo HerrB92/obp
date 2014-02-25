@@ -277,8 +277,6 @@ public class TagSighting {
 				// Byte 12-13: u_int16_t reserved
 				// Byte 14-15: u_int16_t crc
 
-				// FIXME: Test this untested code
-
 				int tempProtocol = 0xff & tagData[1];
 
 				if (tempProtocol == Constants.RFBPROTO_BEACONTRACKER_OLD2) {
@@ -317,7 +315,7 @@ public class TagSighting {
 
 					setValidTagData(true);
 				} else {
-					logger.error("Unknown tag protocol 2: %d", tempProtocol);
+					logger.error(String.format("Unknown tag protocol 2: %d", tempProtocol));
 				}
 				break;
 			case Constants.RFBPROTO_BEACONTRACKER_EXT:
@@ -340,8 +338,10 @@ public class TagSighting {
 				setTagKey(tagId);
 
 				tagFlags = 0;
+				tagButtonPressed = false;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
+					tagButtonPressed = true;
 				}
 
 				tagStrength = 0xff & tagData[4];
@@ -481,8 +481,8 @@ public class TagSighting {
 				// Byte 14-15: u_int16_t crc;
 
 				// Payload p = TBeaconProx:
-				// Byte 04-11: u_int16_t oid_prox[PROX_MAX], PROX_MAX: currently
-				// fixed 4;
+				// Byte 04-11: u_int16_t oid_prox[PROX_MAX], 
+				//				PROX_MAX: currently fixed 4;
 				// Byte 12-13: u_int16_t seq;
 
 				tagId = (0xff & tagData[1]) << 8;
@@ -490,14 +490,15 @@ public class TagSighting {
 				setTagKey(tagId);
 
 				tagFlags = 0;
+				tagButtonPressed = false;
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
+					tagButtonPressed = true;
 				}
 				tagFlags |= Constants.TAGSIGHTINGFLAG_SHORT_SEQUENCE;
 
 				// Ignored: Byte 04-11, as within the original OpenBeacon C++
-				// code
-				// oid_prox data is not extracted/used
+				// code, oid_prox data is not extracted/used
 
 				tagSequence = (0xff & tagData[12]) << 8;
 				tagSequence += 0xff & tagData[13];
@@ -589,6 +590,21 @@ public class TagSighting {
 				// Byte 05: u_int8_t strength
 				// Byte 06-09: u_int32_t uptime
 				// Byte 10-13: u_int32_t ip
+				
+				tagId = (0xff & tagData[1]) << 8;
+				tagId += 0xff & tagData[2];
+				setTagKey(tagId);
+				
+				tagFlags = 0xff & tagData[3];
+				
+				// Ignored: Byte 04 (opcode)
+				
+				tagStrength = 0xff & tagData[5];
+				if (tagStrength >= Constants.STRENGTH_LEVELS_COUNT) {
+					tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
+				}
+				
+				// Ignored: Byte 06-13 (uptime & ip)
 
 				tagCRC = (0xff & tagData[14]) << 8;
 				tagCRC += 0xff & tagData[15];
@@ -613,6 +629,8 @@ public class TagSighting {
 				tagId = (0xff & tagData[1]) << 8;
 				tagId += 0xff & tagData[2];
 				setTagKey(tagId);
+				
+				// Ignored: Byte 03-13 (flags, opcode, reserved, data)
 
 				// Fixed values (as in the original OpenBeacon C++ code)
 				tagStrength = 3;
@@ -786,45 +804,6 @@ public class TagSighting {
 	public boolean isValid() {
 		return (hasValidEnvelopeCRC() && hasValidTagCRC() && hasValidTagData());
 	} // isValid
-
-//	/**
-//	 * Calculate CRC value from the provided byte data array.
-//	 * 
-//	 * FIXME: Enhance parameter information
-//	 * 
-//	 * @param data
-//	 * @param start
-//	 * @param size
-//	 * @return CRC value
-//	 */
-//	private int calculateCRC(byte[] data, int start, int size) {
-//		int crc = 0xFFFF;
-//		int p = start;
-//
-//		while (size-- > 0) {
-//			crc = ((crc >> 8) | (crc << 8)) & 0xFFFF;
-//			crc ^= 0xFF & data[p++];
-//			crc ^= ((0xff & crc) >> 4) & 0xFFFF;
-//			crc ^= (crc << 12) & 0xFFFF;
-//			crc ^= ((crc & 0xFF) << 5) & 0xFFFF;
-//		}
-//
-//		return crc;
-//	} // calculateCRC
-	
-//	/**
-//	 * Calculate CRC value from the provided byte data array as long value.
-//	 * 
-//	 * FIXME: Enhance parameter information
-//	 * 
-//	 * @param data
-//	 * @param start
-//	 * @param size
-//	 * @return CRC value
-//	 */
-//	private int calculateLongCRC(byte[] data, int start, int size) {
-//		return (Tools.calculateCRC(data, start, size) ^ 0xFFFF);
-//	} // calculateLongCRC
 
 	/**
 	 * Custom toString method to provide a human readable output

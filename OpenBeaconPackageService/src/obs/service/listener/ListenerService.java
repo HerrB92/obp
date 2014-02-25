@@ -137,7 +137,7 @@ public class ListenerService implements Runnable {
 					socket.getReceiveBufferSize(),
 					socket.getSoTimeout()));
 		} catch (IOException ioException) {
-			logger.debug("Error printing service information", ioException);
+			logger.error("Error printing service information", ioException);
 		}
 	} // Constructor
 	

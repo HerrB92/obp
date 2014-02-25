@@ -22,7 +22,7 @@ package obs.service;
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
-public class Constants {
+public final class Constants {
 	public static final int ENVELOPE_SIZE_BYTE = 32;
 	public static final int ENVELOPE_HEADER_SIZE_BYTE = 16;
 	

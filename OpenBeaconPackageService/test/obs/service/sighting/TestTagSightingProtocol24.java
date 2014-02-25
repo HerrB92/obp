@@ -24,7 +24,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 /**
- * Test class for testing tag data encoded using protocol 24.
+ * Test class for testing tag data encoded using protocol 24 (RFBPROTO_BEACONTRACKER).
  * 
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0

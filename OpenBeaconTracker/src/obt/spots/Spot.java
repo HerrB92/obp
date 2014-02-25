@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.spots;
 
@@ -14,10 +25,13 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 /**
- * @author bbehrens
- *
+ * Abstract class to define spots (spot, register, unregister tags or
+ * readers) and store or receive the information in the database.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
-@MappedSuperclass
+@MappedSuperclass // This class provides the Hibernate definition also for child classes
 public abstract class Spot implements Serializable {
 	private static final long serialVersionUID = -2171247901903093310L;
 	
@@ -44,7 +58,8 @@ public abstract class Spot implements Serializable {
 	@Column(nullable = false)
 	private int floor;
 	
-	// The column name "group" is not allowed in MySQL/MariaDB
+	// The column name "group" is not allowed in MySQL/MariaDB,
+	// use "SpotGroup" as column name.
 	@Column(name="SpotGroup", nullable = false)
 	private int group;
 	
@@ -61,10 +76,25 @@ public abstract class Spot implements Serializable {
 	@Type(type="obt.persistence.joda.PersistentDateTime")
 	private DateTime lastSeen;
 	
+	/**
+	 * Light constructor (for hibernate)
+	 */
 	protected Spot() {
 		this(0, "-", true, 0, 0, 0, 0, 0);
 	} // Constructor (for Hibernate)
 	
+	/**
+	 * Full qualified constructor
+	 * 
+	 * @param id
+	 * @param name
+	 * @param active
+	 * @param room
+	 * @param floor
+	 * @param group
+	 * @param x
+	 * @param y
+	 */
 	protected Spot(int id, String name, boolean active, int room, int floor, int group, int x, int y) {
 		setId(id);
 		setName(name);
@@ -170,71 +200,79 @@ public abstract class Spot implements Serializable {
 	 */
 	public int getRoom() {
 		return room;
-	}
+	} // getRoom
 
 	/**
 	 * @param room the room to set
 	 */
 	public void setRoom(int room) {
 		this.room = room;
-	}
+	} // setRoom
 
 	/**
 	 * @return the floor
 	 */
 	public int getFloor() {
 		return floor;
-	}
+	} // getFloor
 
 	/**
 	 * @param floor the floor to set
 	 */
 	public void setFloor(int floor) {
 		this.floor = floor;
-	}
+	} // setFloor
 
 	/**
 	 * @return the group
 	 */
 	public int getGroup() {
 		return group;
-	}
+	} // getGroup
 
 	/**
 	 * @param group the group to set
 	 */
 	public void setGroup(int group) {
 		this.group = group;
-	}
+	} // setGroup
 
 	/**
 	 * @return the x
 	 */
 	public int getX() {
 		return x;
-	}
+	} // getX
 
 	/**
 	 * @param x the x to set
 	 */
 	public void setX(int x) {
 		this.x = x;
-	}
+	} // setX
 
 	/**
 	 * @return the y
 	 */
 	public int getY() {
 		return y;
-	}
-
+	} // getY
+	
 	/**
 	 * @param y the y to set
 	 */
 	public void setY(int y) {
 		this.y = y;
-	}
+	} // setY
 	
+	/**
+	 * @return SpotType The type of the spot
+	 */
 	public abstract SpotType getType();
+	
+	/**
+	 * Return key character for this type of spot (e.g. "T" for
+	 * tag or "R" for reader). Has to be overridden.
+	 */
 	protected abstract String getKeyCharacter();
 }

@@ -34,8 +34,18 @@ import obt.tag.estimation.DefaultPositionEstimator;
 import obt.tag.estimation.PositionEstimator;
 
 /**
+ * The class provides the service listener which implements the 
+ * messageReceived method of the related OpenBeaconService listener. 
  * 
- * Code based on the work of
+ * The messageReceived method is called every time, the OpenBeaconService 
+ * network listener receives a valid data package sent by a reader.
+ * 
+ * The method also handles registration, unregistration, forced 
+ * unregistration (after a specified time of tag inactivity) and 
+ * storing the tracking as well as the tag sighting raw data in the
+ * database.
+ * 
+ * Code partly based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
  * @author Björn Behrens <uol@btech.de>
@@ -44,11 +54,30 @@ import obt.tag.estimation.PositionEstimator;
 public class ServiceListener implements Listener {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
+	// Data index instance which holds the available data
+	// in memory
 	private DataIndex dataIndex = DataIndex.getInstance();
+	
+	// Id of the current run
 	private long runId;
+	
+	// Estimator object used to estimate tag positions
 	private PositionEstimator estimator;
 	
 	/**
+	 * Light constructor with data index object and run id. As estimator
+	 * a DefaultEstimator instance will be used.
+	 * 
+	 * @param dataIndex
+	 */
+	public ServiceListener(DataIndex dataIndex, long runId) {
+		this(dataIndex, runId, DefaultPositionEstimator.getInstance());
+	} // Constructor
+	
+	/**
+	 * Full qualified constructor with data index object, run id and
+	 * estimator object (used for position estimation).
+	 * 
 	 * @param dataIndex
 	 * @param estimator
 	 */
@@ -57,55 +86,48 @@ public class ServiceListener implements Listener {
 		setRunId(runId);
 		setPositionEstimator(estimator);
 	} // Constructor
-	
-	/**
-	 * @param dataIndex
-	 */
-	public ServiceListener(DataIndex dataIndex, long runId) {
-		this(dataIndex, runId, DefaultPositionEstimator.getInstance());
-	} // Constructor
 
 	/**
 	 * @return the dataIndex
 	 */
 	private DataIndex getDataIndex() {
 		return dataIndex;
-	}
+	} // getDataIndex
 	
 	/**
 	 * @param dataIndex the dataIndex to set
 	 */
 	private void setDataIndex(DataIndex dataIndex) {
 		this.dataIndex = dataIndex;
-	}
+	} // setDataIndex
 	
 	/**
 	 * @return the run id
 	 */
 	private long getRunId() {
 		return runId;
-	}
+	} // getRunId
 	
 	/**
 	 * @param rundId the id of the current run
 	 */
 	private void setRunId(long runId) {
 		this.runId = runId;
-	}
+	} // setRunId
 	
 	/**
 	 * @return the position estimator
 	 */
 	private PositionEstimator getPositionEstimator() {
 		return estimator;
-	}
+	} // getPositionEstimator
 	
 	/**
 	 * @param estimator the position estimator class reference to set
 	 */
 	private void setPositionEstimator(PositionEstimator estimator) {
 		this.estimator = estimator;
-	}
+	} // setPositionEstimator
 	
 	/**
 	 * @param rawData
@@ -138,7 +160,7 @@ public class ServiceListener implements Listener {
 		tag.resetMainDataChanged();
 	} // saveTrack
 	
-	/* (non-Javadoc)
+	/**
 	 * @see obp.listener.Listener#messageReceived(obp.tag.TagSighting)
 	 */
 	@Override

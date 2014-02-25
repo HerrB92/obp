@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.tag;
 
@@ -12,8 +23,10 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
- * @author bbehrens
- *
+ * Class to store and retrieve the tag data encryption keys.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 @Entity
 @Table(name="TagKeys")
@@ -46,10 +59,24 @@ public class TagKey implements Serializable {
 	@Transient
 	private long[] tagKey = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
 		
+	/**
+	 * Constructor (for hibernate). Sets default OpenBeacon key
+	 * as default encryption key.
+	 */
 	protected TagKey() {
 		this("-", true, "0x00112233", "0x44556677", "0x8899aabb", "0xccddeeff");
 	} // Constructor (for Hibernate)
 	
+	/**
+	 * Full qualified constructor
+	 * 
+	 * @param name
+	 * @param active
+	 * @param keyPart1
+	 * @param keyPart2
+	 * @param keyPart3
+	 * @param keyPart4
+	 */
 	protected TagKey(String name, boolean active, String keyPart1, String keyPart2, String keyPart3, String keyPart4) {
 		setName(name);
 		setActive(active);
@@ -191,7 +218,16 @@ public class TagKey implements Serializable {
 		return Long.decode(getKeyPart4());
 	} // getKeyPart4AsLong
 	
+	/**
+	 * Update part of the key
+	 * 
+	 * @param part	Value between 0 and 3
+	 * @param value
+	 */
 	private void updateTagKey(int part, long value) {
+		if (part <= 0 || part > 3) {
+			throw new IllegalArgumentException("Part values has to be between 0 and 3");
+		}
 		tagKey[part] = value;
 	} // updateTagKey
 	

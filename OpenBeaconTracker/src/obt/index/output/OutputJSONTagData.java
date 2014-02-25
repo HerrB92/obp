@@ -29,14 +29,24 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * @author bbehrens
- *
+ * JSON writer class used to output the current OpenBeaconTracker data 
+ * for the graphical evaluation tool (obtPlot.html) as JSON file.
+ * 
+ * @author Björn Behrens (uol@btech.de)
+ * @version 1.0
  */
 public class OutputJSONTagData extends OutputJSON {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	private final DataIndex index = DataIndex.getInstance();
 	private long runId = 0;
 	
+	/**
+	 * Constructor receiving the JSON file name (including path) and
+	 * the current run id.
+	 * 
+	 * @param fileName
+	 * @param runId
+	 */
 	public OutputJSONTagData(String fileName, long runId) {
 		super(fileName);
 		setRunId(runId);
@@ -50,19 +60,26 @@ public class OutputJSONTagData extends OutputJSON {
 	} // getRunId
 
 	/**
+	 * Set the run id.
+	 * 
 	 * @param runId the runId to set
 	 */
-	public void setRunId(long runId) {
+	protected void setRunId(long runId) {
 		this.runId = runId;
 	} // setRunId
 
 	/**
-	 * Updates the content of the given file (including path) with the
-	 * JSON encoded data of the service, tags, readers and proximity
-	 * information.
+	 * Adds the current OpenBeaconTracker data of the registration, 
+	 * unregistration, spot and moving tags (including proximity) as 
+	 * well as the current information about the readers to the JSON
+	 * output.
 	 * 
 	 * Information: First service run requires about 35 milliseconds, 
-	 * further updates between 1 and 5 milliseconds (for 1 tag, 4 reader).
+	 * further updates between 1 and 5 milliseconds (for 100 tags & 
+	 * 4 readers), depending on the server hardware used.
+	 * 
+	 * Check scalability, if a significantly higher number of elements 
+	 * (tags, readers) is used with OpenBeaconTracker.
 	 * 
 	 * @param index
 	 * @throws JsonGenerationException
@@ -76,15 +93,15 @@ public class OutputJSONTagData extends OutputJSON {
 		generator.writeNumberField("maxY", configuration.getMaxY());
 		generator.writeNumberField("runId", getRunId());
 		
-		// Elements of the original OpenBeacon JSON format,
+		// FIXME: Elements of the original OpenBeacon JSON format,
 		// currently not provided or used.
 //		generator.writeObjectFieldStart("packets");
-//		generator.writeNumberField("rate", 0); // FIXME
-//		generator.writeNumberField("ignored", 0); // FIXME
-//		generator.writeNumberField("invalid_protocol", 0); // FIXME
-//		generator.writeNumberField("unknown_reader", 0); // FIXME
-//		generator.writeNumberField("crc_error", 0); // FIXME
-//		generator.writeNumberField("crc_ok", 0); // FIXME
+//		generator.writeNumberField("rate", 0);
+//		generator.writeNumberField("ignored", 0);
+//		generator.writeNumberField("invalid_protocol", 0);
+//		generator.writeNumberField("unknown_reader", 0);
+//		generator.writeNumberField("crc_error", 0);
+//		generator.writeNumberField("crc_ok", 0);
 //		generator.writeEndObject();
 		
 		generator.writeArrayFieldStart("tag");
@@ -181,6 +198,8 @@ public class OutputJSONTagData extends OutputJSON {
 		
 		generator.writeEndArray();
 		
+		// FIXME: Elements of the original OpenBeacon JSON format for 
+		// proximity, currently not provided or used.
 //		generator.writeArrayFieldStart("edge");
 //		
 ////		for (Proximity proximity: index.getProximities()) {
@@ -194,5 +213,5 @@ public class OutputJSONTagData extends OutputJSON {
 ////		}
 //		
 //		generator.writeEndArray();		
-	}
+	} // process
 }

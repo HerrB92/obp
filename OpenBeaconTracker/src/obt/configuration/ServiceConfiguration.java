@@ -41,10 +41,6 @@ import obt.tag.TagKey;
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
-/**
- * @author bbehrens
- *
- */
 public class ServiceConfiguration {
 	// Instance
 	private static ServiceConfiguration configuration = null;
@@ -72,7 +68,7 @@ public class ServiceConfiguration {
 	private int maxX = 0;
 	private int maxY = 0;
 	
-	// Unregistration X and Y values for a forced unregistration. Determined by
+	// Unregistration x- and y-values for a forced unregistration. Determined by
 	// the first loaded unregister tag position.
 	private int forcedUnRegisterX = Constants.NOT_DEFINED;
 	private int forcedUnRegisterY = Constants.NOT_DEFINED;
@@ -98,7 +94,7 @@ public class ServiceConfiguration {
 	} // getInstance
 	
 	/**
-	 * Helper method to determine maximum X and Y values.
+	 * Helper method to determine maximum x and y-values.
 	 * 
 	 * @param x
 	 * @param y
@@ -200,7 +196,7 @@ public class ServiceConfiguration {
 	 * 
 	 * FIXME: The code of this method should be improved using
 	 * Hibernate object logic (no plain SQL - which is not updated, 
-	 * if class definition changes).
+	 * if the class definition changes).
 	 */
 	public void storeReplayInformation(Long runId) {
 		Session session = DatabaseSessionFactory.getInstance().getCurrentSession();
@@ -279,8 +275,10 @@ public class ServiceConfiguration {
 	} // storeReplayInformation
 		
 	/**
+	 * Return integer value for the specified setting.
+	 * 
 	 * @param settingType
-	 * @return
+	 * @return Integer value for the specified setting
 	 */
 	private int getIntValue(SettingType settingType) {
 		if (settingsMap.containsKey(settingType)) {
@@ -340,7 +338,7 @@ public class ServiceConfiguration {
 	} // getStrengthAggregationAgedSeconds
 
 	/**
-	 * @return the tagDataKey
+	 * @return ArrayList<long[]> The list of encryption keys
 	 */
 	public ArrayList<long[]> getTagKeyList() {
 		return tagKeyList;
@@ -355,11 +353,14 @@ public class ServiceConfiguration {
 	} // getConfigurationLoaded
 	
 	/**
+	 * Calculate the distance between x1, y1 and x2, y2 using
+	 * Pythagoras (a^2 + b^2 = c^2).
+	 * 
 	 * @param x1
 	 * @param y1
 	 * @param x2
 	 * @param y2
-	 * @return
+	 * @return Long Distance
 	 */
 	private Long calcDistance(int x1, int y1, int x2, int y2) {
 		// Pythagoras: a^2 + b^2 = c^2
@@ -367,6 +368,10 @@ public class ServiceConfiguration {
 	} // calcDistance
 	
 	/**
+	 * Add a reader to the reader map. Calculate the distances between already
+	 * added readers and the new reader and store the value in the distance 
+	 * map.
+	 * 
 	 * @param newReader
 	 */
 	protected void addReader(Reader newReader) {
@@ -381,6 +386,7 @@ public class ServiceConfiguration {
 				
 				// The readerDistanceMap stores the distance as
 				// HashMap<ReaderId1, HashMap<ReaderId2, Distance>>
+				
 				// Get through the list of existing relations and add
 				// new relation for new reader, if the reader is on
 				// the same room, floor and group.
@@ -412,31 +418,35 @@ public class ServiceConfiguration {
 	} // addReader
 	
 	/**
-	 * @return
+	 * @return HashMap<String, Reader> Map of readers
 	 */
 	protected HashMap<String, Reader> getReaderMap() {
 		return readerMap;
 	} // getReaders
 	
 	/**
-	 * @return
+	 * @return Collection<Reader> List of readers stored in the readers map
 	 */
 	public Collection<Reader> getReaders() {
 		return getReaderMap().values();
 	} // getReaders
 	
 	/**
+	 * Get reader with the given key ("R...").
+	 * 
 	 * @param key
-	 * @return
+	 * @return Reader Reader object or null
 	 */
 	public Reader getReader(String key) {
 		return getReaderMap().get(key);
 	} // getReader
 	
 	/**
+	 * Get distance between the given readers from the distance map.
+	 * 
 	 * @param readerKey1
 	 * @param readerKey2
-	 * @return
+	 * @return long Distance
 	 */
 	public long getReaderDistance(String readerKey1, String readerKey2) {
 		try {
@@ -448,13 +458,18 @@ public class ServiceConfiguration {
 	
 	/**
 	 * @param key
-	 * @return
+	 * @return boolean True, if the given key exists as reader key;
+	 * 				   False, otherwise
 	 */
 	public boolean isValidReader(String key) {
 		return getReaderMap().containsKey(key);
 	} // isValidReader
 	
 	/**
+	 * Add a spot tag to the spot tag map. Calculate the distances between 
+	 * already added spot tags and the new spot tag and store the value in 
+	 * the distance map.
+	 * 
 	 * @param newSpotTag
 	 */
 	protected void addSpot(Spot newSpotTag) {
@@ -502,38 +517,46 @@ public class ServiceConfiguration {
 	} // addSpotTag
 	
 	/**
-	 * @return
+	 * @return The spot tag map
 	 */
 	protected HashMap<String, Spot> getSpotTagMap() {
 		return spotTagMap;
 	} // getSpotTagMap
 	
 	/**
-	 * @return
+	 * @return The list of spot tags as stored in the spot tag map.
 	 */
 	public Collection<Spot> getSpotTags() {
 		return getSpotTagMap().values();
 	} // getSpotTags
 	
 	/**
+	 * Return the tag with the given key ("T...").
+	 * 
 	 * @param key
-	 * @return
+	 * @return Spot Spot tag with the given key or null
 	 */
 	public Spot getSpot(String key) {
 		return getSpotTagMap().get(key);
 	} // getSpotTag
 	
 	/**
+	 * Determine, if the given key is associated with a spot tag.
+	 * 
 	 * @param key
-	 * @return
+	 * @return boolean	True, if the given key exists as spot tag key;
+	 * 					False, otherwise 
 	 */
 	public boolean isSpotTag(String key) {
 		return getSpotTagMap().containsKey(key);
 	} // isValidSpotTag
 	
 	/**
+	 * Determine, if the given key is associated with a register tag.
+	 * 
 	 * @param key
-	 * @return
+	 * @return boolean	True, if the given key identifies a register tag;
+	 * 					False, otherwise 
 	 */
 	public boolean isRegisterTag(String key) {
 		if (isSpotTag(key)) {
@@ -545,8 +568,11 @@ public class ServiceConfiguration {
 	} // isRegisterTag
 	
 	/**
+	 * Determine, if the given key is associated with an unregister tag.
+	 * 
 	 * @param key
-	 * @return
+	 * @return boolean	True, if the given key identifies an unregister tag;
+	 * 					False, otherwise 
 	 */
 	public boolean isUnRegisterTag(String key) {
 		if (isSpotTag(key)) {
@@ -558,9 +584,14 @@ public class ServiceConfiguration {
 	} // isUnRegisterTag
 	
 	/**
+	 * Return the distance between the tags with the given keys from
+	 * the distance map or Constants.NOT_DEFINED, if there is no
+	 * distance value available.
+	 * 
 	 * @param tagKey1
 	 * @param tagKey2
-	 * @return
+	 * @return long Distance between the given tags or
+	 * 				Constants.NOT_DEFINED
 	 */
 	public long getSpotDistance(String tagKey1, String tagKey2) {
 		try {
@@ -571,20 +602,29 @@ public class ServiceConfiguration {
 	} // getSpotTagDistance	
 
 	/**
-	 * @return the maxX
+	 * MaxX and maxY are the greatest x- and y-values given
+	 * as spot tag, register tag, unregister tag or readers.
+	 * 
+	 * @return the maxX value
 	 */
 	public int getMaxX() {
 		return maxX;
 	} // getMaxX
 
 	/**
-	 * @param maxX the maxX to set
+	 * MaxX and maxY are the greatest x- and y-values given
+	 * as spot tag, register tag, unregister tag or readers.
+	 * 
+	 * @param maxX the maxX value to set
 	 */
 	private void setMaxX(int maxX) {
 		this.maxX = maxX;
 	} // setMaxX
 
 	/**
+	 * MaxX and maxY are the greatest x- and y-values given
+	 * as spot tag, register tag, unregister tag or readers.
+	 * 
 	 * @return the maxY
 	 */
 	public int getMaxY() {
@@ -592,6 +632,9 @@ public class ServiceConfiguration {
 	} // getMaxY
 
 	/**
+	 * MaxX and maxY are the greatest x- and y-values given
+	 * as spot tag, register tag, unregister tag or readers.
+	 * 
 	 * @param maxY the maxY to set
 	 */
 	private void setMaxY(int maxY) {
@@ -599,6 +642,10 @@ public class ServiceConfiguration {
 	} // setMaxY
 
 	/**
+	 * ForcedUnRegisterX and ForcedUnRegisterY are the x- and y-
+	 * values of the first loaded unregister tag. These positions are
+	 * used, if a moving tag is automatically unregistered.
+	 * 
 	 * @return the forcedUnRegisterX
 	 */
 	public int getForcedUnRegisterX() {
@@ -606,6 +653,10 @@ public class ServiceConfiguration {
 	} // getForcedUnRegisterX
 
 	/**
+	 * ForcedUnRegisterX and ForcedUnRegisterY are the x- and y-
+	 * values of the first loaded unregister tag. These positions are
+	 * used, if a moving tag is automatically unregistered.
+	 * 
 	 * @param forcedUnRegisterX the forcedUnRegisterX to set
 	 */
 	private void setForcedUnRegisterX(int forcedUnRegisterX) {
@@ -613,6 +664,10 @@ public class ServiceConfiguration {
 	} // setForcedUnRegisterX
 
 	/**
+	 * ForcedUnRegisterX and ForcedUnRegisterY are the x- and y-
+	 * values of the first loaded unregister tag. These positions are
+	 * used, if a moving tag is automatically unregistered.
+	 * 
 	 * @return the forcedUnRegisterY
 	 */
 	public int getForcedUnRegisterY() {
@@ -620,6 +675,10 @@ public class ServiceConfiguration {
 	} // getForcedUnRegisterY
 
 	/**
+	 * ForcedUnRegisterX and ForcedUnRegisterY are the x- and y-
+	 * values of the first loaded unregister tag. These positions are
+	 * used, if a moving tag is automatically unregistered.
+	 * 
 	 * @param forcedUnRegisterY the forcedUnRegisterY to set
 	 */
 	private void setForcedUnRegisterY(int forcedUnRegisterY) {

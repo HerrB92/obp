@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.tag;
 
@@ -13,13 +24,18 @@ import obt.spots.Spot;
 import obt.tag.estimation.EstimationMethod;
 import obt.tag.estimation.PositionEstimator;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 /**
- * @author bbehrens
- *
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class Tag {
+	static final Logger logger = LogManager.getLogger(Tag.class.getName());
+	
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	private final DataIndex index = DataIndex.getInstance();
 	private PositionEstimator estimator;
@@ -34,7 +50,6 @@ public class Tag {
 	private String lastReaderKey = "";
 	private String lastSpotTagKey = "";
 	
-//	private HashMap<String, TagReaderSighting> tagReaderSightings = new HashMap<String, TagReaderSighting>();
 	private HashMap<String, TagSpotTagSighting> spotTagSightings = new HashMap<String, TagSpotTagSighting>();
 	private HashMap<String, TagProximitySighting> proximitySightings = new HashMap<String, TagProximitySighting>();
 	
@@ -171,29 +186,34 @@ public class Tag {
 	 */
 	public String getLastReaderKey() {
 		return lastReaderKey;
-	}
+	} // getLastReaderKey
 
 	/**
 	 * @param key the last reader key to set
 	 */
 	public void setLastReaderKey(String key) {
 		this.lastReaderKey = key;
-	}
+	} // setLastReaderKey
 	
 	/**
 	 * @return the key of the last spot tag
 	 */
 	public String getLastSpotTagKey() {
 		return lastSpotTagKey;
-	}
+	} // getLastSpotTagKey
 
 	/**
 	 * @param key the key of the last spot tag to set
 	 */
 	public void setLastSpotTagKey(String key) {
 		this.lastSpotTagKey = key;
-	}
+	} // setLastSpotTagKey
 	
+	/**
+	 * Add proximity (to other moving tag) sighting.
+	 * 
+	 * @param newSighting
+	 */
 	public void addProximitySighting(ProximitySighting newSighting) {
 		String tagKey = "T" + newSighting.getTagId();
 		TagProximitySighting sighting;
@@ -208,14 +228,33 @@ public class Tag {
 		sighting.setCount(newSighting.getCount());
 	} // addProximitySighting
 	
+	/**
+	 * Get map of proximity (to other moving tag) sightings.
+	 * 
+	 * @return HashMap<String, TagProximitySighting> Map of proximity sightings
+	 */
 	public HashMap<String, TagProximitySighting> getProximitySightings() {
 		return proximitySightings;
 	} // getProximitySightings
 	
+	/**
+	 * Get proximity (to other moving tag) sighting for the given (other)
+	 * moving tag key
+	 * 
+	 * @param tagKey
+	 * @return TagProximitySighting Sighting object or null
+	 */
 	public TagProximitySighting getProximitySighting(String tagKey) {
 		return getProximitySightings().get(tagKey);
 	} // getProximitySighting
 	
+	/**
+	 * Update active status of the proximity sightings, based on the last seen
+	 * time stamp and the specified aging time frame and return list of 
+	 * remaining active proximity sightings.
+	 * 
+	 * @return ArrayList<TagProximitySighting> List of active proximity sightings
+	 */
 	public ArrayList<TagProximitySighting> getActiveProximitySightings() {
 		ArrayList<TagProximitySighting> sightings = new ArrayList<TagProximitySighting>();
 		
@@ -228,14 +267,31 @@ public class Tag {
 		return sightings;
 	} // getActiveProximitySightings
 	
+	/**
+	 * Get map of spot tag proximity sightings.
+	 * 
+	 * @return HashMap<String, TagSpotTagSighting> Map of spot tag proximity sightings
+	 */
 	public HashMap<String, TagSpotTagSighting> getSpotTagSightings() {
 		return spotTagSightings;
 	} // getSpotTagSightings
 	
+	/**
+	 * Get spot tag proximity sighting for the given spot tag key
+	 * 
+	 * @param tagKey
+	 * @return TagSpotTagSighting Sighting object or null
+	 */
 	protected TagSpotTagSighting getSpotTagSighting(String tagKey) {
 		return getSpotTagSightings().get(tagKey);
 	} // getSpotTagSighting
 	
+	/**
+	 * Add spot tag proximity sighting.
+	 * 
+	 * @param spot		Spot tag object
+	 * @param strength	Determined signal strength
+	 */
 	public void addSpotTagSighting(Spot spot, int strength) {
 		TagSpotTagSighting sighting = getSpotTagSighting(spot.getKey());
 		
@@ -249,6 +305,13 @@ public class Tag {
 		setLastSpotTagKey(spot.getKey());
 	} // addSpotTagSighting
 	
+	/**
+	 * Update active status of the spot tag proximity sightings, based on the last 
+	 * seen time stamp and the specified aging time frame and return list of 
+	 * remaining active spot tag proximity sightings.
+	 * 
+	 * @return ArrayList<TagSpotTagSighting> List of active spot tag sightings
+	 */
 	public ArrayList<TagSpotTagSighting> getActiveSpotTagSightings() {
 		ArrayList<TagSpotTagSighting> sightings = new ArrayList<TagSpotTagSighting>();
 		
@@ -261,15 +324,27 @@ public class Tag {
 		return sightings;
 	} // getActiveSpotTagSightings
 	
+	/**
+	 * Set position estimator instance.
+	 * 
+	 * @param estimator
+	 */
 	public void setPositionEstimator(PositionEstimator estimator) {
 		this.estimator = estimator;
 	} // setPositionEstimator
 	
+	/**
+	 * @return PositionEstimator Used instance of the position estimator
+	 */
 	public PositionEstimator getPositionEstimator() {
 		return estimator;
 	} // getPositionEstimator
 	
-	// FIXME: This code ignores floor and group
+	/**
+	 * Update position estimation.
+	 * 
+	 * FIXME: This code ignores floor and group
+	 */
 	public void updatePositionEstimation() {
 		if (estimator != null) {
 			estimator.estimate(this);
@@ -279,19 +354,19 @@ public class Tag {
 			setMethod(estimator.getMethod());
 			needsEstimation = false;
 			
-			System.out.println(this.toString());
+			logger.debug(this.toString());
 		}
 	} // updatePositionEstimation
 
 	/**
-	 * @return the x
+	 * @return The (last estimated) x position
 	 */
 	public int getX() {
 		return x;
 	} // getX
 
 	/**
-	 * @param x the x to set
+	 * @param x The x position to set
 	 */
 	protected void setX(int x) {
 		if (this.x != x) {
@@ -301,14 +376,14 @@ public class Tag {
 	} // setX
 
 	/**
-	 * @return the y
+	 * @return The (last estimated) y position
 	 */
 	public int getY() {
 		return y;
 	} // getY
 
 	/**
-	 * @param y the y to set
+	 * @param y The y position to set
 	 */
 	protected void setY(int y) {
 		if (this.y != y) {
@@ -318,18 +393,18 @@ public class Tag {
 	} // setY
 	
 	/**
-	 * @return the method
+	 * @return The (last) method used for position estimation
 	 */
 	public EstimationMethod getMethod() {
 		return method;
-	}
+	} // getMethod
 
 	/**
-	 * @param method the method to set
+	 * @param method The estimation method to set
 	 */
 	protected void setMethod(EstimationMethod method) {
 		this.method = method;
-	}
+	} // setMethod
 	
 	/**
 	 * @return Returns true, if spot tag sightings have been added or updated
@@ -337,7 +412,7 @@ public class Tag {
 	 */
 	public boolean needsEstimation() {
 		return needsEstimation;
-	}
+	} // needsEstimation
 
 	/**
 	 * @param estimate Set to true to signal that the position estimation should
@@ -345,9 +420,11 @@ public class Tag {
 	 */
 	protected void setNeedsEstimation(boolean estimate) {
 		this.needsEstimation = estimate;
-	}
+	} // setNeedsEstimation
 
 	/**
+	 * Register the tag.
+	 * 
 	 * @param spotTagX X coordinate of the register spot tag
 	 * @param spotTagY Y coordinate of the register spot tag
 	 */
@@ -363,6 +440,8 @@ public class Tag {
 	} // register
 	
 	/**
+	 * Unregister the tag.
+	 * 
 	 * @param spotTagX X coordinate of the unregister spot tag
 	 * @param spotTagY Y coordinate of the unregister spot tag
 	 */
@@ -381,32 +460,34 @@ public class Tag {
 	 */
 	public boolean isRegistered() {
 		return registered;
-	}
+	} // isRegistered
 	
 	/**
-	 * Signals, if x/y position or button pressed information has changed
+	 * Signals, if x-/y-position or button pressed information has changed
 	 * 
 	 * @return the changed
 	 */
 	public boolean isMainDataChanged() {
 		return mainDataChanged;
-	}
+	} // isMainDataChanged
 
 	/**
 	 * @param changed the changed to set
 	 */
 	protected void setMainDataChanged(boolean changed) {
 		this.mainDataChanged = changed;
-	}
+	} // setMainDataChanged
 	
 	/**
 	 * Set the MainDataChanged flag to false
 	 */
 	public void resetMainDataChanged() {
 		this.mainDataChanged = false;
-	}
+	} // resetMainDataChanged
 
-	/* (non-Javadoc)
+	/**
+	 * Overridden toString method to simplify debugging.
+	 * 
 	 * @see java.lang.Object#toString()
 	 */
 	@Override
@@ -423,27 +504,6 @@ public class Tag {
 		buffer.append(getY());
 		buffer.append("|Button: ");
 		buffer.append(isButtonPressed());
-		
-//		buffer.append("|Readers: ");
-//		
-//		int counter = 1;
-//		for (TagReaderSighting sighting: getTagReaderSightings().values()) {
-//			buffer.append("R");
-//			buffer.append(counter);
-//			buffer.append(": ");
-//			buffer.append(sighting.getSpot().getId());
-//			buffer.append(" (Active: ");
-//			buffer.append(sighting.isActive());
-//			buffer.append(", Strength: ");
-//			buffer.append(sighting.getMinStrength());
-//			buffer.append(") ");
-//			
-//			counter++;
-//		}
-//		
-//		if (counter > 1) {
-//			buffer.deleteCharAt(buffer.length() - 1);
-//		}
 		
 		buffer.append("|SpotTags: ");
 		

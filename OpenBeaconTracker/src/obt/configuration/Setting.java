@@ -121,7 +121,7 @@ public class Setting implements Serializable {
 	private int intValue;
 	
 	/**
-	 * Simple constructor (required by Hibernate)
+	 * Light constructor (for Hibernate)
 	 */
 	public Setting() {}
 	
@@ -139,14 +139,14 @@ public class Setting implements Serializable {
 	 */
 	public SettingType getSettingType() {
 		return settingType;
-	}
+	} // getSettingType
 
 	/**
 	 * @param type the setting type to set
 	 */
 	private void setSettingType(SettingType type) {
 		this.settingType = type;
-	}
+	} // setSettingType
 	
 	/**
 	 * @return Run id, 0 for current run
@@ -169,17 +169,20 @@ public class Setting implements Serializable {
 	 */
 	public SettingValueType getValueType() {
 		return settingType.getType();
-	}
+	} // getValueType
 
 	/**
 	 * @return the value
 	 */
 	public String getValue() {
 		return value;
-	}
+	} // getValie
 
 	/**
-	 * @param value the value to set
+	 * Sets the value of the setting and tries to set (convert)
+	 * the value as well for the corresponding integer value.
+	 * 
+	 * @param value The setting value to set
 	 */
 	public void setValue(String value) {
 		if (getValueType().equals(SettingValueType.IntValue)) {
@@ -189,26 +192,26 @@ public class Setting implements Serializable {
 		}
 		
 		this.value = value;
-	}
+	} // setValue
 	
 	/**
-	 * @return the value as int value
+	 * @return The setting value as integer value
 	 */
 	public int getIntValue() {
 		return intValue;
-	}
+	} // getIntValue
 	
 	/**
-	 * @return
+	 * @return Default string value 
 	 */
 	public String getDefaultValue() {
 		return getSettingType().getDefaultValue();
-	}
+	} // getDefaultValue
 	
 	/**
-	 * @return
+	 * @return Default integer value
 	 */
 	public int getDefaultIntValue() {
 		return getSettingType().getDefaultIntValue();
-	}
+	} // getDefaultIntValue
 }

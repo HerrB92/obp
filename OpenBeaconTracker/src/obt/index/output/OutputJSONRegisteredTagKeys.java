@@ -21,16 +21,31 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * @author bbehrens
- *
+ * JSON writer class used to provide a list of the tag keys of the last 
+ * n unregistered tags as JSON file. n is determined by the cardinality
+ * of the CircularQueue object to store the unregistered tags.
+ * 
+ * @author Björn Behrens (uol@btech.de)
+ * @version 1.0
  */
 public class OutputJSONRegisteredTagKeys extends OutputJSON {
 	private final DataIndex index = DataIndex.getInstance();
 	
+	/**
+	 * Constructor receiving the JSON file name (including path)
+	 * 
+	 * @param fileName
+	 */
 	public OutputJSONRegisteredTagKeys(String fileName) {
 		super(fileName);
 	} // Constructor
 	
+	/**
+	 * Overwritten process method to add the tag keys of the 
+	 * unregistered tags to the JSON output.
+	 * 
+	 * @see obt.index.output.OutputJSON#process(com.fasterxml.jackson.core.JsonGenerator)
+	 */
 	@Override
 	protected void process(JsonGenerator generator) 
 			throws JsonGenerationException, IOException {

@@ -26,8 +26,11 @@ import org.hibernate.annotations.Type;
 import org.joda.time.DateTime;
 
 /**
- * @author bbehrens
- *
+ * Class to create an ongoing id per run (runId) using a database
+ * sequence (auto incrementing column in SQL database).
+ * 
+ * @author Björn Behrens (uol@btech.de)
+ * @version 1.0
  */
 @Entity
 public class ObtRun implements Serializable {
@@ -41,37 +44,68 @@ public class ObtRun implements Serializable {
 	@Type(type="obt.persistence.joda.PersistentDateTime")
 	private DateTime timeStamp;
 
+	/**
+	 * Constructor
+	 * 
+	 * Sets internal time stamp to "now".
+	 */
 	public ObtRun() {
 		this(DateTime.now());
 	} // Constructor (default)
 	
+	/**
+	 * Constructor (with timeStamp parameter)
+	 * 
+	 * @param timeStamp
+	 */
 	public ObtRun(DateTime timeStamp) {
 		setTimeStamp(timeStamp);
 	} // Constructor
 
+	/**
+	 * @return Current run id.
+	 */
 	public Long getRunId() {
 		return runId;
 	} // getRunId
 
-	public void setRunId(Long runId) {
+	/**
+	 * Set run id.
+	 * 
+	 * @param runId
+	 */
+	protected void setRunId(Long runId) {
 		this.runId = runId;
 	} // setRunId
 
-	
+	/**
+	 * @return Time stamp stored in the object
+	 */
 	public DateTime getTimeStamp() {
 		return timeStamp;
 	} // getTimeStamp
 
-	public void setTimeStamp(DateTime timeStamp) {
+	/**
+	 * Set time stamp.
+	 * 
+	 * @param timeStamp
+	 */
+	protected void setTimeStamp(DateTime timeStamp) {
 		this.timeStamp = timeStamp;
 	} // setTimeStamp
-
+	
+	/**
+	 * Overridden toString method to support debugging.
+	 * 
+	 * @see java.lang.Object#toString()
+	 */
 	public String toString() {
 		StringBuilder stringBuilder = new StringBuilder();
 		stringBuilder.append("Run: ");
 		stringBuilder.append(runId);
-		stringBuilder.append(" ");
+		stringBuilder.append(" (");
 		stringBuilder.append(timeStamp.toString());
+		stringBuilder.append(")");
 		
 		return stringBuilder.toString();
 	} // toString

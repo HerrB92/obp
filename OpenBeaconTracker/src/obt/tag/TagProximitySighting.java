@@ -1,5 +1,16 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.tag;
 
@@ -8,18 +19,36 @@ import obt.configuration.ServiceConfiguration;
 import org.joda.time.DateTime;
 
 /**
- * @author bbehrens
- *
+ * Proximity (to other moving tag) sighting class.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class TagProximitySighting {
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
+	// Tag key
 	private String tagKey;
+	
+	// Minimal identified signal strength
 	private int minStrength;
+	
+	// Sighting count (FIXME: Check with OpenBeacon: Of this particular other tag)
 	private int count = 1;
+	
+	// Last update time stamp
 	private DateTime lastUpdate;
+	
+	// Active flag, if the last sighting is younger than
+	// the specified aging time delta.
 	private boolean active = true;
 		
+	/**
+	 * Constructor
+	 * 
+	 * @param tagKey	Tag key
+	 * @param strength	Determined strength
+	 */
 	public TagProximitySighting(String tagKey, int strength) {
 		setTagKey(tagKey);
 		setLastUpdate(DateTime.now()); // Has to be before setMinStrength!
@@ -127,16 +156,16 @@ public class TagProximitySighting {
 	} // setActive
 
 	/**
-	 * @return the count
+	 * @return the count of sightings of the same tag
 	 */
 	public int getCount() {
 		return count;
-	}
+	} // getCount
 
 	/**
-	 * @param count the count to set
+	 * @param count The number of sightings of the same tag
 	 */
 	public void setCount(int count) {
 		this.count = count;
-	}
+	} // setCount
 }

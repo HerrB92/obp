@@ -49,7 +49,7 @@ import obt.persistence.DatabaseSessionFactory;
  * and the timer object which refreshes the JSON file once
  * a second.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class OpenBeaconTracker {	
@@ -67,6 +67,8 @@ public class OpenBeaconTracker {
 	private static ListenerService service;
 	
 	/**
+	 * Main method
+	 * 
 	 * @param args
 	 * @throws InterruptedException
 	 */

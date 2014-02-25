@@ -25,9 +25,8 @@ import obt.tag.Tag;
  * Singleton class which keeps the moving tag, registered tag and unregistered tag data 
  * in memory for faster access.
  * 
- * @author Björn Behrens
+ * @author Björn Behrens (uol@btech.de)
  * @version 1.0
- * @since 1.0
  */
 public class DataIndex {
 	// Instance

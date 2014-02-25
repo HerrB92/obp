@@ -1,9 +1,23 @@
 /**
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; version 2.
  * 
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License along
+ * with this program; if not, write to the Free Software Foundation, Inc.,
+ * 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301 USA.
  */
 package obt.tag.estimation;
 
 import java.util.ArrayList;
+
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import obs.service.Constants;
 import obt.configuration.ServiceConfiguration;
@@ -13,19 +27,33 @@ import obt.tag.Tag;
 import obt.tag.TagSpotTagSighting;
 
 /**
- * @author bbehrens
- *
+ * Default estimator class used for OpenBeaconTracker (singleton). It uses only 
+ * spot tag sightings to estimate the spot position.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class DefaultPositionEstimator implements PositionEstimator {
-	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
+	static final Logger logger = LogManager.getLogger(DefaultPositionEstimator.class.getName());
+	
+	// Configuration data, includes spot tag data
+	private final ServiceConfiguration configuration = 
+			ServiceConfiguration.getInstance();
+	
+	// Singleton class, store own instance
 	private static DefaultPositionEstimator estimator = null;
 	
+	// Determined x-, y-positions and used method
 	private int x = 0;
 	private int y = 0;
 	private EstimationMethod method = EstimationMethod.None;
 	
+	// Private constructor (singleton)
 	private DefaultPositionEstimator() {}
 	
+	/**
+	 * @return Instance
+	 */
 	public static PositionEstimator getInstance() {
 		if (estimator == null) {
 			estimator = new DefaultPositionEstimator();
@@ -35,11 +63,8 @@ public class DefaultPositionEstimator implements PositionEstimator {
 	} // getInstance
 	
 	/**
-	 * If there is only one active reader seeing the tag, than
-	 * we can only predict that we are at the position of the 
-	 * reader (with the inaccuracy of the highest possible power 
-	 * level minus the provided minimal power level at the 
-	 * last update).
+	 * If there is only one sighting (here: to a spot tag), than we can 
+	 * only predict that we are near the position of the spot tag.
 	 * 
 	 * @param method
 	 * @param x
@@ -52,11 +77,8 @@ public class DefaultPositionEstimator implements PositionEstimator {
 	} // estimateBySingleRecord
 	
 	/**
-	 * If there are two readers, then we are likely somewhere between them
-	 * (at least, if the reader ranges would not overlap - which they might 
-	 * often do. But if we assume that all readers are located on rather "outer 
-	 * edges" the assumption is better than the alternative).
-	 * last update).
+	 * If there are two sightings (here: to two spot tags), then we are 
+	 * likely somewhere between them.
 	 * 
 	 * @param method
 	 * @param x1
@@ -76,25 +98,23 @@ public class DefaultPositionEstimator implements PositionEstimator {
 		// between the positions (here for x) and the factor
 		// "part of strength1 of the sum of strength 1 and 2"
 		// to calculate how much of the delta has to be added to
-		// one reader position to get to the estimated tag position.
-		// 
-		// It is trivial to show, that a tag can be really 
-		// far, far away from this position and still show the
-		// same strength and reader detection data.
+		// one position to get to the estimated tag position.
+		
 		setX((int)Math.round(x1 + ((x2 - x1) * factor)));
 		setY((int)Math.round(y1 + ((y2 - y1) * factor)));
 		setMethod(method);
 	} // estimateByTwoRecords
 	
 	/**
-	 * Use Trilateration to estimate a position of the first three
-     * reader sightings.
-     * 	
+	 * Use trilateration to estimate a position of three proximity sightings.
+     * 
      * Uses information from http://en.wikipedia.org/wiki/Trilateration, referencing
      * Manolakis, D.E (2011) 'Efficient Solution and Performance Analysis of 
      * 3-D Position Estimation by Trilateration' IEEE Transactions on
      * Aerospace And Electronic Systems, vol. 32, no. 4, pp. 1239-1248
-     * Available at: http://www.general-files.org/download/gs5bac8d73h32i0/IEEE-AES-96-Efficient%20Solution-and-Performance-Analysis-of-3-D%20Position-Estimation-by-Trilateration.pdf.html#
+     * Available at: http://www.general-files.org/download/gs5bac8d73h32i0/
+     * IEEE-AES-96-Efficient%20Solution-and-Performance-Analysis-of-3-
+     * D%20Position-Estimation-by-Trilateration.pdf.html#
      * Accessed: 18.10.2013
      *  
      * Reba, D. (2012) Answer to '2d trilateration' stackoverflow.com [Online]
@@ -119,7 +139,7 @@ public class DefaultPositionEstimator implements PositionEstimator {
 										long distance23,
 										long distance13) {				
 
-		// Get the greatest distance between the identified readers
+		// Get the greatest distance between the identified spot tags
 		// and use this distance to estimate a radius based on the
 		// signal strength
 		Long distance = distance12;
@@ -140,10 +160,9 @@ public class DefaultPositionEstimator implements PositionEstimator {
 		double radius2 = distance * strength2 / (double)(Constants.STRENGTH_MAX_LEVEL + 1);
 		double radius3 = distance * strength3 / (double)(Constants.STRENGTH_MAX_LEVEL + 1);
 
-//				System.out.println("Distance: " + distance + 
-//					" R1: " + reader1.getId() + " (" + strength1 + "/" + radius1 + "/" + x1 + "/" + y1 + ")" +
-//					" R2: " + reader2.getId() + " (" + strength2 + "/" + radius2 + "/" + x2 + "/" + y2 + ")" + 
-//					" R3: " + reader3.getId() + " (" + strength3 + "/" + radius3 + "/" + x3 + "/" + y3 + ")");
+		logger.trace(String.format("Distance: %d, Strength1: %d, Radius1: %d, X1: %d, Y1: %d", distance, strength1, radius1, x1, y1));
+		logger.trace(String.format("Distance: %d, Strength2: %d, Radius2: %d, X2: %d, Y2: %d", distance, strength2, radius2, x2, y2));
+		logger.trace(String.format("Distance: %d, Strength3: %d, Radius3: %d, X3: %d, Y3: %d", distance, strength3, radius3, x3, y3));
 				
 		// ex = (P2 - P1) / ‖P2 - P1‖, result: vector
 		double exx = (x2 - x1)/Math.sqrt(Math.pow(x2 - x1, 2) + Math.pow(y2 - y1, 2));
@@ -177,6 +196,13 @@ public class DefaultPositionEstimator implements PositionEstimator {
 		setMethod(method);
 	} // estimateByThreeRecords
 	
+	/**
+	 * Estimate the position of the tag using the current proximity
+	 * sightings of the tag. If no estimation is possible (e.g. no
+	 * tag sightings), x and y are set to Constants.NOT_DEFINED.
+	 * 
+	 * @see obt.tag.estimation.PositionEstimator#estimate(obt.tag.Tag)
+	 */
 	public void estimate(Tag tag) {
 		setX(Constants.NOT_DEFINED);
 		setY(Constants.NOT_DEFINED);
@@ -204,7 +230,7 @@ public class DefaultPositionEstimator implements PositionEstimator {
 			tag1 = tagSightings.get(0).getSpot();
 			estimateBySingleRecord(EstimationMethod.OneSpotTag, tag1.getX(), tag1.getY());
 			
-			//System.out.println("1: R: " + reader.getId() + " X: " + getX() + " Y: " + getY() + " S: " + sighting.getMinStrength());
+			logger.trace(String.format("OneSpotTag: X: %d, Y: %d", getX(), getY()));
 			break;
 		case 2:
 			tagSighting = tagSightings.get(0);
@@ -221,7 +247,8 @@ public class DefaultPositionEstimator implements PositionEstimator {
 			
 			estimateByTwoRecords(EstimationMethod.TwoSpotTags, x1, y1, strength1, x2, y2, strength2);
 			
-			//System.out.println("2: X: " + getX() + " Y: " + getY() + " S1: " + strength1 + " S2: " + strength2);
+			logger.trace(String.format("TwoSpotTags: X: %d, Y:%d (X1: %d, Y1: %d, Strength1: %d)", getX(), getY(), x1, y1, strength1));
+			logger.trace(String.format("TwoSpotTags: X: %d, Y:%d (X2: %d, Y2: %d, Strength2: %d)", getX(), getY(), x2, y2, strength2));
 			break;
 		default:
 			tagSighting = tagSightings.get(0);
@@ -251,35 +278,60 @@ public class DefaultPositionEstimator implements PositionEstimator {
 					configuration.getSpotDistance(tag2.getKey(), tag3.getKey()),
 					configuration.getSpotDistance(tag1.getKey(), tag3.getKey()));
 			
-			// System.out.println("3: X: " + getX() + ", Y: " + getY());
+			logger.trace(String.format("TriSpotTags: X: %d, Y:%d (X1: %d, Y1: %d, Strength1: %d)", getX(), getY(), x1, y1, strength1));
+			logger.trace(String.format("TriSpotTags: X: %d, Y:%d (X2: %d, Y2: %d, Strength2: %d)", getX(), getY(), x2, y2, strength2));
+			logger.trace(String.format("TriSpotTags: X: %d, Y:%d (X3: %d, Y3: %d, Strength3: %d)", getX(), getY(), x3, y3, strength3));
 		}
 	} // estimate
 	
+	/**
+	 * @param x
+	 */
 	private void setX(int x) {
 		this.x = x;
 	} // setX
 		
+	/**
+	 * @see obt.tag.estimation.PositionEstimator#getX()
+	 */
 	public int getX() {
 		return x;
 	} // getX
 	
+	/**
+	 * @param y
+	 */
 	private void setY(int y) {
 		this.y = y;
 	} // setY
 	
+	/**
+	 * @see obt.tag.estimation.PositionEstimator#getY()
+	 */
 	public int getY() {
 		return y;
 	} // getY
 	
+	/**
+	 * Update estimation method used.
+	 * 
+	 * @param method
+	 */
 	private void setMethod(EstimationMethod method) {
 		this.method = method;
 	} // setMethod
 	
+	/**
+	 * @see obt.tag.estimation.PositionEstimator#getMethod()
+	 */
 	@Override
 	public EstimationMethod getMethod() {
 		return method;
 	} // getMethod
 
+	/**
+	 * @see obt.tag.estimation.PositionEstimator#getLastEstimationSpotType()
+	 */
 	@Override
 	public SpotType getLastEstimationSpotType() {
 		return null;

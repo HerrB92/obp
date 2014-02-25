@@ -30,20 +30,19 @@ import org.hibernate.service.ServiceRegistry;
 import org.hibernate.service.ServiceRegistryBuilder;
 
 /**
- * @author bbehrens
+ * Database session factory for Hibernate. This class also defines, which 
+ * classes are relevant for Hibernate.
  * 
+ * The parameters to connect to the database are specified in the 
+ * hibernate.cfg.xml file.
+ * 
+ * @author Björn Behrens <uol@btech.de>
+ * @version 1.0
  */
 public class DatabaseSessionFactory {
 	private static org.hibernate.SessionFactory sessionFactory = null;
 
 	private DatabaseSessionFactory() {} // Constructor
-
-//	static {
-//		final Configuration cfg = new Configuration();
-//		cfg.configure("/hibernate.cfg.xml");
-//		
-//		sessionFactory = cfg.buildSessionFactory(new ServiceRegistryBuilder().buildServiceRegistry());
-//	}
 
 	public static SessionFactory getInstance() {
 		if (sessionFactory == null) {

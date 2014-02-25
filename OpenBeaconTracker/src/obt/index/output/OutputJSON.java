@@ -25,8 +25,10 @@ import com.fasterxml.jackson.core.JsonGenerationException;
 import com.fasterxml.jackson.core.JsonGenerator;
 
 /**
- * @author bbehrens
- *
+ * Abstract class defining the common methods of the JSON writer classes.
+ * 
+ * @author Björn Behrens (uol@btech.de)
+ * @version 1.0
  */
 public abstract class OutputJSON {
 	private final JsonFactory factory = new JsonFactory();
@@ -101,6 +103,14 @@ public abstract class OutputJSON {
 		}
 	} // update
 	
+	/**
+	 * Abstract method, overwritten by the extending writer classes to
+	 * add custom JSON content on output.
+	 * 
+	 * @param generator
+	 * @throws JsonGenerationException
+	 * @throws IOException
+	 */
 	protected abstract void process(JsonGenerator generator)
 		throws JsonGenerationException, IOException;
 }

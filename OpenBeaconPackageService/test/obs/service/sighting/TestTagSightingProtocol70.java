@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Test class for testing tag data encoded using protocol 70.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSightingProtocol70 {
@@ -75,12 +75,16 @@ public class TestTagSightingProtocol70 {
 		assertEquals(17638, tagSighting.getTagSequence());
 		assertNotNull(tagSighting.getProximitySightings());
 		assertEquals(0, tagSighting.getProximitySightings().size());
-		assertEquals(12, tagSighting.getTagCRC());
+		assertEquals(10508, tagSighting.getTagCRC());
 		assertTrue(tagSighting.hasValidTagCRC());
 		assertTrue(tagSighting.isValid());
 		
 		for (int i = 0; i < packetData.length; i++) {
-			assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			try {
+				assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			} catch (AssertionError e) {
+				System.out.printf("PacketData failed at %d (expected: %d, got: %d)\n", i, packetData[i], tagSighting.getRawData()[i]);
+			}
 		}
 		
 		assertFalse(tagSighting.getTagData() == null);

@@ -24,7 +24,7 @@
  * stackoverflow.com, 02.09.2013
  * Available at: http://stackoverflow.com/a/18561829 (Accessed: 08.12.2013)
  * 
- * Copyright 2013 BjÃ¶rn Behrens <uol@btech.de>
+ * Copyright 2013 Björn Behrens <uol@btech.de>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published

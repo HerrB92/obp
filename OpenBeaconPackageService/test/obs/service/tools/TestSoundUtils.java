@@ -12,7 +12,7 @@ import org.junit.Test;
 /**
  * Test for the SoundUtils class. Use your ears for assertion... ;-)
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TestSoundUtils {

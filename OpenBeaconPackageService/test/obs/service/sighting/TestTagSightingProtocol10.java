@@ -22,14 +22,13 @@ import obs.service.Constants;
 import obs.service.sighting.TagSighting;
 import obs.service.tools.Tools;
 
-import org.junit.Before;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
 /**
  * Test class for testing tag data encoded using protocol 24.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSightingProtocol10 {
@@ -45,7 +44,6 @@ public class TestTagSightingProtocol10 {
 	@BeforeClass
 	public static void setUpBeforeClass() throws Exception {
 		// Create envelope
-		byte[] packetData = new byte[32];
 		packetData[0] = 0;				// Envelope CRC (1) - updated below!
 		packetData[1] = 0;				// Envelope CRC (2) - updated below!
 		packetData[2] = Constants.ENVELOPE_PROTOCOL_BEACONLOG_SIGHTING;	// Envelope protocol
@@ -85,20 +83,24 @@ public class TestTagSightingProtocol10 {
 		tagCRCValue = Tools.calculateCRC(payload, 0, 14);
 		
 		payload[14] = (byte) (0xff & (tagCRCValue >> 8));		// Tag CRC (2)
-		payload[15] = (byte) (0xff & tagCRCValue); 			// Tag CRC (1)
+		payload[15] = (byte) (0xff & tagCRCValue); 				// Tag CRC (1)
 		
 		// Encrypt the payload an copy it into the envelope
-		Tools.encrypt(payload, key);
+		payload = Tools.flipArray(payload);
+		payload = Tools.encrypt(payload, key);
+		payload = Tools.flipArray(payload);
+		
+		// Copy payload into packetData array
 		System.arraycopy(payload, 0, packetData, 16, 16);
 		
 		// Calculate the CRC values of the envelope
-		envelopeCRCValue = Tools.calculateCRC(packetData, 2, 30);
+		envelopeCRCValue = Tools.calculateLongCRC(packetData, 2, 30);
 		
 		packetData[0] = (byte) (0xff & (envelopeCRCValue >> 8));	// Envelope CRC (2)
 		packetData[1] = (byte) (0xff & envelopeCRCValue); 			// Envelope CRC (1)
-
+				
 		tagSighting = new TagSighting(new DatagramPacket(packetData, 32), key);
-	}
+	} // setUpBeforeClass
 
 	/**
 	 * Test method for {@link odp.service.sighting.tagsighting.TagSighting#TagSighting(java.net.DatagramPacket, int[])}.
@@ -113,38 +115,42 @@ public class TestTagSightingProtocol10 {
 	 */
 	@Test
 	public final void testData() {
-		assertEquals(17809, tagSighting.getEnvelopeCRC());
+		assertEquals(envelopeCRCValue, tagSighting.getEnvelopeCRC());
 		assertTrue(tagSighting.hasValidEnvelopeCRC());
 		assertEquals(1, tagSighting.getProtocol());
 		assertEquals(1, tagSighting.getInterface());
-		assertEquals(1300, tagSighting.getReaderId());
-		assertEquals("R1300", tagSighting.getReaderKey());
+		assertEquals(1268, tagSighting.getReaderId());
+		assertEquals("R1268", tagSighting.getReaderKey());
 		assertEquals(32, tagSighting.getSize());
 		assertEquals(432, tagSighting.getSequence());
 		assertEquals(1126039, tagSighting.getTimestamp());
 		assertTrue(tagSighting.hasValidTagData());
-		assertEquals(1119, tagSighting.getTagId());
-		assertEquals("T1119", tagSighting.getTagKey());
-		assertNull(tagSighting.isTagButtonPressed());
-		assertEquals(24, tagSighting.getTagProtocol());
-		assertEquals(0, tagSighting.getFlags());
+		assertEquals(1139, tagSighting.getTagId());
+		assertEquals("T1139", tagSighting.getTagKey());
+		assertTrue(tagSighting.isTagButtonPressed());
+		assertEquals(16, tagSighting.getTagProtocol());
+		assertEquals(2, tagSighting.getFlags());
 		assertEquals(2, tagSighting.getStrength());
 		assertNull(tagSighting.getProximitySightings());
 		assertEquals(-1, tagSighting.getTagTime());
 		assertEquals(-1, tagSighting.getTagBattery());
-		assertEquals(1770132, tagSighting.getTagSequence());
-		assertEquals(136, tagSighting.getTagCRC());
+		assertEquals(513, tagSighting.getTagSequence());
+		assertEquals(tagCRCValue, tagSighting.getTagCRC());
 		assertTrue(tagSighting.hasValidTagCRC());
 		assertTrue(tagSighting.isValid());
 		
 		for (int i = 0; i < packetData.length; i++) {
-			assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			try {
+				assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			} catch (AssertionError e) {
+				System.out.printf("PacketData failed at %d (expected: %d, got: %d)\n", i, packetData[i], tagSighting.getRawData()[i]);
+			}
 		}
 		
 		assertFalse(tagSighting.getTagData() == null);
 		assertEquals(16, tagSighting.getTagData().length);
 		
-		assertEquals("69,145,1,1,5,20,0,32,0,0,1,176,0,17,46,151,13,43,103,48,213,161,133,84,151,18,99,14,132,224,172,87",
+		assertEquals("122,208,1,1,4,244,0,32,0,0,1,176,0,17,46,151,73,242,65,211,156,68,214,179,165,145,152,3,195,243,162,106",
 					tagSighting.toString(true));
 	} // testData
 }

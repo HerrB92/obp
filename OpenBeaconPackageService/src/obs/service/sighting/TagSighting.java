@@ -31,7 +31,7 @@ import obs.service.tools.Tools;
  * Code based on the work of 2007
  * Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TagSighting {
@@ -228,7 +228,7 @@ public class TagSighting {
 		// Check envelope CRC
 		// CRC is calculated from all raw data except the first two bytes
 		// (which contain the envelope CRC value)
-		if (calculateLongCRC(rawData, 2, 30) == getEnvelopeCRC()) {
+		if (Tools.calculateLongCRC(rawData, 2, 30) == getEnvelopeCRC()) {
 			validEnvelopeCRC = true;
 		}
 
@@ -283,8 +283,10 @@ public class TagSighting {
 
 				if (tempProtocol == Constants.RFBPROTO_BEACONTRACKER_OLD2) {
 					tagFlags = 0;
+					tagButtonPressed = false;
 					if ((tagData[2] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 						tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
+						tagButtonPressed = true;
 					}
 
 					int tempStrength = 0xff & tagData[3];
@@ -389,7 +391,7 @@ public class TagSighting {
 				if ((tagData[3] & Constants.RFBFLAGS_SENSOR) == Constants.RFBFLAGS_SENSOR) {
 					tagFlags = Constants.TAGSIGHTINGFLAG_BUTTON_PRESS;
 				}
-
+				
 				tagStrength = 0xff & tagData[4];
 				if (tagStrength >= Constants.STRENGTH_LEVELS_COUNT) {
 					tagStrength = Constants.STRENGTH_LEVELS_COUNT - 1;
@@ -633,7 +635,7 @@ public class TagSighting {
 			}
 		}
 
-		return (tagCRC == (Tools.calculateCRC(tagData, 0, 14) & 0xFF));
+		return (tagCRC == Tools.calculateCRC(tagData, 0, 14)); // & 0xFF)
 	} // decryptTagData
 
 	private void setTagKey(int tagId) {
@@ -809,20 +811,20 @@ public class TagSighting {
 //
 //		return crc;
 //	} // calculateCRC
-
-	/**
-	 * Calculate CRC value from the provided byte data array as long value.
-	 * 
-	 * FIXME: Enhance parameter information
-	 * 
-	 * @param data
-	 * @param start
-	 * @param size
-	 * @return CRC value
-	 */
-	private int calculateLongCRC(byte[] data, int start, int size) {
-		return (Tools.calculateCRC(data, start, size) ^ 0xFFFF);
-	} // calculateLongCRC
+	
+//	/**
+//	 * Calculate CRC value from the provided byte data array as long value.
+//	 * 
+//	 * FIXME: Enhance parameter information
+//	 * 
+//	 * @param data
+//	 * @param start
+//	 * @param size
+//	 * @return CRC value
+//	 */
+//	private int calculateLongCRC(byte[] data, int start, int size) {
+//		return (Tools.calculateCRC(data, start, size) ^ 0xFFFF);
+//	} // calculateLongCRC
 
 	/**
 	 * Custom toString method to provide a human readable output

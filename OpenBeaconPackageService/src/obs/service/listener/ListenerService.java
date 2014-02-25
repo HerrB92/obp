@@ -44,7 +44,7 @@ import obs.service.sighting.TagSighting;
  * Code based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class ListenerService implements Runnable {
@@ -131,11 +131,11 @@ public class ListenerService implements Runnable {
 		thread = new Thread(this);
 
 		try {
-			logger.debug("Local IP: %s:%d, buffer size: %d, timeout: %d",
+			logger.debug(String.format("Local IP: %s:%d, buffer size: %d, timeout: %d",
 					socket.getLocalAddress().getHostAddress().toString(),
 					socket.getLocalPort(),
 					socket.getReceiveBufferSize(),
-					socket.getSoTimeout());
+					socket.getSoTimeout()));
 		} catch (IOException ioException) {
 			logger.debug("Error printing service information", ioException);
 		}
@@ -235,7 +235,7 @@ public class ListenerService implements Runnable {
 						getMessageListener().messageReceived(tagSighting);
 					} else {
 						lostCRC++;
-						logger.debug("Invalid CRC packages: %d", tagSighting.getTagCRC());
+						logger.debug(String.format("Invalid CRC packages: %d", tagSighting.getTagCRC()));
 					}
 				}
 			} catch (IOException ioException) {

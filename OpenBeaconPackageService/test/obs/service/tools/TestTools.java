@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Test class for Tools class.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TestTools {

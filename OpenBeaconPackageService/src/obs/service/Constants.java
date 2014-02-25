@@ -19,7 +19,7 @@ package obs.service;
  * packages. The constants have to be reviewed, if OpenBeacon releases newer
  * firmwares, readers or tags.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class Constants {

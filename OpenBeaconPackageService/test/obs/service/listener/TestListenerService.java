@@ -25,12 +25,11 @@ import org.junit.Test;
  * Test class for the test of the service class reading previously
  * recorded tag data.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestListenerService {
 	private static final long[] key = {0x00112233, 0x44556677, 0x8899aabb, 0xccddeeff};
-	//private ArrayList<byte[]> data = new ArrayList<byte[]>();
 	
 	private static ListenerService service;
 	

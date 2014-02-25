@@ -33,7 +33,7 @@ import javax.sound.sampled.*;
  * stackoverflow.com, 14.07.2011, 21:17 [Online]
  * Available at: http://stackoverflow.com/a/6700039 (Accessed: 12.10.2013)
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class SoundUtils extends Thread {

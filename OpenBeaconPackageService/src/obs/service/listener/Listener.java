@@ -24,7 +24,7 @@ import obs.service.sighting.TagSighting;
  * Code based on the work of
  * 2007 Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  */
 public interface Listener {

@@ -19,7 +19,7 @@ import obs.service.Constants;
 /**
  * Class used to provide the data structure for proximity sightings.
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author BjÃ¶rn Behrens (uol@btech.de)
  * @version 1.0
  */
 public class ProximitySighting {

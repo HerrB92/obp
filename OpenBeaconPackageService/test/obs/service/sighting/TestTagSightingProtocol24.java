@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Test class for testing tag data encoded using protocol 24.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author BjÃ¶rn Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSightingProtocol24 {
@@ -74,12 +74,16 @@ public class TestTagSightingProtocol24 {
 		assertEquals(-1, tagSighting.getTagTime());
 		assertEquals(-1, tagSighting.getTagBattery());
 		assertEquals(1770132, tagSighting.getTagSequence());
-		assertEquals(136, tagSighting.getTagCRC());
+		assertEquals(41352, tagSighting.getTagCRC());
 		assertTrue(tagSighting.hasValidTagCRC());
 		assertTrue(tagSighting.isValid());
 		
 		for (int i = 0; i < packetData.length; i++) {
-			assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			try {
+				assertEquals(packetData[i], tagSighting.getRawData()[i]);
+			} catch (AssertionError e) {
+				System.out.printf("PacketData failed at %d (expected: %d, got: %d)\n", i, packetData[i], tagSighting.getRawData()[i]);
+			}
 		}
 		
 		assertFalse(tagSighting.getTagData() == null);

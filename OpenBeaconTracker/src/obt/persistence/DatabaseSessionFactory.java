@@ -47,7 +47,7 @@ public class DatabaseSessionFactory {
 	public static SessionFactory getInstance() {
 		if (sessionFactory == null) {
 			Configuration cfg = new Configuration();
-			cfg.configure("/hibernate.cfg.xml"); // /hibernate.cfg.xml
+			cfg.configure("/hibernate.cfg.xml");
 			cfg.addAnnotatedClass(ObtRun.class);
 			cfg.addAnnotatedClass(Setting.class);
 			cfg.addAnnotatedClass(Reader.class);

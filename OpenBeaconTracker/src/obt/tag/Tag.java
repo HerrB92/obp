@@ -29,12 +29,13 @@ import org.apache.logging.log4j.Logger;
 import org.joda.time.DateTime;
 
 /**
+ * Tag class.
  * 
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
 public class Tag {
-	static final Logger logger = LogManager.getLogger(Tag.class.getName());
+	private static final Logger logger = LogManager.getLogger(Tag.class.getName());
 	
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	private final DataIndex index = DataIndex.getInstance();

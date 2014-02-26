@@ -34,7 +34,7 @@ import obt.tag.TagSpotTagSighting;
  * @version 1.0
  */
 public class DefaultPositionEstimator implements PositionEstimator {
-	static final Logger logger = LogManager.getLogger(DefaultPositionEstimator.class.getName());
+	private static final Logger logger = LogManager.getLogger(DefaultPositionEstimator.class.getName());
 	
 	// Configuration data, includes spot tag data
 	private final ServiceConfiguration configuration = 

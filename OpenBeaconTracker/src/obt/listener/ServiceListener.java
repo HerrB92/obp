@@ -16,6 +16,8 @@ package obt.listener;
 
 import java.util.ArrayList;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 
@@ -52,6 +54,9 @@ import obt.tag.estimation.PositionEstimator;
  * @version 1.0
  */
 public class ServiceListener implements Listener {
+	private static final Logger logger = LogManager.getLogger(Tag.class.getName());
+
+	// Configuration instance
 	private final ServiceConfiguration configuration = ServiceConfiguration.getInstance();
 	
 	// Data index instance which holds the available data
@@ -306,7 +311,7 @@ public class ServiceListener implements Listener {
 				}
 			}
 		} else {
-			System.out.println("Unknown reader: " + tagSighting.getReaderId());
+			logger.info("Unknown reader: " + tagSighting.getReaderId());
 		}
 	} // messageReceived
 }

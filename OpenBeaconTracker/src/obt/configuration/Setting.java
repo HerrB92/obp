@@ -25,6 +25,8 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 
 /**
+ * Setting type class.
+ * 
  * @author Björn Behrens <uol@btech.de>
  * @version 1.0
  */
@@ -80,21 +82,21 @@ public class Setting implements Serializable {
 		} // Constructor
 				
 		/**
-		 * @return
+		 * @return Setting type
 		 */
 		private SettingValueType getType() {
 			return type;
 		}
 		
 		/**
-		 * @return
+		 * @return Default value
 		 */
 		private String getDefaultValue() {
 			return defaultValue;
 		}
 		
 		/**
-		 * @return
+		 * @return Default integer value
 		 */
 		public int getDefaultIntValue() {
 			return defaultIntValue;

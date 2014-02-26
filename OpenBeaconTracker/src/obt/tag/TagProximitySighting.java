@@ -33,7 +33,7 @@ public class TagProximitySighting {
 	// Minimal identified signal strength
 	private int minStrength;
 	
-	// Sighting count (FIXME: Check with OpenBeacon: Of this particular other tag)
+	// Sighting count (FIXME: Check with OpenBeacon: Of this particular other tag?)
 	private int count = 1;
 	
 	// Last update time stamp
@@ -51,7 +51,7 @@ public class TagProximitySighting {
 	 */
 	public TagProximitySighting(String tagKey, int strength) {
 		setTagKey(tagKey);
-		setLastUpdate(DateTime.now()); // Has to be before setMinStrength!
+		setLastUpdate(DateTime.now()); // Has to be set before setMinStrength!
 		setMinStrength(strength);
 	} // Constructor
 	

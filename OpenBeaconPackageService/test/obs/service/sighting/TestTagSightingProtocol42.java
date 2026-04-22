@@ -34,7 +34,7 @@ import org.junit.Test;
  * FIXME: This test only tests the protocol itself, based on the original code from 
  * OpenBeacon. Validate the test with actual data from a tag using this protocol!
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSightingProtocol42 {

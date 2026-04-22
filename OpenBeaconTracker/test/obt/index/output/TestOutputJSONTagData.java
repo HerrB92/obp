@@ -14,7 +14,14 @@
  */
 package obt.index.output;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
+
+import java.nio.file.Path;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -24,20 +31,28 @@ import org.junit.Test;
  *
  */
 public class TestOutputJSONTagData {
+	private Path tempFile;
+	private OutputJSONTagData output;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		tempFile = TestOutputJSONSupport.createTempJsonFile("obp-outputjson-tagdata-");
+		output = new OutputJSONTagData(tempFile.toString(), 99L);
 	}
 
 	/**
 	 * Test method for {@link obt.index.output.OutputJSONTagData#process(com.fasterxml.jackson.core.JsonGenerator)}.
 	 */
 	@Test
-	public final void testProcess() {
-		fail("Not yet implemented"); // TODO
+	public final void testProcess() throws Exception {
+		output.update();
+		String content = TestOutputJSONSupport.readFile(tempFile);
+		assertTrue(content.contains("\"tag\""));
+		assertTrue(content.contains("\"reader\""));
+		assertTrue(content.contains("\"spots\""));
 	}
 
 	/**
@@ -45,7 +60,8 @@ public class TestOutputJSONTagData {
 	 */
 	@Test
 	public final void testOutputJSONTagData() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(output);
+		assertEquals(99L, output.getRunId());
 	}
 
 }

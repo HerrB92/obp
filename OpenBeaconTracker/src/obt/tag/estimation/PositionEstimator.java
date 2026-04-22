@@ -21,7 +21,7 @@ import obt.tag.Tag;
  * Interface to provide an abstract PositionEstimator definition
  * which can be used to integrate alternative PositionEstimators.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public interface PositionEstimator {

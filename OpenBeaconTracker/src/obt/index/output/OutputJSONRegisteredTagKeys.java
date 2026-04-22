@@ -25,7 +25,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  * n unregistered tags as JSON file. n is determined by the cardinality
  * of the CircularQueue object to store the unregistered tags.
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author Bjoern Behrens (uol@btech.de)
  * @version 1.0
  */
 public class OutputJSONRegisteredTagKeys extends OutputJSON {

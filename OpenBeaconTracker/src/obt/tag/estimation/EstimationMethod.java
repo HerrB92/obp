@@ -19,7 +19,7 @@ package obt.tag.estimation;
  * to estimate the position for the location tracking event stored
  * in the database.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public enum EstimationMethod {

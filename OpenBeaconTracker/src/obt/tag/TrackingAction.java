@@ -18,7 +18,7 @@ package obt.tag;
  * Enumerator values used to describe the location tracking events 
  * in the database.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public enum TrackingAction {

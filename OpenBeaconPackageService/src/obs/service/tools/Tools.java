@@ -20,7 +20,7 @@ package obs.service.tools;
  * Allesandro wrote: "Tools for decryption based on a java implementation of Ma
  * Bingyao optimized for 16 byte data"
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class Tools {

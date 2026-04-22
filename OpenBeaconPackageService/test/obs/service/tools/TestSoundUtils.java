@@ -3,16 +3,20 @@
  */
 package obs.service.tools;
 
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
 import javax.sound.sampled.LineUnavailableException;
 
 import org.junit.After;
+import org.junit.Assume;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Test for the SoundUtils class. Use your ears for assertion... ;-)
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TestSoundUtils {
@@ -43,6 +47,7 @@ public class TestSoundUtils {
 	 */
 	@Test
 	public void testRun() throws InterruptedException {		
+		Assume.assumeTrue("Audio output line not available in this environment", isAudioOutputAvailable());
 		sound.run();
 	} // testSoundUtils
 
@@ -51,6 +56,7 @@ public class TestSoundUtils {
 	 */
 	@Test
 	public void testBeep() {
+		Assume.assumeTrue("Audio output line not available in this environment", isAudioOutputAvailable());
 		SoundUtils.beep(500, 750);
 	} // testBeep
 
@@ -60,6 +66,7 @@ public class TestSoundUtils {
 	 */
 	@Test
 	public void testTone() throws LineUnavailableException {
+		Assume.assumeTrue("Audio output line not available in this environment", isAudioOutputAvailable());
 		SoundUtils.tone(600, 750);
 	} // testTone
 
@@ -69,6 +76,13 @@ public class TestSoundUtils {
 	 */
 	@Test
 	public void testToneWithVolumne() throws LineUnavailableException {
+		Assume.assumeTrue("Audio output line not available in this environment", isAudioOutputAvailable());
 		SoundUtils.tone(700, 750, 2.0);
 	} // testToneWithVolumne
+
+	private boolean isAudioOutputAvailable() {
+		AudioFormat audioFormat = new AudioFormat(8000f, 8, 1, true, false);
+		DataLine.Info lineInfo = new DataLine.Info(javax.sound.sampled.SourceDataLine.class, audioFormat);
+		return AudioSystem.isLineSupported(lineInfo);
+	}
 }

@@ -23,7 +23,7 @@ import org.junit.Test;
 /**
  * Test for the ProximitySighting class.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TestProximitySighting {

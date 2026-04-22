@@ -23,7 +23,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.hibernate.HibernateException;
-import org.hibernate.engine.spi.SessionImplementor;
+import org.hibernate.engine.spi.SharedSessionContractImplementor;
 import org.hibernate.usertype.EnhancedUserType;
 
 import obt.persistence.joda.TypeHelper;
@@ -64,7 +64,7 @@ public abstract class AbstractSingleColumnUserType<T, J, C extends ColumnMapper<
 
     @SuppressWarnings({ "unchecked" })
     @Override
-    public T nullSafeGet(ResultSet resultSet, String[] strings, SessionImplementor session, Object object) throws SQLException {
+    public T nullSafeGet(ResultSet resultSet, String[] strings, SharedSessionContractImplementor session, Object object) throws SQLException {
         
     	beforeNullSafeOperation(session);
     	
@@ -83,7 +83,7 @@ public abstract class AbstractSingleColumnUserType<T, J, C extends ColumnMapper<
     }
 
     @Override
-    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index, SessionImplementor session) throws SQLException {
+    public void nullSafeSet(PreparedStatement preparedStatement, Object value, int index, SharedSessionContractImplementor session) throws SQLException {
 
     	beforeNullSafeOperation(session);
     	

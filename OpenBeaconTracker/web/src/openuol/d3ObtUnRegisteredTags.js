@@ -19,7 +19,7 @@
  * Available at: http://bl.ocks.org/llimllib/841dd138e429bb0545df
  * (Accessed: 23.11.2013)
  * 
- * Copyright 2013 Björn Behrens <uol@btech.de>
+ * Copyright 2013 Bjoern Behrens <uol@btech.de>
  *
  ***************************************************************/
 

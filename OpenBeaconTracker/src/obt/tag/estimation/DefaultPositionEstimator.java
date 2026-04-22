@@ -30,7 +30,7 @@ import obt.tag.TagSpotTagSighting;
  * Default estimator class used for OpenBeaconTracker (singleton). It uses only 
  * spot tag sightings to estimate the spot position.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class DefaultPositionEstimator implements PositionEstimator {

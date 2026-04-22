@@ -20,7 +20,7 @@
 ///**
 // * Reader sighting class.
 // * 
-// * @author Björn Behrens <uol@btech.de>
+// * @author Bjoern Behrens <uol@btech.de>
 // * @version 1.0
 // */
 //public class TagReaderSighting extends SpotSighting<Reader> {

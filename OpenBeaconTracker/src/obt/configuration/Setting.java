@@ -27,7 +27,7 @@ import javax.persistence.Transient;
 /**
  * Setting type class.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @Entity
@@ -38,7 +38,7 @@ public class Setting implements Serializable {
 	/**
 	 * Type of value enumeration class.
 	 * 
-	 * @author Björn Behrens <uol@btech.de>
+	 * @author Bjoern Behrens <uol@btech.de>
 	 * @version 1.0
 	 */
 	public enum SettingValueType {
@@ -49,7 +49,7 @@ public class Setting implements Serializable {
 	/**
 	 * Type of setting enumeration class.
 	 * 
-	 * @author Björn Behrens <uol@btech.de>
+	 * @author Bjoern Behrens <uol@btech.de>
 	 * @version 1.0
 	 */
 	public enum SettingType {

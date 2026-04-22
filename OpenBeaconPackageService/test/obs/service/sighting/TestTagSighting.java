@@ -38,7 +38,7 @@ import org.junit.Test;
  * Test class for the test of the service class reading previously
  * recorded tag data.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSighting {
@@ -52,7 +52,10 @@ public class TestTagSighting {
 		byte[] bytes;
 		
 		try {
-			InputStream inputStream = getClass().getResourceAsStream("Tag_1119_SampleData.log");
+			InputStream inputStream = getClass().getResourceAsStream("/obs/service/sighting/Tag_1119_SampleData.log");
+			if (inputStream == null) {
+				throw new FileNotFoundException("Missing test resource: Tag_1119_SampleData.log");
+			}
 		    InputStreamReader inputStreamReader = new InputStreamReader(inputStream);
 			reader = new BufferedReader(inputStreamReader);
 			

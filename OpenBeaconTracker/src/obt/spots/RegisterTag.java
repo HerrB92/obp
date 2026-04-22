@@ -22,7 +22,7 @@ import obs.service.Constants;
 /**
  * Class for register tags.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @Entity

@@ -14,8 +14,16 @@
  */
 package obt.index.output;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.nio.file.Path;
+
+import obt.index.DataIndex;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -24,20 +32,33 @@ import org.junit.Test;
  *
  */
 public class TestOutputJSONRegisteredTagKeys {
+	private Path tempFile;
+	private OutputJSONRegisteredTagKeys output;
+	private DataIndex index;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		tempFile = TestOutputJSONSupport.createTempJsonFile("obp-outputjson-registered-");
+		output = new OutputJSONRegisteredTagKeys(tempFile.toString());
+		index = DataIndex.getInstance();
+		index.getRegisteredTagKeys().clear();
+		index.registerTagKey("T111");
+		index.registerTagKey("T222");
 	}
 
 	/**
 	 * Test method for {@link obt.index.output.OutputJSONRegisteredTagKeys#process(com.fasterxml.jackson.core.JsonGenerator)}.
 	 */
 	@Test
-	public final void testProcess() {
-		fail("Not yet implemented"); // TODO
+	public final void testProcess() throws Exception {
+		output.update();
+		String content = TestOutputJSONSupport.readFile(tempFile);
+		assertTrue(content.contains("\"tag\""));
+		assertTrue(content.contains("T111"));
+		assertTrue(content.contains("T222"));
 	}
 
 	/**
@@ -45,7 +66,7 @@ public class TestOutputJSONRegisteredTagKeys {
 	 */
 	@Test
 	public final void testOutputJSONRegisteredTagKeys() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(output);
 	}
 
 }

@@ -30,7 +30,7 @@ import org.joda.time.DateTime;
 /**
  * Class used to store the tracking updates in the database.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @Entity

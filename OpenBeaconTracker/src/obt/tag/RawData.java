@@ -23,7 +23,7 @@ import javax.persistence.Id;
 /**
  * Class to store the raw data of tag sightings in the database.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @Entity

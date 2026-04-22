@@ -21,8 +21,8 @@ import java.util.List;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.hibernate.SQLQuery;
 import org.hibernate.Session;
+import org.hibernate.query.NativeQuery;
 
 import obs.service.Constants;
 import obt.configuration.Setting.SettingType;
@@ -38,7 +38,7 @@ import obt.tag.TagKey;
  * Singleton class which loads the available configuration data from the
  * database on first load.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class ServiceConfiguration {
@@ -211,8 +211,8 @@ public class ServiceConfiguration {
 			"  FROM Settings " +
 			" WHERE runId = 0 ";
 		 
-		SQLQuery query;
-		query = session.createSQLQuery(sql);
+		NativeQuery<?> query;
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 		
@@ -223,7 +223,7 @@ public class ServiceConfiguration {
 			"  FROM Readers " +
 			" WHERE runId = 0 AND active = 1";
 		 
-		query = session.createSQLQuery(sql);
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 		
@@ -234,7 +234,7 @@ public class ServiceConfiguration {
 			"  FROM SpotTags " +
 			" WHERE runId = 0 AND active = 1";
 		 
-		query = session.createSQLQuery(sql);
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 		
@@ -245,7 +245,7 @@ public class ServiceConfiguration {
 			"  FROM RegisterTags " +
 			" WHERE runId = 0 AND active = 1";
 		 
-		query = session.createSQLQuery(sql);
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 		
@@ -256,7 +256,7 @@ public class ServiceConfiguration {
 			"  FROM UnRegisterTags " +
 			" WHERE runId = 0 AND active = 1";
 		 
-		query = session.createSQLQuery(sql);
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 		
@@ -267,7 +267,7 @@ public class ServiceConfiguration {
 			"  FROM TagKeys " +
 			" WHERE runId = 0 AND active = 1";
 		 
-		query = session.createSQLQuery(sql);
+		query = session.createNativeQuery(sql);
 		query.setParameter("runId", runId);
 		query.executeUpdate();
 				
@@ -380,7 +380,7 @@ public class ServiceConfiguration {
 			
 			// If there are other readers, calculate distance between each reader
 			// and store information in hash map for faster access
-			if (readerMap.size() > 1) {
+			if (readerMap.size() > 0) {
 				Reader reader;
 				Long distance;
 				
@@ -478,7 +478,7 @@ public class ServiceConfiguration {
 			
 			// If there are other spots, calculate distance between each spot
 			// and store information in hash map for faster access
-			if (spotTagMap.size() > 1) {
+			if (spotTagMap.size() > 0) {
 				Spot tag;
 				Long distance;
 				

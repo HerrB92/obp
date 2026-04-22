@@ -27,7 +27,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
 /**
  * Abstract class defining the common methods of the JSON writer classes.
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author Bjoern Behrens (uol@btech.de)
  * @version 1.0
  */
 public abstract class OutputJSON {

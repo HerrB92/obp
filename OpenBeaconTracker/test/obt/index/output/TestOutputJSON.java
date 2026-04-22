@@ -14,55 +14,90 @@
  */
 package obt.index.output;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
+import java.nio.file.Path;
+
+import com.fasterxml.jackson.core.JsonGenerator;
 import org.junit.Before;
 import org.junit.Test;
 
 public class TestOutputJSON {
+	private static class TestableOutputJSON extends OutputJSON {
+		public TestableOutputJSON(String fileName) {
+			super(fileName);
+		}
+
+		@Override
+		protected void process(JsonGenerator generator) throws IOException {
+			generator.writeStringField("status", "ok");
+		}
+	}
+
+	private Path tempFile;
+	private TestableOutputJSON output;
 
 	@Before
 	public void setUp() throws Exception {
+		tempFile = TestOutputJSONSupport.createTempJsonFile("obp-outputjson-");
+		output = new TestableOutputJSON(tempFile.toString());
 	}
 
 	@Test
 	public final void testOutputJSON() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(output);
+		assertEquals(tempFile.toFile(), output.getFile());
 	}
 
 	@Test
 	public final void testGetFile() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(output.getFile());
+		assertEquals(tempFile.toFile(), output.getFile());
 	}
 
 	@Test
 	public final void testSetFile() {
-		fail("Not yet implemented"); // TODO
+		Path replacementFile = tempFile.resolveSibling("replacement-outputjson.json");
+		output.setFile(replacementFile.toString());
+		assertEquals(replacementFile.toFile(), output.getFile());
 	}
 
 	@Test
 	public final void testGetFactory() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(output.getFactory());
 	}
 
 	@Test
 	public final void testIncrementSequence() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(0L, output.incrementSequence());
+		assertEquals(1L, output.incrementSequence());
 	}
 
 	@Test
 	public final void testGetSequence() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(0L, output.getSequence());
+		output.incrementSequence();
+		assertEquals(1L, output.getSequence());
 	}
 
 	@Test
-	public final void testUpdate() {
-		fail("Not yet implemented"); // TODO
+	public final void testUpdate() throws Exception {
+		output.update();
+		assertTrue(output.getFile().exists());
 	}
 
 	@Test
-	public final void testProcess() {
-		fail("Not yet implemented"); // TODO
+	public final void testProcess() throws IOException {
+		output.update();
+		String content = TestOutputJSONSupport.readFile(tempFile);
+		assertTrue(content.contains("\"status\""));
+		assertTrue(content.contains("\"ok\""));
 	}
 
 }

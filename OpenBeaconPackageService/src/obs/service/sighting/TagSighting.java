@@ -31,7 +31,7 @@ import obs.service.tools.Tools;
  * Code based on the work of 2007
  * Alessandro Marianantoni <alex@alexrieti.com>
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TagSighting {

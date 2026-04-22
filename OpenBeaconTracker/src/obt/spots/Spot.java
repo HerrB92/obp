@@ -28,7 +28,7 @@ import org.joda.time.DateTime;
  * Abstract class to define spots (spot, register, unregister tags or
  * readers) and store or receive the information in the database.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @MappedSuperclass // This class provides the Hibernate definition also for child classes

@@ -25,7 +25,7 @@ import javax.persistence.Transient;
 /**
  * Class to store and retrieve the tag data encryption keys.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 @Entity

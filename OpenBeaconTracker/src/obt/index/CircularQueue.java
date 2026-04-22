@@ -27,7 +27,7 @@ import java.util.Queue;
  * last N elements in Java' stockoverflow.com, 12.04.2011 [Online] Available at:
  * http://stackoverflow.com/a/5637726 (Accessed: 23.11.2013)
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author Bjoern Behrens (uol@btech.de)
  * @version 1.0
  */
 public class CircularQueue<E> implements Queue<E> {

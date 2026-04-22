@@ -29,7 +29,7 @@ import org.joda.time.DateTime;
  * Class to create an ongoing id per run (runId) using a database
  * sequence (auto incrementing column in SQL database).
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author Bjoern Behrens (uol@btech.de)
  * @version 1.0
  */
 @Entity

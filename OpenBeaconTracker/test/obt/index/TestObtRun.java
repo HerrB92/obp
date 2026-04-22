@@ -14,22 +14,32 @@
  */
 package obt.index;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import org.joda.time.DateTime;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author bbehrens
+ * @author Bjoern Behrens
  *
  */
 public class TestObtRun {
+	private ObtRun run;
+	private DateTime fixedDateTime;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		fixedDateTime = new DateTime(2020, 1, 2, 3, 4, 5, 0);
+		run = new ObtRun(fixedDateTime);
 	}
 
 	/**
@@ -37,7 +47,8 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testObtRun() {
-		fail("Not yet implemented"); // TODO
+		ObtRun defaultRun = new ObtRun();
+		assertNotNull(defaultRun.getTimeStamp());
 	}
 
 	/**
@@ -45,7 +56,7 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testObtRunDateTime() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(fixedDateTime, run.getTimeStamp());
 	}
 
 	/**
@@ -53,7 +64,7 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testGetRunId() {
-		fail("Not yet implemented"); // TODO
+		assertNull(run.getRunId());
 	}
 
 	/**
@@ -61,7 +72,8 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testSetRunId() {
-		fail("Not yet implemented"); // TODO
+		run.setRunId(42L);
+		assertEquals(Long.valueOf(42L), run.getRunId());
 	}
 
 	/**
@@ -69,7 +81,7 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testGetTimeStamp() {
-		fail("Not yet implemented"); // TODO
+		assertEquals(fixedDateTime, run.getTimeStamp());
 	}
 
 	/**
@@ -77,7 +89,9 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testSetTimeStamp() {
-		fail("Not yet implemented"); // TODO
+		DateTime updatedDateTime = fixedDateTime.plusHours(1);
+		run.setTimeStamp(updatedDateTime);
+		assertEquals(updatedDateTime, run.getTimeStamp());
 	}
 
 	/**
@@ -85,7 +99,10 @@ public class TestObtRun {
 	 */
 	@Test
 	public final void testToString() {
-		fail("Not yet implemented"); // TODO
+		run.setRunId(7L);
+		String output = run.toString();
+		assertTrue(output.contains("Run: 7"));
+		assertTrue(output.contains(run.getTimeStamp().toString()));
 	}
 
 }

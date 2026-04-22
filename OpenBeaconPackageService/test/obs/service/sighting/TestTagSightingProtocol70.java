@@ -26,7 +26,7 @@ import org.junit.Test;
 /**
  * Test class for testing tag data encoded using protocol 70 (RFBPROTO_PROXREPORT_EXT).
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  **/
 public class TestTagSightingProtocol70 {

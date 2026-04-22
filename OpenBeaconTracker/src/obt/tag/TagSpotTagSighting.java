@@ -20,7 +20,7 @@ import obt.spots.Spot;
 /**
  * Spot tag sighting class.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public class TagSpotTagSighting extends SpotSighting<Spot> {		

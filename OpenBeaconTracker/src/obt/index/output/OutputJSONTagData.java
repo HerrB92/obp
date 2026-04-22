@@ -32,7 +32,7 @@ import com.fasterxml.jackson.core.JsonGenerator;
  * JSON writer class used to output the current OpenBeaconTracker data 
  * for the graphical evaluation tool (obtPlot.html) as JSON file.
  * 
- * @author Björn Behrens (uol@btech.de)
+ * @author Bjoern Behrens (uol@btech.de)
  * @version 1.0
  */
 public class OutputJSONTagData extends OutputJSON {

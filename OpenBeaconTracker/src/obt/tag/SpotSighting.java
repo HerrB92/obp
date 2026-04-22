@@ -21,7 +21,7 @@ import org.joda.time.DateTime;
 /**
  * Class to store spot tag sightings.
  * 
- * @author Björn Behrens <uol@btech.de>
+ * @author Bjoern Behrens <uol@btech.de>
  * @version 1.0
  */
 public abstract class SpotSighting<E extends Spot> {

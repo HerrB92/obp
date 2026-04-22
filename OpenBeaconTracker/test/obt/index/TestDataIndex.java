@@ -14,22 +14,37 @@
  */
 package obt.index;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 
+import java.util.Collection;
+
+import obt.tag.Tag;
 import org.junit.Before;
 import org.junit.Test;
 
 /**
- * @author bbehrens
+ * @author Bjoern Behrens
  *
  */
 public class TestDataIndex {
+	private DataIndex index;
+	private Tag tag;
 
 	/**
 	 * @throws java.lang.Exception
 	 */
 	@Before
 	public void setUp() throws Exception {
+		index = DataIndex.getInstance();
+		index.getTagMap().clear();
+		index.getRegisteredTagKeys().clear();
+		index.getUnRegisteredTagKeys().clear();
+		tag = new Tag(1234, null);
 	}
 
 	/**
@@ -37,7 +52,8 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetInstance() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(DataIndex.getInstance());
+		assertSame(index, DataIndex.getInstance());
 	}
 
 	/**
@@ -45,7 +61,8 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetTagMap() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(index.getTagMap());
+		assertTrue(index.getTagMap().isEmpty());
 	}
 
 	/**
@@ -53,7 +70,9 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetTags() {
-		fail("Not yet implemented"); // TODO
+		Collection<Tag> tags = index.getTags();
+		assertNotNull(tags);
+		assertTrue(tags.isEmpty());
 	}
 
 	/**
@@ -61,7 +80,9 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetTagByKey() {
-		fail("Not yet implemented"); // TODO
+		index.addTag(tag);
+		assertSame(tag, index.getTagByKey(tag.getKey()));
+		assertNull(index.getTagByKey("T9999"));
 	}
 
 	/**
@@ -69,7 +90,9 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testAddTag() {
-		fail("Not yet implemented"); // TODO
+		index.addTag(tag);
+		assertEquals(1, index.getTagMap().size());
+		assertSame(tag, index.getTagMap().get(tag.getKey()));
 	}
 
 	/**
@@ -77,7 +100,8 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetKnownReaders() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(index.getKnownReaders());
+		assertTrue(index.getKnownReaders().size() > 0);
 	}
 
 	/**
@@ -85,7 +109,9 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testRegisterTagKey() {
-		fail("Not yet implemented"); // TODO
+		index.registerTagKey("T1234");
+		assertEquals(1, index.getRegisteredTagKeys().size());
+		assertEquals("T1234", index.getRegisteredTagKeys().peek());
 	}
 
 	/**
@@ -93,7 +119,8 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetRegisteredTagKeys() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(index.getRegisteredTagKeys());
+		assertTrue(index.getRegisteredTagKeys().isEmpty());
 	}
 
 	/**
@@ -101,7 +128,9 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testUnRegisterTagKey() {
-		fail("Not yet implemented"); // TODO
+		index.unRegisterTagKey("T1234");
+		assertEquals(1, index.getUnRegisteredTagKeys().size());
+		assertEquals("T1234", index.getUnRegisteredTagKeys().peek());
 	}
 
 	/**
@@ -109,7 +138,8 @@ public class TestDataIndex {
 	 */
 	@Test
 	public final void testGetUnRegisteredTagKeys() {
-		fail("Not yet implemented"); // TODO
+		assertNotNull(index.getUnRegisteredTagKeys());
+		assertTrue(index.getUnRegisteredTagKeys().isEmpty());
 	}
 
 }

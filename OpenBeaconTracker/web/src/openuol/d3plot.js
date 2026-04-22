@@ -19,7 +19,7 @@
  * Available at: http://bl.ocks.org/mbostock/3887118
  * (Accessed: 30.08.2013)
  * 
- * Copyright 2013 Björn Behrens <uol@btech.de>
+ * Copyright 2013 Bjoern Behrens <uol@btech.de>
  *
  ***************************************************************/
 

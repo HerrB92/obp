@@ -14,7 +14,12 @@
  */
 package obt.configuration;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
+import static org.junit.Assert.assertTrue;
 import obt.configuration.ServiceConfiguration;
 import obt.spots.Reader;
 import obt.spots.RegisterTag;
@@ -27,7 +32,7 @@ import org.junit.Test;
 /**
  * Test class for service configuration
  * 
- * @author Bj�rn Behrens
+ * @author Bjoern Behrens
  */
 public class TestServiceConfiguration {
 	private ServiceConfiguration configuration;

@@ -63,6 +63,7 @@ The current OpenBeacon website describes newer hardware and project context, whi
 
 - OpenBeacon project background: [openbeacon.org/about](https://www.openbeacon.org/about.html)
 
-## Encoding
+## Author
 
-Project text/source files in active modules are UTF-8 encoded.
+Björn Behrens
+Created: 2014

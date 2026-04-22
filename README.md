@@ -66,4 +66,4 @@ The current OpenBeacon website describes newer hardware and project context, whi
 ## Author
 
 Björn Behrens
-Created: 2014
+Created: 2014 
